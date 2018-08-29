@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import com.github.javafaker.Faker;
 import org.junit.Test;
 
 
@@ -15,8 +16,9 @@ public class ConferenceCliClientTest {
 
     @Test
     public void shouldDecodeAddCommand() {
-        String title = SampleData.sampleText(5);
-        String description = SampleData.sampleText(10);
+        Faker faker = new Faker();
+        String title = faker.book().title();
+        String description = faker.lorem().paragraph();
         ConferenceClientCommand command = client.decodeCommand(new String[] { "add", "-title", title, "-description", description });
         assertThat(command).isInstanceOf(AddTalkCommand.class)
             .isEqualToComparingFieldByField(new AddTalkCommand().withTitle(title).withDescription(description));
