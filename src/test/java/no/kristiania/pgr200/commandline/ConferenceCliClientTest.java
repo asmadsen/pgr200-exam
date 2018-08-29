@@ -1,4 +1,4 @@
-package no.kristiania.prg200.commandline;
+package no.kristiania.pgr200.commandline;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
