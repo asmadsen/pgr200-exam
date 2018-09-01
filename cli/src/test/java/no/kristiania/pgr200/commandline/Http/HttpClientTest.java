@@ -24,9 +24,9 @@ public class HttpClientTest {
         JsonObject expect = new JsonObject();
         expect.add("args", new JsonObject());
         expect.add("headers", gson.toJsonTree(ResponseTestUtils.TransformKeys(headers)));
-        expect.addProperty("origin", "172.17.0.1");
         expect.addProperty("url", "http://localhost:8080/get");
         JsonObject object = response.getBody();
+        object.remove("origin");
         assertThat(object.entrySet())
                 .isEqualTo(expect.entrySet());
     }
@@ -42,12 +42,12 @@ public class HttpClientTest {
         expect.add("args", new JsonObject());
         expect.addProperty("data", jsonData.toString());
         expect.add("headers", gson.toJsonTree(ResponseTestUtils.TransformKeys(headers)));
-        expect.addProperty("origin", "172.17.0.1");
         expect.add("files", new JsonObject());
         expect.add("form", new JsonObject());
         expect.add("json", jsonData);
         expect.addProperty("url", "http://localhost:8080/post");
         JsonObject object = response.getBody();
+        object.remove("origin");
         assertThat(object.entrySet())
                 .isEqualTo(expect.entrySet());
     }
@@ -63,12 +63,12 @@ public class HttpClientTest {
         expect.add("args", new JsonObject());
         expect.addProperty("data", "");
         expect.add("headers", gson.toJsonTree(ResponseTestUtils.TransformKeys(headers)));
-        expect.addProperty("origin", "172.17.0.1");
         expect.add("files", new JsonObject());
         expect.add("form", gson.toJsonTree(formData));
         expect.add("json", null);
         expect.addProperty("url", "http://localhost:8080/post");
         JsonObject object = response.getBody();
+        object.remove("origin");
         assertThat(object.entrySet())
                 .isEqualTo(expect.entrySet());
     }
@@ -86,12 +86,12 @@ public class HttpClientTest {
         expect.add("args", new JsonObject());
         expect.addProperty("data", jsonData.toString());
         expect.add("headers", gson.toJsonTree(ResponseTestUtils.TransformKeys(headers)));
-        expect.addProperty("origin", "172.17.0.1");
         expect.add("files", new JsonObject());
         expect.add("form", new JsonObject());
         expect.add("json", jsonData);
         expect.addProperty("url", "http://localhost:8080/put");
         JsonObject object = response.getBody();
+        object.remove("origin");
         assertThat(object.entrySet())
                 .isEqualTo(expect.entrySet());
     }
@@ -107,12 +107,12 @@ public class HttpClientTest {
         expect.add("args", new JsonObject());
         expect.addProperty("data", "");
         expect.add("headers", gson.toJsonTree(ResponseTestUtils.TransformKeys(headers)));
-        expect.addProperty("origin", "172.17.0.1");
         expect.add("files", new JsonObject());
         expect.add("form", gson.toJsonTree(formData));
         expect.add("json", null);
         expect.addProperty("url", "http://localhost:8080/put");
         JsonObject object = response.getBody();
+        object.remove("origin");
         assertThat(object.entrySet())
                 .isEqualTo(expect.entrySet());
     }
@@ -125,12 +125,12 @@ public class HttpClientTest {
         expect.add("args", new JsonObject());
         expect.addProperty("data", "");
         expect.add("headers", gson.toJsonTree(ResponseTestUtils.TransformKeys(headers)));
-        expect.addProperty("origin", "172.17.0.1");
         expect.add("files", new JsonObject());
         expect.add("form", new JsonObject());
         expect.add("json", null);
         expect.addProperty("url", "http://localhost:8080/delete");
         JsonObject object = response.getBody();
+        object.remove("origin");
         assertThat(object.entrySet())
                 .isEqualTo(expect.entrySet());
     }
