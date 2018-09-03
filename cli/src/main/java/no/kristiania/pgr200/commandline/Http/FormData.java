@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class FormData extends HashMap<String, String> {
+    public static final long serialVersionUID = 3624988207423423525L;
     public String put(String key, Object value) {
         return super.put(key, String.valueOf(value));
     }

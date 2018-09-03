@@ -3,6 +3,7 @@ package no.kristiania.pgr200.commandline;
 import no.kristiania.pgr200.commandline.Commands.ConferenceClientCommand;
 import no.kristiania.pgr200.commandline.Exceptions.DecodeCommandException;
 import no.kristiania.pgr200.commandline.Http.HttpClient;
+import no.kristiania.pgr200.common.Spinner;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,8 +17,12 @@ public class ConferenceCliClient {
         this.client = client;
     }
 
-    public static void main(String[] args) {
-        System.out.println(String.join(", ", args));
+    public static void main(String[] args) throws Exception {
+        Spinner.spin(() -> {
+            try {
+                Thread.sleep(5 * 1000);
+            } catch (InterruptedException e) { }
+        }, "Uploading Talk");
     }
 
     public ConferenceClientCommand decodeCommand(String[] strings) {

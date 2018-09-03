@@ -1,8 +1,10 @@
 package no.kristiania.pgr200.commandline.Commands;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import no.kristiania.pgr200.commandline.CommandOptions;
 import no.kristiania.pgr200.commandline.ConferenceCliClient;
+import no.kristiania.pgr200.commandline.Http.Response;
 
 public class AddTalkCommand extends ConferenceClientCommand {
 
@@ -36,7 +38,8 @@ public class AddTalkCommand extends ConferenceClientCommand {
         object.addProperty("title", title);
         object.addProperty("description", description);
 
-        this.client.post("/api/talks", object);
+        Response<JsonElement> response = this.client.post("/api/talks", object);
+
         return this;
     }
 
