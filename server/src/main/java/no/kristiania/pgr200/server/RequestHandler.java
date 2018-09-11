@@ -16,7 +16,7 @@ public class RequestHandler {
         this.body = body;
     }
 
-    public void processRequest(PrintWriter out) throws InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+    public void processRequest(PrintWriter out) throws InvocationTargetException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException {
         TalksController talksController = new TalksController();
         talksController.setOut(out);
         Method controllerMethod = talksController.getMethodFromAnnotation(request);

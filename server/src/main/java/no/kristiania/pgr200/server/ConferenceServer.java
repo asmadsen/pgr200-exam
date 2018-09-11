@@ -61,6 +61,8 @@ public class ConferenceServer implements Runnable {
             connection.close();
         } catch (IOException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
             e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 }
