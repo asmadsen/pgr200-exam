@@ -46,7 +46,6 @@ public class HttpRequestTest {
                 .hasFieldOrPropertyWithValue("httpVersion", "HTTP/1.1");
 
         request = new HttpRequest(PUT, "/");
-        request.writeToStream();
 
         assertThat(request)
                 .hasFieldOrPropertyWithValue("uri", "/")

@@ -1,0 +1,2 @@
+ALTER TABLE talks
+ADD topic VARCHAR(255);
