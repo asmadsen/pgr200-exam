@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -147,7 +148,8 @@ public class HttpClient {
         }
         try {
             Socket socket = new Socket(this.address, this.port);
-            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF8"));
+            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(),
+                                                                          StandardCharsets.UTF_8));
             wr.write(String.format("%s %s HTTP/1.1\r\n", method, path));
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 wr.write(String.format("%s: %s\r\n", entry.getKey(), entry.getValue()));
