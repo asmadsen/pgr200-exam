@@ -1,5 +1,9 @@
 package no.kristiania.pgr200.common.Http;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest extends HttpCommon {
@@ -26,6 +30,16 @@ public class HttpRequest extends HttpCommon {
     }
 
     public HttpRequest(HttpMethod method, String uri, Map<String, String> headers, String body) {
+        super(headers, body);
+        this.httpMethod = method;
+        this.uri = uri;
+    }
+
+    public HttpRequest(HttpMethod method, String uri, JsonElement body) {
+        this(method, uri, null, body);
+    }
+
+    public HttpRequest(HttpMethod method, String uri, Map<String, String> headers, JsonElement body) {
         super(headers, body);
         this.httpMethod = method;
         this.uri = uri;
