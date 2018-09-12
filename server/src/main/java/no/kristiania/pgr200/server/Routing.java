@@ -6,5 +6,5 @@ import java.lang.reflect.Method;
 
 public interface Routing {
 
-    Method parseRoute(HttpMethod method, String route) throws Exception;
+    Method parseRoute() throws Exception;
 }

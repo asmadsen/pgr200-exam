@@ -44,24 +44,22 @@ public class ConferenceServer implements Runnable {
             HashMap<String, String> headers = new HashMap<>();
             String request = in.readLine();
             if(request == null) return;
-            String method = request;
+            String requestLine = request;
             while(!(request = in.readLine()).equals("")){
                 String[] line = request.split(": ");
                 headers.put(line[0], line[1]);
             }
             StringBuilder body = new StringBuilder();
-            if(method.toUpperCase().matches("POST")){
+            if(requestLine.toUpperCase().matches("POST")){
                 int input;
                 while((input = in.read()) != -1){
                     body.append((char) input);
                 }
             }
-            RequestHandler requestHandler = new RequestHandler(method, headers, body.toString());
+            RequestHandler requestHandler = new RequestHandler(requestLine, headers, body.toString());
             requestHandler.processRequest(out);
             connection.close();
-        } catch (IOException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
