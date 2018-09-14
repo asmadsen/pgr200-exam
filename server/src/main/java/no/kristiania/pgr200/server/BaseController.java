@@ -3,23 +3,14 @@ package no.kristiania.pgr200.server;
 import no.kristiania.pgr200.common.Http.HttpMethod;
 
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class BaseController extends HeaderResponse implements Routing {
+public class BaseController extends HeaderResponse {
 
     private PrintWriter out;
     private String id;
     private String parameters;
     private String route;
     private HttpMethod method;
-
-    @Override
-    public Method parseRoute() throws Exception {
-        throw new Exception("Not implemented!");
-    }
 
     public PrintWriter getOut() {
         return out;

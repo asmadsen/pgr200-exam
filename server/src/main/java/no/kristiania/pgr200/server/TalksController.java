@@ -4,11 +4,7 @@ package no.kristiania.pgr200.server;
 import com.google.gson.Gson;
 import no.kristiania.pgr200.common.Http.HttpMethod;
 
-import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
 
 @ApiController("/talks")
 public class TalksController extends BaseController{

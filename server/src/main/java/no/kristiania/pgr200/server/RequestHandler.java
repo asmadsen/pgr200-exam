@@ -35,7 +35,7 @@ class RequestHandler {
         }
     }
 
-    private BaseController getControllerFromRoute(){
+    BaseController getControllerFromRoute(){
         for (Map.Entry<BaseController, ApiController> entry : getControllers().entrySet()) {
             Pattern regex = Pattern.compile(entry.getValue().value());
             Matcher matcher = regex.matcher(route);
@@ -52,7 +52,7 @@ class RequestHandler {
         return annotations;
     }
 
-    private Method getMethodFromAnnotation(BaseController controller) {
+    Method getMethodFromAnnotation(BaseController controller) {
         Method[] methods = controller.getClass().getDeclaredMethods();
         for (Method method : methods) {
             if (method.isAnnotationPresent(ApiRequest.class)) {
