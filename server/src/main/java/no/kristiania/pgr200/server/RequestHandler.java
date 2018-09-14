@@ -1,28 +1,83 @@
 package no.kristiania.pgr200.server;
 
+import no.kristiania.pgr200.common.Http.HttpMethod;
+
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class RequestHandler {
+class RequestHandler {
 
-    HashMap<String, String> headers;
-    String request, body;
+    private HashMap<String, String> headers;
+    private String route, body;
+    private HttpMethod httpMethod;
+    private BaseController controller;
 
-    public RequestHandler(String request, HashMap<String, String> headers, String body){
-        this.request = request;
+    RequestHandler(String requestLine, HashMap<String, String> headers, String body){
+        this.httpMethod = HttpMethod.valueOf(requestLine.split(" ")[0]);
+        this.route = requestLine.split(" ")[1];
         this.headers = headers;
         this.body = body;
     }
 
-    public void processRequest(PrintWriter out) throws InvocationTargetException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException {
-        TalksController talksController = new TalksController();
-        talksController.setOut(out);
-        Method controllerMethod = talksController.getMethodFromAnnotation(request);
-        if(controllerMethod != null) controllerMethod.invoke(talksController);
+    void processRequest(PrintWriter out) throws InvocationTargetException, IllegalAccessException {
+        BaseController controller = getControllerFromRoute();
+        Method controllerMethod = null;
+        if (controller != null) controllerMethod = getMethodFromAnnotation(controller);
+        if(controllerMethod != null){
+            controller.setOut(out);
+            setController(controller);
+            controllerMethod.invoke(controller);
+        }
     }
-//
+
+    private BaseController getControllerFromRoute(){
+        for (Map.Entry<BaseController, ApiController> entry : getControllers().entrySet()) {
+            Pattern regex = Pattern.compile(entry.getValue().value());
+            Matcher matcher = regex.matcher(route);
+            if(matcher.find()) return entry.getKey();
+        }
+        return null;
+    }
+
+    private HashMap<BaseController, ApiController> getControllers(){
+        // TODO: Use enum for controller classes?
+        HashMap<BaseController, ApiController> annotations = new HashMap<>();
+        annotations.put(new TalksController(), TalksController.class.getAnnotation(ApiController.class));
+        annotations.put(new ScheduleController(), ScheduleController.class.getAnnotation(ApiController.class));
+        return annotations;
+    }
+
+    private Method getMethodFromAnnotation(BaseController controller) {
+        Method[] methods = controller.getClass().getDeclaredMethods();
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(ApiRequest.class)) {
+                ApiRequest annotation = method.getAnnotation(ApiRequest.class);
+                if (route.split("/").length == annotation.route().split("/").length
+                        && annotation.action().equals(httpMethod)
+                        && Pattern.compile(annotation.route()).matcher(route).find()) {
+                    controller.setMethod(httpMethod);
+                    controller.setRoute(route);
+                    return method;
+                }
+            }
+        }
+        return null;
+    }
+
+    public BaseController getController() {
+        return controller;
+    }
+
+    public void setController(BaseController controller) {
+        this.controller = controller;
+    }
+
+    //
 //    private void processGET(PrintWriter out, StringTokenizer parse){
 //        String token = parse.nextToken();
 //        if(token.matches("/favicon[.]ico")){

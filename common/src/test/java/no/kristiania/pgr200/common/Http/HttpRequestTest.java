@@ -1,5 +1,6 @@
 package no.kristiania.pgr200.common.Http;
 
+import com.google.gson.JsonObject;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -72,6 +73,31 @@ public class HttpRequestTest {
                 .hasFieldOrPropertyWithValue("json", null)
                 .hasFieldOrPropertyWithValue("httpVersion", "HTTP/1.1");
         assertThat(request.getHeaders()).containsEntry("Accept-Encoding", "gzip");
+
+        JsonObject body = new JsonObject();
+        body.addProperty("hello", "world");
+        request = new HttpRequest(DELETE, "/path", body);
+        assertThat(request)
+                .hasFieldOrPropertyWithValue("uri", "/path")
+                .hasFieldOrPropertyWithValue("httpMethod", DELETE)
+                .hasFieldOrPropertyWithValue("body", body.toString())
+                .hasFieldOrPropertyWithValue("json", body)
+                .hasFieldOrPropertyWithValue("httpVersion", "HTTP/1.1");
+        assertThat(request.getHeaders()).containsEntry("Content-Type", "application/json");
+
+        body = new JsonObject();
+        body.addProperty("hello", "world");
+        request = new HttpRequest(DELETE, "/path", new HashMap<String, String>() {{
+            put("Accept-Encoding", "gzip");
+        }}, body);
+        assertThat(request)
+                .hasFieldOrPropertyWithValue("uri", "/path")
+                .hasFieldOrPropertyWithValue("httpMethod", DELETE)
+                .hasFieldOrPropertyWithValue("body", body.toString())
+                .hasFieldOrPropertyWithValue("json", body)
+                .hasFieldOrPropertyWithValue("httpVersion", "HTTP/1.1");
+        assertThat(request.getHeaders()).containsEntry("Accept-Encoding", "gzip")
+                                        .containsEntry("Content-Type", "application/json");
 
         request = new HttpRequest(DELETE, "/path", new HashMap<String, String>() {{
             put("Accept-Encoding", "gzip");

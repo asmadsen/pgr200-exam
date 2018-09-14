@@ -15,19 +15,7 @@ public abstract class HttpCommon {
     protected JsonElement json;
 
     public HttpCommon() {
-        this(new HashMap<>(), "");
-    }
-
-    public HttpCommon(JsonElement body) {
-        this(new HashMap<>(), body.toString());
-    }
-
-    public HttpCommon(String body) {
-        this(new HashMap<>(), body);
-    }
-
-    public HttpCommon(Map<String, String> headers) {
-        this(headers, "");
+        this(null, "");
     }
 
     public HttpCommon(Map<String, String> headers, String body) {
@@ -37,6 +25,23 @@ public abstract class HttpCommon {
         }
         this.headers = headers;
         this.setBody(body);
+    }
+
+    public HttpCommon(Map<String, String> headers, JsonElement body) {
+        this.httpVersion = "HTTP/1.1";
+        if (headers == null) {
+            headers = new HashMap<>();
+        }
+        this.headers = headers;
+        this.setBody(body);
+    }
+
+    private void setBody(JsonElement body) {
+        if (this.headers != null) {
+            this.headers.put("Content-Type", "application/json");
+        }
+        this.body = body.toString();
+        this.json = body;
     }
 
     public Map<String, String> getHeaders() {
