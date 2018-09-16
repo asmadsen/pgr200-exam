@@ -58,13 +58,13 @@ public class TalkResponse {
     public ResultSet queryTalks(String statement, String id) throws SQLException {
         PreparedStatement preparedStatement = DatabaseHandling.getConnection().prepareStatement(statement);
         if (id != null) preparedStatement.setString(1, id);
-//        ResultSet talkResult =
-//        while (talkResult.next()) {
-//            Values.add(new Talk(
-//                    talkResult.getString("id"),
-//                    talkResult.getString("title"),
-//                    talkResult.getString("description")));
-//        }
+        ResultSet talkResult = DatabaseHandling.selectStatement(preparedStatement);
+        while (talkResult.next()) {
+            Values.add(new Talk(
+                    talkResult.getString("id"),
+                    talkResult.getString("title"),
+                    talkResult.getString("description")));
+        }
         return DatabaseHandling.selectStatement(preparedStatement);
     }
 }

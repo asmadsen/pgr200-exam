@@ -3,9 +3,7 @@ package no.kristiania.pgr200.server;
 import com.github.javafaker.Faker;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.assertj.core.api.Java6Assertions;
 import org.junit.*;
-import org.junit.rules.ExpectedException;
 
 import java.sql.SQLException;
 
@@ -26,7 +24,7 @@ public class TalkResponseTest {
 
     @Before
     public void init(){
-        ConferenceServer.DATABASE_URL = "command_line_parser_test";
+        ConferenceServer.DATABASE_URL = "conference_server_test";
         SetupDatabaseTest.initSchema();
     }
 
@@ -56,21 +54,5 @@ public class TalkResponseTest {
     @Test
     public void shouldReturnNullIfTalkIsNull() throws SQLException {
         assertNull(talkResponse.createTalk(null));
-    }
-
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
-
-    @Ignore
-    public void shouldThrowSQLException() throws SQLException {
-        talkResponse.fetchTalkById(null);
-        expectedEx.expectMessage("No value specified for parameter 1");
-    }
-
-    @Test
-    public void shouldCreateSampleTalk(){
-        Talk talk = new Talk();
-        Java6Assertions.assertThat(talk.getTitle()).isNotNull();
-        Java6Assertions.assertThat(talk.getDescription()).isNotNull();
     }
 }
