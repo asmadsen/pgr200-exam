@@ -22,9 +22,12 @@ public class HttpParser {
             request.setHttpVersion(parts[2]);
         }
 
-        request.setHeaders(parseHeaders(reader));
+        Map<String, String> headers = parseHeaders(reader);
+        request.setHeaders(headers);
 
-        request.setBody(parseBody(reader));
+        if (headers.containsKey("Content-Length") || reader.ready()) {
+            request.setBody(parseBody(reader, Integer.parseInt(headers.get("Content-Length"))));
+        }
 
         return request;
     }
@@ -40,18 +43,25 @@ public class HttpParser {
             response.setStatus(HttpStatus.valueOf(Integer.parseInt(parts[1])));
         }
 
-        response.setHeaders(parseHeaders(reader));
+        Map<String, String> headers = parseHeaders(reader);
+        response.setHeaders(headers);
 
-        response.setBody(parseBody(reader));
+        if (headers.containsKey("Content-Length") || reader.ready()) {
+            response.setBody(parseBody(reader, Integer.parseInt(headers.get("Content-Length"))));
+        }
 
         return response;
     }
 
-    private String parseBody(InputStreamReader reader) throws IOException {
+    private String parseBody(InputStreamReader reader, int length) throws IOException {
         StringBuilder builder = new StringBuilder();
         int c;
+        int read = 0;
         while ((c = reader.read()) != -1) {
             builder.append((char) c);
+            if (++read >= length) {
+                break;
+            }
         }
         return builder.toString();
     }
