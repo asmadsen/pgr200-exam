@@ -1,20 +1,22 @@
 package no.kristiania.pgr200.server;
 
+import no.kristiania.pgr200.common.Http.HttpMethod;
+import no.kristiania.pgr200.common.Http.HttpParser;
+import no.kristiania.pgr200.common.Http.HttpRequest;
 import org.flywaydb.core.Flyway;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 
+import static java.lang.System.in;
+
 public class ConferenceServer implements Runnable {
     private Socket connection;
     private static final int PORT = 8080;
-    public static String DATABASE_URL = "command_line_parser";
+    public static String DATABASE_URL = "conference_server";
 
     public ConferenceServer(Socket socket) {
         this.connection = socket;
@@ -38,26 +40,14 @@ public class ConferenceServer implements Runnable {
     }
 
     @Override
+
     public void run() {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-             PrintWriter out = new PrintWriter(connection.getOutputStream())) {
-            HashMap<String, String> headers = new HashMap<>();
-            String request = in.readLine();
-            if(request == null) return;
-            String requestLine = request;
-            while(!(request = in.readLine()).equals("")){
-                String[] line = request.split(": ");
-                headers.put(line[0], line[1]);
+        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+            HttpRequest httpRequest = new HttpParser().parseRequest(in);
+            RequestHandler requestHandler = new RequestHandler(httpRequest);
+            if(httpRequest.getUri() != null || httpRequest.getHttpMethod() != null) {
+                requestHandler.processRequest(out);
             }
-            StringBuilder body = new StringBuilder();
-            if(requestLine.toUpperCase().matches("POST")){
-                int input;
-                while((input = in.read()) != -1){
-                    body.append((char) input);
-                }
-            }
-            RequestHandler requestHandler = new RequestHandler(requestLine, headers, body.toString());
-            requestHandler.processRequest(out);
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
