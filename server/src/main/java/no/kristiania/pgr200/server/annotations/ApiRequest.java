@@ -1,4 +1,4 @@
-package no.kristiania.pgr200.server;
+package no.kristiania.pgr200.server.annotations;
 
 import no.kristiania.pgr200.common.Http.HttpMethod;
 

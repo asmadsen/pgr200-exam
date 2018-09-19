@@ -2,6 +2,9 @@ package no.kristiania.pgr200.server;
 
 import no.kristiania.pgr200.common.Http.HttpMethod;
 import no.kristiania.pgr200.common.Http.HttpRequest;
+import no.kristiania.pgr200.server.controllers.BaseController;
+import no.kristiania.pgr200.server.controllers.ScheduleController;
+import no.kristiania.pgr200.server.controllers.TalksController;
 import org.junit.Test;
 
 import java.lang.reflect.Method;

@@ -1,6 +1,7 @@
-package no.kristiania.pgr200.server;
+package no.kristiania.pgr200.server.controllers;
 
 import no.kristiania.pgr200.common.Http.HttpMethod;
+import no.kristiania.pgr200.server.HeaderResponse;
 
 import java.io.PrintWriter;
 

@@ -1,11 +1,8 @@
 package no.kristiania.pgr200.server;
 
 import com.github.javafaker.Faker;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import no.kristiania.pgr200.common.Http.HttpResponse;
-import org.assertj.core.api.Java6Assertions;
+import no.kristiania.pgr200.server.models.Talk;
 import org.junit.*;
 
 import java.sql.SQLException;
@@ -56,14 +53,5 @@ public class TalkResponseTest {
     @Test
     public void shouldReturnNullIfTalkIsNull() throws SQLException {
         assertNull(talkResponse.createTalk(null));
-    }
-  
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
-
-    @Ignore
-    public void shouldThrowSQLException() throws SQLException {
-        talkResponse.fetchTalkById(null);
-        expectedEx.expectMessage("No value specified for parameter 1");
     }
 }
