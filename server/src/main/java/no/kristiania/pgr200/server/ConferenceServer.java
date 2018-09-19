@@ -24,7 +24,8 @@ public class ConferenceServer implements Runnable {
 
     public static void main(String[] args) {
         Flyway flyway = new Flyway();
-        flyway.setDataSource("jdbc:mysql://localhost/" + DATABASE_URL + "?serverTimezone=UTC", "root", "testkake");
+        flyway.setDataSource("jdbc:mysql://localhost", "root", "testkake");
+        flyway.setSchemas(DATABASE_URL);
         flyway.migrate();
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             boolean listening = true;
@@ -32,7 +33,7 @@ public class ConferenceServer implements Runnable {
                 ConferenceServer conferenceServer = new ConferenceServer(serverSocket.accept());
                 Thread thread = new Thread(conferenceServer);
                 thread.start();
-                if(DATABASE_URL.equals("command_line_parser_test")) listening = false;
+                if(DATABASE_URL.equals("conference_server_test")) listening = false;
             }
         } catch (IOException e) {
             e.printStackTrace();

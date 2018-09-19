@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import no.kristiania.pgr200.common.Http.HttpResponse;
 import org.assertj.core.api.Java6Assertions;
 import org.junit.*;
-import org.junit.rules.ExpectedException;
 
 import java.sql.SQLException;
 
@@ -28,7 +27,7 @@ public class TalkResponseTest {
 
     @Before
     public void init(){
-        ConferenceServer.DATABASE_URL = "command_line_parser_test";
+        ConferenceServer.DATABASE_URL = "conference_server_test";
         SetupDatabaseTest.initSchema();
     }
 
@@ -58,7 +57,7 @@ public class TalkResponseTest {
     public void shouldReturnNullIfTalkIsNull() throws SQLException {
         assertNull(talkResponse.createTalk(null));
     }
-
+  
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
@@ -67,5 +66,4 @@ public class TalkResponseTest {
         talkResponse.fetchTalkById(null);
         expectedEx.expectMessage("No value specified for parameter 1");
     }
-
 }
