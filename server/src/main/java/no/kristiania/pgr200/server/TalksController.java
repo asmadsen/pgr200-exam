@@ -2,25 +2,23 @@ package no.kristiania.pgr200.server;
 
 
 import com.google.gson.Gson;
+import no.kristiania.pgr200.common.Http.HttpMethod;
 
 import java.sql.SQLException;
 
+@ApiController("/talks")
 public class TalksController extends BaseController{
 
-    @ApiRequest(action = "GET", route = "talks")
-    public void index() throws SQLException {
+    @ApiRequest(action = HttpMethod.GET, route = "/api/talks")
+    public void index() {
         System.out.println("TEST GET Index");
-        System.out.println(getParameters());
-
+        sendSuccessResponse(getOut(), "application/json");
     }
 
-    @ApiRequest(action = "POST", route = "talks")
-    public void create(){
-        System.out.println("TEST POST Create");
-    }
-
-    @ApiRequest(action = "GET", route = "talks/\\d+(?!\\S+)")
+    @ApiRequest(action = HttpMethod.GET, route = "/api/talks/\\d+")
     public void show() throws SQLException {
+        System.out.println("TEST GET Show");
+        setId(getRoute().split("/")[3]);
         TalkResponse talkResponse = new TalkResponse();
         Talk talk = talkResponse.fetchTalkById(getId());
         if (talk.getTitle() == null && talk.getDescription() == null){
@@ -33,13 +31,26 @@ public class TalksController extends BaseController{
         }
     }
 
-    @ApiRequest(action = "PATCH", route = "talks")
+    @ApiRequest(action = HttpMethod.POST, route = "/api/talks")
+    public void create(){
+        System.out.println("TEST POST Create");
+    }
+
+    @ApiRequest(action = HttpMethod.PATCH, route = "/api/talks/\\d+")
     public void update(){
         System.out.println("TEST PATCH Update");
     }
 
-    @ApiRequest(action = "DELETE", route = "talks//\\d+(?!\\S+)")
+    @ApiRequest(action = HttpMethod.DELETE, route = "/api/talks/\\d+")
     public void destroy(){
         System.out.println("TEST DELETE Destroy");
+    }
+
+    @ApiRequest(action = HttpMethod.GET, route = "/api/talks/schedule")
+    public void allInASchedule(){
+        System.out.println("TEST GET All in a schedule");
+        sendSuccessResponse(getOut(), "application/json");
+        getOut().println("{\"test\":\"alltalks\"}");
+        getOut().flush();
     }
 }

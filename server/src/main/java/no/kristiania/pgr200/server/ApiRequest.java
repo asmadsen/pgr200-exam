@@ -1,11 +1,13 @@
 package no.kristiania.pgr200.server;
 
+import no.kristiania.pgr200.common.Http.HttpMethod;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiRequest {
-    String action();
+    HttpMethod action();
     String route();
     String id() default "Method not allowed";
 }

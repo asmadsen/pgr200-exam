@@ -8,7 +8,7 @@ public class DatabaseHandling {
 
     public Connection createConnection() throws SQLException {
         Connection connection = null;
-        connection = DriverManager.getConnection("jdbc:mysql://localhost/" + ConferenceServer.DATABASE_URL + "?serverTimezone=UTC", "kjell", "123456");
+        connection = DriverManager.getConnection("jdbc:mysql://localhost/" + ConferenceServer.DATABASE_URL + "?serverTimezone=UTC", "root", "testkake");
         return connection;
     }
 
