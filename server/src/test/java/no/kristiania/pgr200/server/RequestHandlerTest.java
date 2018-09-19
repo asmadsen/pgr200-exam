@@ -1,5 +1,7 @@
 package no.kristiania.pgr200.server;
 
+import no.kristiania.pgr200.common.Http.HttpMethod;
+import no.kristiania.pgr200.common.Http.HttpRequest;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -11,51 +13,51 @@ public class RequestHandlerTest {
 
     @Test
     public void shouldReturnTalksController(){
-        RequestHandler requestHandler = new RequestHandler("GET /api/talks HTTP/1.1", defaultHeaders(), "");
+        RequestHandler requestHandler = new RequestHandler(new HttpRequest(HttpMethod.GET, "/api/talks", defaultHeaders()));
         BaseController controller = requestHandler.getControllerFromRoute();
         assertThat(controller).isInstanceOf(TalksController.class);
     }
 
     @Test
     public void shouldReturnScheduleController(){
-        RequestHandler requestHandler = new RequestHandler("GET /api/schedule HTTP/1.1", defaultHeaders(), "");
+        RequestHandler requestHandler = new RequestHandler( new HttpRequest(HttpMethod.GET, "/api/schedule", defaultHeaders()));
         BaseController controller = requestHandler.getControllerFromRoute();
         assertThat(controller).isInstanceOf(ScheduleController.class);
     }
 
     @Test
     public void shouldReturnIndexMethod() throws NoSuchMethodException {
-        String[] requestCases = { "GET /api/talks/ HTTP/1.1", "GET /api/talks HTTP/1.1", "GET /api/talks?title=sometitle HTTP/1.1" };
-        loopCases(requestCases, "index");
+        String[] requestCases = { "/api/talks/", "/api/talks", "/api/talks?title=sometitle" };
+        loopCases(requestCases, HttpMethod.GET, "index");
     }
 
     @Test
     public void shouldReturnShowMethod() throws NoSuchMethodException {
-        String[] requestCases = { "GET /api/talks/1 HTTP/1.1", "GET /api/talks/123 HTTP/1.1", "GET /api/talks/123notAnId HTTP/1.1" };
-        loopCases(requestCases, "show");
+        String[] requestCases = { "/api/talks/1", "/api/talks/123", "/api/talks/123notAnId" };
+        loopCases(requestCases, HttpMethod.GET, "show");
     }
 
     @Test
     public void shouldInvokeCreateMethod() throws NoSuchMethodException {
-        String[] requestCases = { "POST /api/talks HTTP/1.1", "POST /api/talks HTTP/1.1", "POST /api/talks HTTP/1.1" };
-        loopCases(requestCases, "create");
+        String[] requestCases = { "/api/talks", "/api/talks", "/api/talks" };
+        loopCases(requestCases, HttpMethod.POST, "create");
     }
 
     @Test
     public void shouldInvokeUpdateMethod() throws NoSuchMethodException {
-        String[] requestCases = { "PATCH /api/talks/1 HTTP/1.1", "PATCH /api/talks/123 HTTP/1.1", "PATCH /api/talks/123notAnId HTTP/1.1" };
-        loopCases(requestCases, "update");
+        String[] requestCases = { "/api/talks/1", "/api/talks/123", "/api/talks/123notAnId" };
+        loopCases(requestCases, HttpMethod.PATCH, "update");
     }
 
     @Test
     public void shouldReturnDestroyMethod() throws NoSuchMethodException {
-        String[] requestCases = { "DELETE /api/talks/1 HTTP/1.1", "DELETE /api/talks/123 HTTP/1.1", "DELETE /api/talks/123notAnId HTTP/1.1" };
-        loopCases(requestCases, "destroy");
+        String[] requestCases = { "/api/talks/1", "/api/talks/123", "/api/talks/123notAnId" };
+        loopCases(requestCases, HttpMethod.DELETE, "destroy");
     }
 
-    private void loopCases(String[] requestCases, String method) throws NoSuchMethodException {
-        for (int i = 0; i < requestCases.length-1; i++) {
-            RequestHandler requestHandler = new RequestHandler(requestCases[i], defaultHeaders(), "");
+    private void loopCases(String[] route, HttpMethod httpMethod, String method) throws NoSuchMethodException {
+        for (int i = 0; i < route.length-1; i++) {
+            RequestHandler requestHandler = new RequestHandler( new HttpRequest(httpMethod, route[i], defaultHeaders()));
             BaseController controller = requestHandler.getControllerFromRoute();
             Method correctMethod = controller.getClass().getMethod(method);
             Method requestedMethod = requestHandler.getMethodFromAnnotation(controller);

@@ -1,7 +1,13 @@
 package no.kristiania.pgr200.server;
 
 import no.kristiania.pgr200.common.Http.HttpMethod;
+import no.kristiania.pgr200.common.Http.HttpRequest;
+import no.kristiania.pgr200.common.Http.HttpResponse;
+import no.kristiania.pgr200.common.Http.HttpStatus;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,33 +18,29 @@ import java.util.regex.Pattern;
 
 class RequestHandler {
 
-    private HashMap<String, String> headers;
-    private String route, body;
-    private HttpMethod httpMethod;
+    private HttpRequest httpRequest;
     private BaseController controller;
 
-    RequestHandler(String requestLine, HashMap<String, String> headers, String body){
-        this.httpMethod = HttpMethod.valueOf(requestLine.split(" ")[0]);
-        this.route = requestLine.split(" ")[1];
-        this.headers = headers;
-        this.body = body;
+    RequestHandler(HttpRequest httpRequest){
+        this.httpRequest = httpRequest;
     }
 
-    void processRequest(PrintWriter out) throws InvocationTargetException, IllegalAccessException {
-        BaseController controller = getControllerFromRoute();
+    void processRequest(OutputStream out) throws InvocationTargetException, IllegalAccessException, IOException {
+        setController(getControllerFromRoute());
         Method controllerMethod = null;
         if (controller != null) controllerMethod = getMethodFromAnnotation(controller);
         if(controllerMethod != null){
-            controller.setOut(out);
-            setController(controller);
-            controllerMethod.invoke(controller);
+            HttpResponse httpResponse = (HttpResponse) controllerMethod.invoke(controller);
+            httpResponse.writeToStream(out);
+        } else {
+            new HttpResponse(HttpStatus.MethodNotAllowed).writeToStream(out);
         }
     }
 
     BaseController getControllerFromRoute(){
         for (Map.Entry<BaseController, ApiController> entry : getControllers().entrySet()) {
             Pattern regex = Pattern.compile(entry.getValue().value());
-            Matcher matcher = regex.matcher(route);
+            Matcher matcher = regex.matcher(httpRequest.getUri());
             if(matcher.find()) return entry.getKey();
         }
         return null;
@@ -47,8 +49,8 @@ class RequestHandler {
     private HashMap<BaseController, ApiController> getControllers(){
         // TODO: Use enum for controller classes?
         HashMap<BaseController, ApiController> annotations = new HashMap<>();
-        annotations.put(new TalksController(), TalksController.class.getAnnotation(ApiController.class));
-        annotations.put(new ScheduleController(), ScheduleController.class.getAnnotation(ApiController.class));
+        annotations.put(new TalksController(httpRequest), TalksController.class.getAnnotation(ApiController.class));
+        annotations.put(new ScheduleController(httpRequest), ScheduleController.class.getAnnotation(ApiController.class));
         return annotations;
     }
 
@@ -57,11 +59,9 @@ class RequestHandler {
         for (Method method : methods) {
             if (method.isAnnotationPresent(ApiRequest.class)) {
                 ApiRequest annotation = method.getAnnotation(ApiRequest.class);
-                if (route.split("/").length == annotation.route().split("/").length
-                        && annotation.action().equals(httpMethod)
-                        && Pattern.compile(annotation.route()).matcher(route).find()) {
-                    controller.setMethod(httpMethod);
-                    controller.setRoute(route);
+                if (httpRequest.getUri().split("/").length == annotation.route().split("/").length
+                        && annotation.action().equals(httpRequest.getHttpMethod())
+                        && Pattern.compile(annotation.route()).matcher(httpRequest.getUri()).find()) {
                     return method;
                 }
             }
@@ -76,56 +76,4 @@ class RequestHandler {
     public void setController(BaseController controller) {
         this.controller = controller;
     }
-
-    //
-//    private void processGET(PrintWriter out, StringTokenizer parse){
-//        String token = parse.nextToken();
-//        if(token.matches("/favicon[.]ico")){
-////            sendFavIcon(out);
-//        } else if (token.matches("/api/talks/(\\d+)")){
-//            getTalkById(out, token);
-//        } else if (token.matches("/api/talks/?")){
-//            getAllTalks(out);
-//        } else {
-//            badRequest(out);
-//        }
-//    }
-//
-//    private void processPOST(BufferedReader in, PrintWriter out) throws IOException, SQLException {
-//        StringBuilder body = new StringBuilder();
-//        String inputLine;
-//        String contentLengthHeader = "content-length: ";
-//        int contentLength = 0;
-//        while (!(inputLine = in.readLine()).equals("")){
-//            if(inputLine.startsWith("content-length: ")){
-//                contentLength = Integer.parseInt(inputLine.substring(contentLengthHeader.length()));
-//            }
-//        }
-//        for (int i = 0; i < contentLength; i++){
-//            body.append((char) in.read());
-//        }
-//        TalkResponse talkResponse = new TalkResponse();
-//        Talk talk = new Gson().fromJson(body.toString(), Talk.class);
-//        sendSuccessResponse(out, "application/json");
-//        out.println(talkResponse.createTalk(talk));
-//        System.out.println(talkResponse.createTalk(talk));
-//    }
-//
-//    private void getAllTalks(PrintWriter out){
-//        TalkResponse talkResponse = new TalkResponse();
-//        talkResponse.fetchAllTalks();
-//        if (talkResponse.getTalks().isEmpty()){
-//            sendUnprocessableResponse(out);
-//        } else {
-//            Gson gson = new Gson();
-//            String json = gson.toJson(talkResponse);
-//            JsonObject obj = new JsonParser().parse(json).getAsJsonObject();
-//            obj.get("Talks").getAsJsonArray().forEach(e -> e.getAsJsonObject().remove("description"));
-//            sendTalks(out, gson.toJson(obj));
-//        }
-//    }
-//
-//    private void sendTalks(PrintWriter out, String talkResponse){
-//
-//    }
 }

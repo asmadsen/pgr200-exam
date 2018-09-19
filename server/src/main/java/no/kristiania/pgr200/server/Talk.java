@@ -1,12 +1,22 @@
 package no.kristiania.pgr200.server;
 
+import com.google.gson.JsonElement;
+
 public class Talk {
 
     private String id;
     private String title;
     private String description;
+    private String topic;
 
     public Talk(){
+
+    }
+
+    public Talk(JsonElement jsonElement){
+        this.title = jsonElement.getAsJsonObject().get("title").toString();
+        this.description = jsonElement.getAsJsonObject().get("description").toString();
+        this.topic = jsonElement.getAsJsonObject().get("topic").toString();
     }
 
     public Talk(String title, String description){
