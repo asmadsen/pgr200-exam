@@ -1,4 +1,6 @@
-package no.kristiania.pgr200.server;
+package no.kristiania.pgr200.server.db;
+
+import no.kristiania.pgr200.server.ConferenceServer;
 
 import java.sql.*;
 

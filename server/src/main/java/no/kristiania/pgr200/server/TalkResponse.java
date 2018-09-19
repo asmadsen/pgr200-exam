@@ -2,6 +2,8 @@ package no.kristiania.pgr200.server;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import no.kristiania.pgr200.server.db.DatabaseHandling;
+import no.kristiania.pgr200.server.models.Talk;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

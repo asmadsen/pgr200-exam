@@ -1,17 +1,12 @@
 package no.kristiania.pgr200.server;
 
-import no.kristiania.pgr200.common.Http.HttpMethod;
 import no.kristiania.pgr200.common.Http.HttpParser;
 import no.kristiania.pgr200.common.Http.HttpRequest;
 import org.flywaydb.core.Flyway;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-
-import static java.lang.System.in;
 
 public class ConferenceServer implements Runnable {
     private Socket connection;

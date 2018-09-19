@@ -1,4 +1,4 @@
-package no.kristiania.pgr200.server;
+package no.kristiania.pgr200.server.models;
 
 import com.google.gson.JsonElement;
 

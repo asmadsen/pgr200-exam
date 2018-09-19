@@ -1,4 +1,4 @@
-package no.kristiania.pgr200.server;
+package no.kristiania.pgr200.server.controllers;
 
 
 import com.google.gson.Gson;
@@ -9,11 +9,17 @@ import no.kristiania.pgr200.common.Http.HttpMethod;
 import no.kristiania.pgr200.common.Http.HttpRequest;
 import no.kristiania.pgr200.common.Http.HttpResponse;
 import no.kristiania.pgr200.common.Http.HttpStatus;
+import no.kristiania.pgr200.server.HttpErrorCodes;
+import no.kristiania.pgr200.server.TalkResponse;
+import no.kristiania.pgr200.server.annotations.ApiRequest;
+import no.kristiania.pgr200.server.controllers.ApiController;
+import no.kristiania.pgr200.server.controllers.BaseController;
+import no.kristiania.pgr200.server.models.Talk;
 
 import java.sql.SQLException;
 
 @ApiController("/talks")
-public class TalksController extends BaseController{
+public class TalksController extends BaseController {
 
     HttpRequest httpRequest;
 
