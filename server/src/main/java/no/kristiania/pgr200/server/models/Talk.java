@@ -2,7 +2,10 @@ package no.kristiania.pgr200.server.models;
 
 import com.google.gson.JsonElement;
 
-public class Talk {
+import java.util.List;
+
+public class Talk extends Records<Talk> {
+    public static final String TABLE = "talks";
 
     private String id;
     private String title;
@@ -30,6 +33,17 @@ public class Talk {
         this.description = description;
     }
 
+    @SuppressWarnings("unchecked")
+    public List<Talk> all() {
+        return query(TABLE, "id", "title", "description");
+    }
+
+    @SuppressWarnings("unchecked")
+    public Talk findBy(String id) {
+        List<Talk> talks = query(TABLE, "id", "title", "description");
+        return talks.get(0);
+    }
+
     public String getId() { return this.id; }
 
     public String getTitle() {
@@ -40,18 +54,23 @@ public class Talk {
         return this.description;
     }
 
-    public Talk withId(String id){
+    public void setId(String id) {
         this.id = id;
-        return this;
     }
 
-    public Talk withTitle(String title){
+    public void setTitle(String title) {
         this.title = title;
-        return this;
     }
 
-    public Talk withDescription(String description){
+    public void setDescription(String description) {
         this.description = description;
-        return this;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }

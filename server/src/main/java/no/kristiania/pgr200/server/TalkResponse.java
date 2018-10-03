@@ -10,36 +10,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+// Will be moved to Records.
+@Deprecated
 public class TalkResponse {
 
-    private ArrayList<Talk> Values;
-    private Talk Value;
+    private ArrayList<Talk> values;
+    private Talk value;
 
     public TalkResponse(){
-        Values = new ArrayList<>();
-        Value = new Talk();
+        values = new ArrayList<>();
+        value = new Talk();
     }
 
     public ArrayList<Talk> getTalks(){
-        return Values;
+        return values;
     }
 
     public Talk getTalk() {
-        return Value;
-    }
-
-    public void fetchAllTalks() throws SQLException {
-        String statement = "SELECT id, title, description FROM talks";
-        queryTalks(statement, null);
-    }
-
-    public Talk fetchTalkById(String id) throws SQLException {
-        String statement = "SELECT id, title, description FROM talks WHERE id = ? LIMIT 1";
-        ResultSet talkResult = queryTalks(statement, id);
-        while(talkResult.next()){
-            Value.withId(talkResult.getString("id")).withTitle(talkResult.getString("title")).withDescription(talkResult.getString("description"));
-        }
-        return Value;
+        return value;
     }
 
     public JsonElement createTalk(Talk talk) throws SQLException {
@@ -59,18 +47,5 @@ public class TalkResponse {
             }
         }
         return null;
-    }
-
-    public ResultSet queryTalks(String statement, String id) throws SQLException {
-        PreparedStatement preparedStatement = DatabaseHandling.getConnection().prepareStatement(statement);
-        if (id != null) preparedStatement.setString(1, id);
-        ResultSet talkResult = DatabaseHandling.selectStatement(preparedStatement);
-        while (talkResult.next()) {
-            Values.add(new Talk(
-                    talkResult.getString("id"),
-                    talkResult.getString("title"),
-                    talkResult.getString("description")));
-        }
-        return DatabaseHandling.selectStatement(preparedStatement);
     }
 }

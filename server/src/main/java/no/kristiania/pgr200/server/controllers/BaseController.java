@@ -1,17 +1,29 @@
 package no.kristiania.pgr200.server.controllers;
 
 import no.kristiania.pgr200.common.Http.HttpMethod;
-import no.kristiania.pgr200.server.HeaderResponse;
 
 import java.io.PrintWriter;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public class BaseController extends HeaderResponse {
+public class BaseController {
 
     private PrintWriter out;
     private String id;
     private String parameters;
     private String route;
     private HttpMethod method;
+
+    public Map<String, String> getHeaders(String body){
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Connection", "close");
+        headers.put("Content-Length", String.valueOf(body.length()));
+        headers.put("Date: ", new Date().toString());
+        headers.put("Server", "Conference API server");
+        return headers;
+    }
 
     public PrintWriter getOut() {
         return out;

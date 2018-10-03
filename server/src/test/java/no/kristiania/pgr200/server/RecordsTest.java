@@ -1,16 +1,17 @@
 package no.kristiania.pgr200.server;
 
 import com.github.javafaker.Faker;
-import com.google.gson.JsonElement;
+import no.kristiania.pgr200.server.models.Records;
 import no.kristiania.pgr200.server.models.Talk;
 import org.junit.*;
 
 import java.sql.SQLException;
+import java.util.List;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class TalkResponseTest {
+public class RecordsTest {
 
     private TalkResponse talkResponse = new TalkResponse();
 
@@ -29,25 +30,17 @@ public class TalkResponseTest {
     }
 
     @Test
-    public void shouldReturnAllTalks() throws SQLException {
+    public void shouldReturnTalksList() throws SQLException {
         talkResponse.createTalk(new Talk(getFakeTitle(), getFakeDescription(12)));
-        talkResponse.fetchAllTalks();
-        Assert.assertEquals(1, talkResponse.getTalks().size());
+        List<Talk> talks = new Talk().query("talks", "id", "title", "description");
+        assertEquals(1, talks.size());
     }
 
     @Test
-    public void shouldFetchTalk() throws SQLException {
-        talkResponse.createTalk(new Talk(getFakeTitle(), getFakeDescription(12)));
-        talkResponse.fetchTalkById("1");
-        Assert.assertEquals(1, talkResponse.getTalks().size());
-    }
-
-    @Test
-    public void shouldReturnATalkId() throws SQLException {
-        String title = getFakeTitle();
-        String description = getFakeDescription(12);
-        JsonElement response = talkResponse.createTalk(new Talk(title, description));
-        assertThat(response.getAsJsonObject().get("id")).isNotNull();
+    public void shouldBuildStatement(){
+        Records records = new Records();
+        StringBuilder statement = records.buildSelectStatement("tableName", "name", "surname");
+        assertEquals(statement.toString(), "SELECT name, surname FROM tableName;");
     }
 
     @Test
