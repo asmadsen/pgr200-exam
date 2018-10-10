@@ -6,12 +6,13 @@ import java.sql.*;
 
 public class DatabaseHandling {
     public static Connection con;
-    private static ResultSet rs;
 
     public Connection createConnection() throws SQLException {
-        Connection connection = null;
-        connection = DriverManager.getConnection("jdbc:mysql://localhost/" + ConferenceServer.DATABASE_URL + "?serverTimezone=UTC", "root", "testkake");
-        return connection;
+        System.out.println(ConferenceServer.DATASOURCE);
+        return DriverManager.getConnection(
+                ConferenceServer.DATASOURCE,
+                ConferenceServer.USER,
+                ConferenceServer.PASSWORD);
     }
 
     public static Connection getConnection() throws SQLException {

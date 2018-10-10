@@ -11,7 +11,9 @@ import java.net.Socket;
 public class ConferenceServer implements Runnable {
     private Socket connection;
     private static final int PORT = 8080;
-    public static String DATABASE_URL = "conference_server";
+    public static String DATASOURCE = "jdbc:mysql://localhost/conference_server";
+    public static String USER = "root";
+    public static String PASSWORD = "testkake";
 
     public ConferenceServer(Socket socket) {
         this.connection = socket;
@@ -20,15 +22,13 @@ public class ConferenceServer implements Runnable {
     public static void main(String[] args) {
         Flyway flyway = new Flyway();
         flyway.setDataSource("jdbc:mysql://localhost", "root", "testkake");
-        flyway.setSchemas(DATABASE_URL);
+        flyway.setSchemas("conference_server");
         flyway.migrate();
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            boolean listening = true;
-            while (listening) {
+            while (true) {
                 ConferenceServer conferenceServer = new ConferenceServer(serverSocket.accept());
                 Thread thread = new Thread(conferenceServer);
                 thread.start();
-                if(DATABASE_URL.equals("conference_server_test")) listening = false;
             }
         } catch (IOException e) {
             e.printStackTrace();

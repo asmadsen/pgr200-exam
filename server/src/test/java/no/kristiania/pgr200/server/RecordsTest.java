@@ -25,7 +25,9 @@ public class RecordsTest {
 
     @Before
     public void init(){
-        ConferenceServer.DATABASE_URL = "conference_server_test";
+        ConferenceServer.DATASOURCE = "jdbc:h2:mem:conference_server;DB_CLOSE_DELAY=-1";
+        ConferenceServer.USER = "sa";
+        ConferenceServer.PASSWORD = "sa";
         SetupDatabaseTest.initSchema();
     }
 

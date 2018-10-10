@@ -6,8 +6,7 @@ public class SetupDatabaseTest {
 
     public static void initSchema() {
         Flyway flyway = new Flyway();
-        flyway.setDataSource("jdbc:mysql://localhost", "root", "testkake");
-        flyway.setSchemas("conference_server_test");
+        flyway.setDataSource("jdbc:h2:mem:conference_server;DB_CLOSE_DELAY=-1", "sa", "sa");
         flyway.clean();
         flyway.migrate();
     }
