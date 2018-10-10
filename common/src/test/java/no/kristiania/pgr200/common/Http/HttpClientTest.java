@@ -80,11 +80,11 @@ public class HttpClientTest {
         Map<String, String> headers = new HashMap<>();
         HttpRequest request = new HttpRequest(HttpMethod.GET, "/get", headers);
 
-        HttpResponse response = client.execute("localhost:8080", request);
+        HttpResponse response = client.execute("httpbin.org", request);
         JsonObject expect = new JsonObject();
         expect.add("args", new JsonObject());
         expect.add("headers", gson.toJsonTree(headers));
-        expect.addProperty("url", "http://localhost:8080/get");
+        expect.addProperty("url", "http://httpbin.org/get");
         JsonObject object = response.getJson().getAsJsonObject();
         object.remove("origin");
         assertThat(object.entrySet())
