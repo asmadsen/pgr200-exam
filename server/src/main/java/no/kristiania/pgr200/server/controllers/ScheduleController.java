@@ -1,8 +1,7 @@
 package no.kristiania.pgr200.server.controllers;
 
 import no.kristiania.pgr200.common.Http.HttpRequest;
-import no.kristiania.pgr200.server.controllers.ApiController;
-import no.kristiania.pgr200.server.controllers.BaseController;
+import no.kristiania.pgr200.server.annotations.ApiController;
 
 @ApiController("/schedule")
 public class ScheduleController extends BaseController {
