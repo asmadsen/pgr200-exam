@@ -52,7 +52,11 @@ public class HttpClient {
                 headers.put("Connection", "close");
             }
             if (!headers.containsKey("Host")) {
-                headers.put("Host", String.format("%s:%d", host, port));
+                if (port != 80) {
+                    headers.put("Host", String.format("%s:%d", host, port));
+                } else {
+                    headers.put("Host", String.format("%s", host));
+                }
             }
             OutputStream outputStream = socket.getOutputStream();
             request.writeToStream(outputStream);
