@@ -23,6 +23,7 @@ public enum Operator {
     Like("LIKE"),
     Not("NOT"),
     Or("Or"),
+    Null("NULL"),
     IsNull("IS NULL"),
     Unique("UNIQUE");
 
