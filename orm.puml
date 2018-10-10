@@ -1,0 +1,105 @@
+@startuml
+
+namespace Common {
+    class User {
+        +id : int
+        +name : string
+        @Validate(String::class, notNull = true)
+        +email : string
+    }
+
+    class Validation {
+
+    }
+}
+
+namespace Server {
+
+    class UserModel extends Common.User implements BaseModel, SoftDelete {
+    }
+
+    interface BaseModel implements Pagination, Relation {
+        -dbState : BaseModel
+        -exists : boolean
+        ---
+        -isDirty() : boolean
+        +save() : boolean
+        +update(attributes : Map) : boolean
+        +all() : List<User>
+        +fill(attributes : Map) : User
+        +delete() : boolean
+    }
+
+    interface Pagination {
+        ---
+        +paginate()
+    }
+
+    interface SoftDelete {
+        #deleted_at : string
+        ---
+        +all
+        +restore() : BaseModel
+        +delete() : boolean
+        +delete(force : boolean) : boolean
+    }
+
+    interface Relation {
+        ---
+        +hasOne(class : Class<Model>, foreignKey : String, localKey : String)
+        +belongsTo(class : class<Model>, foreignKey : String, localKey : String)
+        +hasMany(class : class<Model>, foreignKey : String, localKey : String)
+        +hasManyThrough(class : class<Model>, foreignKey : String, localKey : String)
+    }
+
+    class Query {
+        -table : string
+        -selects : Set<string>
+        -wheres : LinkedList<ConditionalStatement>
+        -joins : LinkedList<JoinStatement>
+        -groupBy : LinkedHashSet<string>
+        -orderBy : LinkedHashSet<string>
+        -having : LinkedList<ConditionalStatement>
+        ---
+        +select(columns : string...)
+        +join(table : Class<? extends BaseModel>, foreignKey : string, localKey : string, type : JoinType)
+        +join(query : Query, foreignKey : string, localKey : string, type : JoinType)
+        +where(key : string, operator : SqlOperator, value : T, useAnd : boolean = true)
+        +having(key : string, operator : SqlOperator, value : T, useAnd : boolean = true)
+        +groupBy(column : string...)
+        +orderBy(column : string...)
+        +get()
+        +first()
+        +delete() : boolean
+    }
+
+    class ConditionalStatement<T> {
+        key : string
+        operator : SqlOperator
+        value : T
+        useAnd : boolean = true
+        ---
+        getStatement() : string
+    }
+
+    class JoinStatement {
+        table : Class<BaseModel>
+        query : Query
+        foreignKey : string
+        localKey : string
+        type : JoinType
+    }
+
+
+    enum SqlOperator {
+
+    }
+
+    enum JoinType {
+        LeftJoin
+        OuterJoin
+    }
+
+}
+
+@enduml
