@@ -22,7 +22,7 @@ public enum SqlOperator {
     In("IN"),
     Like("LIKE"),
     Not("NOT"),
-    Or("Or"),
+    Or("OR"),
     Null("NULL"),
     IsNull("IS NULL"),
     Unique("UNIQUE");
