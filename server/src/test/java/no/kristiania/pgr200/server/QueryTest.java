@@ -1,9 +1,8 @@
 package no.kristiania.pgr200.server;
 
-import no.kristiania.pgr200.server.models.Operator;
-import no.kristiania.pgr200.server.models.Query;
-import no.kristiania.pgr200.server.models.Statement;
-import no.kristiania.pgr200.server.models.Talk;
+import no.kristiania.pgr200.server.query.SqlOperator;
+import no.kristiania.pgr200.server.query.Query;
+import no.kristiania.pgr200.server.models.TalkModel;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -14,49 +13,49 @@ import static org.junit.Assert.assertEquals;
 public class QueryTest {
     @Test
     public void shouldBuildFindBy() {
-        Query query = new Query<Talk>("tableName");
-        query.findBy(Talk.class,12);
+        Query query = new Query<TalkModel>("tableName");
+        query.findBy(TalkModel.class,12);
         assertEquals("SELECT id, title, description, topic FROM tableName WHERE id = ?;", query.buildSql());
     }
 
     @Test
     public void shouldCombineWhereWithAND(){
-         Query query = new Query<Talk>("tableName");
-         query.where("title", Operator.Like, "some title")
-                 .where("topic", Operator.Like, "java");
+         Query query = new Query<TalkModel>("tableName");
+         query.where("title", SqlOperator.Like, "some title")
+                 .where("topic", SqlOperator.Like, "java");
          assertEquals("SELECT * FROM tableName WHERE title LIKE ? AND topic LIKE ?;", query.buildSql());
     }
 
     @Test
     public void shouldBuildWhereNotNull(){
-        Query query = new Query<Talk>("tableName");
-        query.whereNot("title", Operator.Null.getOperator());
+        Query query = new Query<TalkModel>("tableName");
+        query.whereNot("title", SqlOperator.Null.getOperator());
         assertEquals("SELECT * FROM tableName WHERE title NOT ?;", query.buildSql());
     }
 
     @Test
     public void shouldBuildWhereNull(){
-        Query query = new Query<Talk>("tableName");
+        Query query = new Query<TalkModel>("tableName");
         query.whereIsNull("title");
         assertEquals("SELECT * FROM tableName WHERE title IS NULL;", query.buildSql());
     }
 
     @Test
     public void shouldBuildSelect(){
-        Query query = new Query<Talk>("tableName");
+        Query query = new Query<TalkModel>("tableName");
         query.select("column1", "column2", "column3", "column4");
         assertEquals("SELECT column1, column2, column3, column4 FROM tableName;", query.buildSql());
     }
 
     @Test
     public void shouldBuildDefaultStatement(){
-        Query query = new Query<Talk>("tableName");
+        Query query = new Query<TalkModel>("tableName");
         assertEquals("SELECT * FROM tableName;", query.buildSql());
     }
 
     @Test
     public void shouldBuildWhereEquals(){
-        Query query = new Query<Talk>("tableName");
+        Query query = new Query<TalkModel>("tableName");
         query.whereEquals("title", "java talk");
         assertEquals("SELECT * FROM tableName WHERE title = ?;", query.buildSql());
     }

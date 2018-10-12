@@ -1,12 +1,13 @@
 package no.kristiania.pgr200.server.models;
 
 import com.google.gson.JsonElement;
+import no.kristiania.pgr200.common.Dao.Talk;
 import no.kristiania.pgr200.server.annotations.Record;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class Talk extends BaseModel<Talk> {
+public class TalkModel extends Talk implements BaseModel<TalkModel> {
     private static final String TABLE = "talks";
 
     private String id;
@@ -14,32 +15,32 @@ public class Talk extends BaseModel<Talk> {
     private String description;
     private String topic;
 
-    public Talk(){
+    public TalkModel(){
 
     }
 
-    public Talk(JsonElement jsonElement){
+    public TalkModel(JsonElement jsonElement){
         this.title = jsonElement.getAsJsonObject().get("title").toString();
         this.description = jsonElement.getAsJsonObject().get("description").toString();
         this.topic = jsonElement.getAsJsonObject().get("topic").toString();
     }
 
-    public Talk(String title, String description){
+    public TalkModel(String title, String description){
         this.title = title;
         this.description = description;
     }
 
-    public Talk(String id, String title, String description){
+    public TalkModel(String id, String title, String description){
         this.id = id;
         this.title = title;
         this.description = description;
     }
 
-    public static List<Talk> all() throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
-        return all(Talk.class);
+    public static List<TalkModel> all() throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        return all(TalkModel.class);
     }
 
-    public static Talk findBy(int id) throws Exception {
+    public static TalkModel findBy(int id) throws Exception {
         return findBy(id);
     }
 

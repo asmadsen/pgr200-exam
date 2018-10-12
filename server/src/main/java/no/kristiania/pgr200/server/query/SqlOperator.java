@@ -1,6 +1,6 @@
-package no.kristiania.pgr200.server.models;
+package no.kristiania.pgr200.server.query;
 
-public enum Operator {
+public enum SqlOperator {
     Addition("+"),
     Subtraction("-"),
     Multiplication("*"),
@@ -28,7 +28,7 @@ public enum Operator {
     Unique("UNIQUE");
 
     private final String operator;
-    Operator(String operator) {
+    SqlOperator(String operator) {
         this.operator = operator;
     }
 

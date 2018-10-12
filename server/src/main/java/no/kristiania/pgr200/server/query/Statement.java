@@ -1,4 +1,4 @@
-package no.kristiania.pgr200.server.models;
+package no.kristiania.pgr200.server.query;
 
 public enum Statement {
     SELECT("SELECT"),

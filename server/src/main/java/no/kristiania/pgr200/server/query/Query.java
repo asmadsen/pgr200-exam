@@ -1,7 +1,8 @@
-package no.kristiania.pgr200.server.models;
+package no.kristiania.pgr200.server.query;
 
 import no.kristiania.pgr200.server.annotations.Record;
 import no.kristiania.pgr200.server.db.DatabaseHandling;
+import no.kristiania.pgr200.server.models.BaseModel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +11,11 @@ import java.util.*;
 public class Query<T>{
 
     private final String table;
+    private Set<String> selects;
+    private LinkedList<ConditionalStatement> wheres, having;
+    private LinkedList<JoinStatement> joins;
+    private LinkedHashSet<String> groupBy, orderBy;
+
     private StringJoiner select, from, join, where, groupBy, having, orderBy;
     private List<String> values;
 
@@ -29,7 +35,7 @@ public class Query<T>{
         this.select(Arrays.stream(typeClass.getDeclaredMethods())
                 .filter(e -> e.isAnnotationPresent(Record.class) && e.getAnnotation(Record.class).type().equals("SET"))
                 .map(m -> m.getAnnotation(Record.class).column()).toArray(String[]::new));
-        this.where("id", Operator.Equals, String.valueOf(id));
+        this.where("id", SqlOperator.Equals, String.valueOf(id));
         return this;
     }
 
@@ -41,20 +47,18 @@ public class Query<T>{
         return this;
     }
 
-    public <V, K> Query<T> insert(Map<K, V> columns){
-        initialize(insert).add(Statement.INSERT.getStatement()).add(table);
-        columns.forEach((k, v) -> {
-        });
-        for (Map.Entry column : columns) {
-            initialize(insert).add(Statement.INSERT).add(column.getKey());
-        }
+    public Query<T> join(Class<? extends BaseModel> table, String foreignKey, String localKey, JoinType type){
         return this;
     }
 
-    public Query<T> where(String column, Operator operator, String value){
+    public Query<T> join(Query<T> query, String foreignKey, String localKey, JoinType type){
+        return this;
+    }
+
+    public <V> Query<T> where(String key, SqlOperator operator, V value){
         this.where = initialize(where);
         if(where.length() > 0) where.add("AND");
-        this.where.add(column).add(operator.getOperator());
+        this.where.add(key).add(operator.getOperator());
         if(value != null) {
             this.values.add(value);
             this.where.add("?");
@@ -62,18 +66,52 @@ public class Query<T>{
         return this;
     }
 
+    public Query<T> having(String key, SqlOperator operator, T value){
+        return this;
+    }
+
+    public Query<T> groupBy(String... columns){
+        return this;
+    }
+
+    public Query<T> orderBy(String... columns){
+        return this;
+    }
+
+    public Query<T> get(){
+        return this;
+    }
+
+    public Query<T> first(){
+        return this;
+    }
+
+    public Query<T> delete(){
+        return this;
+    }
+
+//    public <V, K> Query<T> insert(Map<K, V> columns){
+//        initialize(insert).add(Statement.INSERT.getStatement()).add(table);
+//        columns.forEach((k, v) -> {
+//        });
+//        for (Map.Entry column : columns) {
+//            initialize(insert).add(Statement.INSERT).add(column.getKey());
+//        }
+//        return this;
+    }
+
     public Query<T> whereNot(String column, String value){
-        where(column, Operator.Not, value);
+        where(column, SqlOperator.Not, value);
         return this;
     }
 
     public Query<T> whereEquals(String column, String value){
-        where(column, Operator.Equals, value);
+        where(column, SqlOperator.Equals, value);
         return this;
     }
 
     public Query<T> whereIsNull(String column){
-        where(column, Operator.IsNull, null);
+        where(column, SqlOperator.IsNull, null);
         return this;
     }
 
