@@ -8,6 +8,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="cli" />
         <module name="common" />
+        <module name="conference-api-orm" />
+        <module name="orm" />
         <module name="server" />
       </profile>
     </annotationProcessing>
@@ -15,6 +17,8 @@
       <module name="cli" target="1.8" />
       <module name="command-line-parser" target="1.8" />
       <module name="common" target="1.8" />
+      <module name="conference-api-orm" target="1.8" />
+      <module name="orm" target="1.8" />
       <module name="server" target="1.8" />
     </bytecodeTargetLevel>
   </component>
