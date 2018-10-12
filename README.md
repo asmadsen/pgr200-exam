@@ -1,4 +1,4 @@
-# Architecture overview
+# Architecture overview [![Build Status](https://travis-ci.com/Westerdals/command-line-parser-exercise-asmadsen.svg?token=CtziNfWQqQxtrfWutyqx&branch=master)](https://travis-ci.com/Westerdals/command-line-parser-exercise-asmadsen)
 
 ![Architecture Overview](doc/conference-server.png)
 
