@@ -1,4 +1,4 @@
-package no.kristiania.pgr200.server.controllers;
+package no.kristiania.pgr200.server.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

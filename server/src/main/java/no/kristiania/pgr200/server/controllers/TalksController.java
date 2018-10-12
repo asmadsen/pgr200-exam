@@ -2,13 +2,14 @@ package no.kristiania.pgr200.server.controllers;
 
 
 import com.google.gson.*;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import no.kristiania.pgr200.common.Http.HttpMethod;
 import no.kristiania.pgr200.common.Http.HttpRequest;
 import no.kristiania.pgr200.common.Http.HttpResponse;
 import no.kristiania.pgr200.common.Http.HttpStatus;
-import no.kristiania.pgr200.server.TalkResponse;
+import no.kristiania.pgr200.server.annotations.ApiController;
 import no.kristiania.pgr200.server.annotations.ApiRequest;
-import no.kristiania.pgr200.server.models.Talk;
+import no.kristiania.pgr200.server.models.TalkModel;
 
 import java.sql.SQLException;
 
@@ -17,21 +18,21 @@ public class TalksController extends BaseController {
 
     private HttpRequest httpRequest;
     private HttpResponse httpResponse;
-    private Talk talk;
+    private TalkModel talk;
     private Gson gson;
     private JsonObject body;
 
     public TalksController(HttpRequest httpRequest){
         this.httpRequest = httpRequest;
         this.httpResponse = new HttpResponse();
-        this.talk = new Talk();
+        this.talk = new TalkModel();
         this.body = new JsonObject();
         this.gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
     @ApiRequest(action = HttpMethod.GET, route = "/api/talks")
-    public HttpResponse index() {
-        body.add("values", new JsonParser().parse(gson.toJson(talk.all())));
+    public HttpResponse index() throws Exception {
+        body.add("values", new JsonParser().parse(gson.toJson(TalkModel.all())));
         httpResponse.setHeaders(getHeaders(gson.toJson(body)));
         httpResponse.setBody(gson.toJson(body));
         httpResponse.setStatus(HttpStatus.OK);
@@ -39,9 +40,9 @@ public class TalksController extends BaseController {
     }
 
     @ApiRequest(action = HttpMethod.GET, route = "/api/talks/\\d+")
-    public HttpResponse show() {
+    public HttpResponse show() throws Exception {
         body.add("value", new JsonParser().parse(gson.toJson(
-                talk.findBy(httpRequest.getUri().split("/")[3]))));
+                TalkModel.findBy(Integer.parseInt(httpRequest.getUri().split("/")[3])))));
         httpResponse.setHeaders(getHeaders(gson.toJson(body)));
         httpResponse.setBody(gson.toJson(body));
         httpResponse.setStatus(HttpStatus.OK);
@@ -50,11 +51,11 @@ public class TalksController extends BaseController {
 
     @ApiRequest(action = HttpMethod.POST, route = "/api/talks")
     public HttpResponse create( ) throws SQLException {
-        System.out.println("TEST POST Create");
-        TalkResponse talkResponse = new TalkResponse();
-        JsonElement jsonElement = talkResponse.createTalk(new Talk(httpRequest.getJson()));
-        if(jsonElement == null) return new HttpResponse(HttpStatus.UnprocessableEntity);
-        return new HttpResponse(HttpStatus.Created, jsonElement);
+//        System.out.println("TEST POST Create");
+//        JsonElement jsonElement = new TalkModel(httpRequest.getJson()).create();
+//        if(jsonElement == null) return new HttpResponse(HttpStatus.UnprocessableEntity);
+//        return new HttpResponse(HttpStatus.Created, jsonElement);
+        return null;
     }
 
     @ApiRequest(action = HttpMethod.PATCH, route = "/api/talks/\\d+")
