@@ -73,6 +73,9 @@ namespace Server {
         +delete() : boolean
     }
 
+    Query "1" o-- "*" ConditionalStatement
+    Query "1" o-- "*" JoinStatement
+
     class ConditionalStatement<T> {
         key : string
         operator : SqlOperator
@@ -82,6 +85,8 @@ namespace Server {
         getStatement() : string
     }
 
+    ConditionalStatement "1" o-- "1" SqlOperator
+
     class JoinStatement {
         table : Class<BaseModel>
         query : Query
@@ -90,6 +95,9 @@ namespace Server {
         type : JoinType
     }
 
+    JoinStatement "1" o-- "1" JoinType
+    JoinStatement "1" o-- "0..1" Query
+    JoinStatement "1" o-- "0..1" BaseModel
 
     enum SqlOperator {
 
