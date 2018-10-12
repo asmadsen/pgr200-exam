@@ -2,6 +2,7 @@ package no.kristiania.pgr200.server.controllers;
 
 
 import com.google.gson.*;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import no.kristiania.pgr200.common.Http.HttpMethod;
 import no.kristiania.pgr200.common.Http.HttpRequest;
 import no.kristiania.pgr200.common.Http.HttpResponse;
@@ -50,10 +51,11 @@ public class TalksController extends BaseController {
 
     @ApiRequest(action = HttpMethod.POST, route = "/api/talks")
     public HttpResponse create( ) throws SQLException {
-        System.out.println("TEST POST Create");
-        JsonElement jsonElement = new TalkModel(httpRequest.getJson()).create();
-        if(jsonElement == null) return new HttpResponse(HttpStatus.UnprocessableEntity);
-        return new HttpResponse(HttpStatus.Created, jsonElement);
+//        System.out.println("TEST POST Create");
+//        JsonElement jsonElement = new TalkModel(httpRequest.getJson()).create();
+//        if(jsonElement == null) return new HttpResponse(HttpStatus.UnprocessableEntity);
+//        return new HttpResponse(HttpStatus.Created, jsonElement);
+        return null;
     }
 
     @ApiRequest(action = HttpMethod.PATCH, route = "/api/talks/\\d+")

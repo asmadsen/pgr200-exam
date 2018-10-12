@@ -1,13 +1,12 @@
 package no.kristiania.pgr200.server.models;
 
 import com.google.gson.JsonElement;
-import no.kristiania.pgr200.common.Dao.Talk;
 import no.kristiania.pgr200.server.annotations.Record;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class TalkModel extends Talk implements BaseModel<TalkModel> {
+public class TalkModel implements BaseModel<TalkModel> {
     private static final String TABLE = "talks";
 
     private String id;
@@ -37,7 +36,7 @@ public class TalkModel extends Talk implements BaseModel<TalkModel> {
     }
 
     public static List<TalkModel> all() throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
-        return all(TalkModel.class);
+        return BaseModel.all(TalkModel.class);
     }
 
     public static TalkModel findBy(int id) throws Exception {

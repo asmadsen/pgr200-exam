@@ -28,7 +28,7 @@ public interface BaseModel<T> {
     }
 
     default <K, V> BaseModel<T> fill(Map<K, V> attributes){
-        return false;
+        return null;
     }
 
     default boolean isDirty(){
@@ -58,17 +58,18 @@ public interface BaseModel<T> {
         return records;
     }
 
-    static <T> T findBy(Class<T> tClass, int id) throws IllegalAccessException, InstantiationException, SQLException {
-        BaseModel record = (BaseModel) tClass.newInstance();
-        ResultSet resultSet = new Query<TalkModel>(record.TABLE).findBy(TalkModel.class, id).execute();
-        if (resultSet.next()){
+    // TODO: IMPLEMENT!
+//    static <T> T findBy(Class<T> tClass, int id) throws IllegalAccessException, InstantiationException, SQLException {
+//        BaseModel record = (BaseModel) tClass.newInstance();
+//        ResultSet resultSet = new Query<TalkModel>(record.TABLE).findBy(TalkModel.class, id).execute();
+//        if (resultSet.next()){
+//
+//        }
+//    }
 
-        }
-    }
-
-    // TODO: USE SAVE!
-    @Deprecated
-    default JsonElement create() throws SQLException {
+//    // TODO: USE SAVE!
+//    @Deprecated
+//    default JsonElement create() throws SQLException {
 //        String statement = "INSERT INTO talks(title, description) VALUES (?, ?)";
 //        PreparedStatement preparedStatement = DatabaseHandling.getConnection().prepareStatement(statement);
 //        String[] columns = getColumns();
@@ -84,7 +85,7 @@ public interface BaseModel<T> {
 //            jsonObject.addProperty("url", "http://localhost:8080/api/talks/" + newTalk.getString("id"));
 //            return jsonObject;
 //        }
-    }
+//    }
 
     default String[] getColumns(){
         return Arrays.stream(this.getClass().getAnnotationsByType(Record.class))

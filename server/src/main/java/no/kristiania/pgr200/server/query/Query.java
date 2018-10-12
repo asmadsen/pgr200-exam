@@ -16,7 +16,7 @@ public class Query<T>{
     private LinkedList<JoinStatement> joins;
     private LinkedHashSet<String> groupBy, orderBy;
 
-    private StringJoiner select, from, join, where, groupBy, having, orderBy;
+    private StringJoiner select, from, join, where;
     private List<String> values;
 
     public Query(String table, String... columns){
@@ -40,10 +40,6 @@ public class Query<T>{
     }
 
     public Query<T> select(String... columns){
-        this.select = initialize(select);
-        this.select.add(Statement.SELECT.getStatement());
-        System.out.println(String.join(", ", columns));
-        select.add(String.join(", ", columns));
         return this;
     }
 
@@ -56,13 +52,6 @@ public class Query<T>{
     }
 
     public <V> Query<T> where(String key, SqlOperator operator, V value){
-        this.where = initialize(where);
-        if(where.length() > 0) where.add("AND");
-        this.where.add(key).add(operator.getOperator());
-        if(value != null) {
-            this.values.add(value);
-            this.where.add("?");
-        }
         return this;
     }
 
@@ -98,7 +87,7 @@ public class Query<T>{
 //            initialize(insert).add(Statement.INSERT).add(column.getKey());
 //        }
 //        return this;
-    }
+//    }
 
     public Query<T> whereNot(String column, String value){
         where(column, SqlOperator.Not, value);
