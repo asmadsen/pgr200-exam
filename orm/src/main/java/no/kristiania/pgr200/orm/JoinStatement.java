@@ -1,9 +1,8 @@
-package java.no.kristiania.pgr200.orm;
+package no.kristiania.pgr200.orm;
 
-import no.kristiania.pgr200.server.models.BaseModel;
 
-public class JoinStatement {
-    private Class<BaseModel> table;
+public class JoinStatement<T> {
+    private Class<T> table;
     private Query query;
     private String foreignKey, localKey;
     private JoinType type;

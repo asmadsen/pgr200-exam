@@ -1,4 +1,4 @@
-package java.no.kristiania.pgr200.orm;
+package no.kristiania.pgr200.orm;
 
 public enum SqlOperator {
     Addition("+"),

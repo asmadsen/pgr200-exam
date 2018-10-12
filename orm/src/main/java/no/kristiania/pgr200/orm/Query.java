@@ -1,8 +1,4 @@
-package java.no.kristiania.pgr200.orm;
-
-import no.kristiania.pgr200.server.annotations.Record;
-import no.kristiania.pgr200.server.db.DatabaseHandling;
-import no.kristiania.pgr200.server.models.BaseModel;
+package no.kristiania.pgr200.orm;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,21 +27,21 @@ public class Query<T>{
         this.values = new ArrayList<>();
     }
 
-    public Query<T> findBy(Class<T> typeClass, int id) {
-        this.select(Arrays.stream(typeClass.getDeclaredMethods())
-                .filter(e -> e.isAnnotationPresent(Record.class) && e.getAnnotation(Record.class).type().equals("SET"))
-                .map(m -> m.getAnnotation(Record.class).column()).toArray(String[]::new));
-        this.where("id", SqlOperator.Equals, String.valueOf(id));
-        return this;
-    }
+//    public Query<T> findBy(Class<T> typeClass, int id) {
+//        this.select(Arrays.stream(typeClass.getDeclaredMethods())
+//                .filter(e -> e.isAnnotationPresent(Record.class) && e.getAnnotation(Record.class).type().equals("SET"))
+//                .map(m -> m.getAnnotation(Record.class).column()).toArray(String[]::new));
+//        this.where("id", SqlOperator.Equals, String.valueOf(id));
+//        return this;
+//    }
 
     public Query<T> select(String... columns){
         return this;
     }
 
-    public Query<T> join(Class<? extends BaseModel> table, String foreignKey, String localKey, JoinType type){
-        return this;
-    }
+//    public Query<T> join(Class<? extends BaseModel> table, String foreignKey, String localKey, JoinType type){
+//        return this;
+//    }
 
     public Query<T> join(Query<T> query, String foreignKey, String localKey, JoinType type){
         return this;
@@ -119,9 +115,9 @@ public class Query<T>{
         return query.toString() + ";";
     }
 
-    public ResultSet execute() throws SQLException {
-        return DatabaseHandling.selectStatement(DatabaseHandling.getConnection().prepareStatement(buildSql()));
-    }
+//    public ResultSet execute() throws SQLException {
+//        return DatabaseHandling.selectStatement(DatabaseHandling.getConnection().prepareStatement(buildSql()));
+//    }
 
     public StringJoiner initialize(StringJoiner list) {
         if(list == null) return new StringJoiner(" ");
