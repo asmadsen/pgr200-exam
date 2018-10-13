@@ -5,6 +5,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class JoinStatementTest {
     @Test
@@ -16,6 +19,21 @@ public class JoinStatementTest {
         );
 
         assertThat(statement.getSqlStatement()).isEqualTo("LEFT JOIN `users` ON `users`.`id` = `?`.`user_id`");
+    }
+
+    @Test
+    public void shouldParseSubQueryJoin() {
+        Query<GenericModel> mockQuery = mock(Query.class);
+        String subQuery = "SELECT * FROM `USERS` WHERE `id` = 1";
+        when(mockQuery.getSqlStatement()).thenReturn(subQuery);
+        JoinStatement<GenericModel> statement = new JoinStatement<>(
+                mockQuery,
+                "users",
+                "id",
+                "user_id"
+        );
+
+        assertThat(statement.getSqlStatement()).isEqualTo("LEFT JOIN (" + subQuery + ") ON `users`.`id` = `?`.`user_id`");
     }
 
     @Test
