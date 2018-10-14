@@ -1,6 +1,8 @@
 package no.kristiania.pgr200.orm;
 
 
+import no.kristiania.pgr200.orm.Enums.JoinType;
+
 public class JoinStatement<T extends BaseModel> {
     private T model;
     private Query query;

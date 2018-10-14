@@ -1,8 +1,11 @@
 package no.kristiania.pgr200.orm;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import no.kristiania.pgr200.orm.Enums.JoinType;
+import no.kristiania.pgr200.orm.Enums.OrderDirection;
+import no.kristiania.pgr200.orm.Enums.SqlOperator;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Query<T>{
 
@@ -10,13 +13,18 @@ public class Query<T>{
     private Set<String> selects;
     private LinkedList<ConditionalStatement> wheres, having;
     private LinkedList<JoinStatement> joins;
-    private LinkedHashSet<String> groupBy, orderBy;
+    private LinkedHashSet<String> groupBy;
+    private LinkedHashMap<String, OrderDirection> orderBy;
 
     private StringJoiner select, from, join, where;
     private List<String> values;
 
     public Query(String table, String... columns){
         this.table = table;
+        this.selects = new LinkedHashSet<>();
+        this.groupBy = new LinkedHashSet<>();
+        this.orderBy = new LinkedHashMap<>();
+        this.select(columns);
         this.select = new StringJoiner(" ").add(Statement.SELECT.getStatement())
                 .add(String.join(", ", columns));
     }
@@ -36,6 +44,9 @@ public class Query<T>{
 //    }
 
     public Query<T> select(String... columns){
+        Arrays.stream(columns)
+              .map(column -> String.format("`%s`", column))
+              .forEach(column -> this.selects.add(column));
         return this;
     }
 
@@ -48,6 +59,10 @@ public class Query<T>{
     }
 
     public <V> Query<T> where(String key, SqlOperator operator, V value){
+        return this.where(key, operator, value, false);
+    }
+
+    public <V> Query<T> where(String key, SqlOperator operator, V value, boolean or){
         return this;
     }
 
@@ -56,10 +71,20 @@ public class Query<T>{
     }
 
     public Query<T> groupBy(String... columns){
+        Arrays.stream(columns)
+              .map(column -> String.format("`%s`", column))
+              .forEach(column -> this.groupBy.add(column));
         return this;
     }
 
     public Query<T> orderBy(String... columns){
+        Arrays.stream(columns)
+              .forEach(column -> this.orderBy(column, OrderDirection.DESC));
+        return this;
+    }
+
+    public Query<T> orderBy(String column, OrderDirection direction){
+        this.orderBy.put(String.format("`%s`", column), direction);
         return this;
     }
 
@@ -125,6 +150,55 @@ public class Query<T>{
     }
 
     public String getSqlStatement() {
-        return "";
+        StringBuilder sql = new StringBuilder();
+        sql.append(String.format(
+                "SELECT %s FROM `%s`",
+                String.join(", ", this.selects),
+                this.table
+        ));
+        if (this.wheres != null && this.wheres.size() > 0) {
+            // TODO: add where statements
+        }
+        if (this.groupBy != null && this.groupBy.size() > 0) {
+            sql.append(" GROUP BY ")
+               .append(String.join(", ", this.groupBy));
+        }
+        if (this.orderBy != null && this.orderBy.size() > 0) {
+            sql.append(" ORDER BY ")
+               .append(String.join(
+                       ", ",
+                       this.orderBy
+                               .entrySet()
+                               .stream()
+                               .map(entry -> String.format("%s %s", entry.getKey(), entry.getValue().name()))
+                       .collect(Collectors.toList())
+               ));
+        }
+        return sql.toString();
+    }
+
+    public Query<T> count(String column) {
+        this.selects.add(String.format("COUNT(`%s`)", column));
+        return this;
+    }
+
+    public Query<T> average(String column) {
+        this.selects.add(String.format("AVG(`%s`)", column));
+        return this;
+    }
+
+    public Query<T> sum(String column) {
+        this.selects.add(String.format("SUM(`%s`)", column));
+        return this;
+    }
+
+    public Query<T> max(String column) {
+        this.selects.add(String.format("MAX(`%s`)", column));
+        return this;
+    }
+
+    public Query<T> min(String column) {
+        this.selects.add(String.format("MIN(`%s`)", column));
+        return this;
     }
 }

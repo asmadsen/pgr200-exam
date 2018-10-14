@@ -1,7 +1,7 @@
 package no.kristiania.pgr200.orm;
 
+import no.kristiania.pgr200.orm.Enums.JoinType;
 import no.kristiania.pgr200.orm.TestData.UserModel;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
