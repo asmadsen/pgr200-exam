@@ -123,4 +123,8 @@ public class Query<T>{
         if(list == null) return new StringJoiner(" ");
         return list;
     }
+
+    public String getSqlStatement() {
+        return "";
+    }
 }
