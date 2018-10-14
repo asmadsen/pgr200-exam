@@ -2,6 +2,7 @@ package no.kristiania.pgr200.orm;
 
 import no.kristiania.pgr200.orm.Enums.OrderDirection;
 import no.kristiania.pgr200.orm.Enums.SqlOperator;
+import no.kristiania.pgr200.orm.TestData.UserModel;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -70,6 +71,15 @@ public class QueryTest {
                 .min("fortune");
 
         assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, MIN(`fortune`) FROM `users`");
+    }
+
+    @Test
+    public void shouldComposeJoinQuery() {
+        Query query = new Query("roles", "id", "name")
+                .join(new UserModel(), "id", "user_id")
+                .select("users.id", "users.name");
+
+        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `users`.`id`, `users`.`name` FROM `roles` LEFT JOIN `users` ON `users`.`id` = `roles`.`user_id`");
     }
 
     @Ignore

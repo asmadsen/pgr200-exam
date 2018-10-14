@@ -7,7 +7,7 @@ import no.kristiania.pgr200.orm.Enums.SqlOperator;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Query<T>{
+public class Query<T> {
 
     private final String table;
     private Set<String> selects;
@@ -19,20 +19,17 @@ public class Query<T>{
     private StringJoiner select, from, join, where;
     private List<String> values;
 
-    public Query(String table, String... columns){
+    public Query(String table, String... columns) {
+        this(table);
+        this.select(columns);
+    }
+
+    public Query(String table) {
         this.table = table;
         this.selects = new LinkedHashSet<>();
         this.groupBy = new LinkedHashSet<>();
+        this.joins = new LinkedList<>();
         this.orderBy = new LinkedHashMap<>();
-        this.select(columns);
-        this.select = new StringJoiner(" ").add(Statement.SELECT.getStatement())
-                .add(String.join(", ", columns));
-    }
-
-    public Query(String table){
-        this.table = table;
-        from(table);
-        this.values = new ArrayList<>();
     }
 
 //    public Query<T> findBy(Class<T> typeClass, int id) {
@@ -43,9 +40,12 @@ public class Query<T>{
 //        return this;
 //    }
 
-    public Query<T> select(String... columns){
+    public Query<T> select(String... columns) {
         Arrays.stream(columns)
-              .map(column -> String.format("`%s`", column))
+              .map(column -> String.join(".", Arrays.stream(column.split("\\."))
+                                                    .map(part -> String.format("`%s`", part))
+                                                    .collect(Collectors.toList()))
+              )
               .forEach(column -> this.selects.add(column));
         return this;
     }
@@ -54,100 +54,69 @@ public class Query<T>{
 //        return this;
 //    }
 
-    public Query<T> join(Query<T> query, String foreignKey, String localKey, JoinType type){
+    public Query<T> join(Query<T> query, String foreignKey, String localKey, JoinType type) {
         return this;
     }
 
-    public <V> Query<T> where(String key, SqlOperator operator, V value){
+    public <V> Query<T> where(String key, SqlOperator operator, V value) {
         return this.where(key, operator, value, false);
     }
 
-    public <V> Query<T> where(String key, SqlOperator operator, V value, boolean or){
+    public <V> Query<T> where(String key, SqlOperator operator, V value, boolean or) {
         return this;
     }
 
-    public Query<T> having(String key, SqlOperator operator, T value){
+    public Query<T> having(String key, SqlOperator operator, T value) {
         return this;
     }
 
-    public Query<T> groupBy(String... columns){
+    public Query<T> groupBy(String... columns) {
         Arrays.stream(columns)
               .map(column -> String.format("`%s`", column))
               .forEach(column -> this.groupBy.add(column));
         return this;
     }
 
-    public Query<T> orderBy(String... columns){
+    public Query<T> orderBy(String... columns) {
         Arrays.stream(columns)
               .forEach(column -> this.orderBy(column, OrderDirection.DESC));
         return this;
     }
 
-    public Query<T> orderBy(String column, OrderDirection direction){
+    public Query<T> orderBy(String column, OrderDirection direction) {
         this.orderBy.put(String.format("`%s`", column), direction);
         return this;
     }
 
-    public Query<T> get(){
+    public Query<T> get() {
         return this;
     }
 
-    public Query<T> first(){
+    public Query<T> first() {
         return this;
     }
 
-    public Query<T> delete(){
+    public Query<T> delete() {
         return this;
     }
-
-//    public <V, K> Query<T> insert(Map<K, V> columns){
-//        initialize(insert).add(Statement.INSERT.getStatement()).add(table);
-//        columns.forEach((k, v) -> {
-//        });
-//        for (Map.Entry column : columns) {
-//            initialize(insert).add(Statement.INSERT).add(column.getKey());
-//        }
-//        return this;
-//    }
-
-    public Query<T> whereNot(String column, String value){
+    public Query<T> whereNot(String column, String value) {
         where(column, SqlOperator.Not, value);
         return this;
     }
 
-    public Query<T> whereEquals(String column, String value){
+    public Query<T> whereEquals(String column, String value) {
         where(column, SqlOperator.Equals, value);
         return this;
     }
 
-    public Query<T> whereIsNull(String column){
+    public Query<T> whereIsNull(String column) {
         where(column, SqlOperator.IsNull, null);
         return this;
-    }
-
-    private Query<T> from(String table){
-        this.from = initialize(from);
-        this.from.add(Statement.FROM.getStatement()).add(table);
-        return this;
-    }
-
-    public String buildSql(){
-        if(select.length() == 0) this.select("*");
-        StringJoiner query = new StringJoiner(" ");
-        query.add(select.toString());
-        query.add(from.toString());
-        if(where != null) query.add(Statement.WHERE.getStatement()).add(where.toString());
-        return query.toString() + ";";
     }
 
 //    public ResultSet execute() throws SQLException {
 //        return DatabaseHandling.selectStatement(DatabaseHandling.getConnection().prepareStatement(buildSql()));
 //    }
-
-    public StringJoiner initialize(StringJoiner list) {
-        if(list == null) return new StringJoiner(" ");
-        return list;
-    }
 
     public String getSqlStatement() {
         StringBuilder sql = new StringBuilder();
@@ -156,6 +125,12 @@ public class Query<T>{
                 String.join(", ", this.selects),
                 this.table
         ));
+        if (this.joins != null && this.joins.size() > 0) {
+            this.joins.forEach(join -> {
+                sql.append(" ")
+                   .append(join.getSqlStatement().replace("?", this.table));
+            });
+        }
         if (this.wheres != null && this.wheres.size() > 0) {
             // TODO: add where statements
         }
@@ -171,7 +146,7 @@ public class Query<T>{
                                .entrySet()
                                .stream()
                                .map(entry -> String.format("%s %s", entry.getKey(), entry.getValue().name()))
-                       .collect(Collectors.toList())
+                               .collect(Collectors.toList())
                ));
         }
         return sql.toString();
@@ -199,6 +174,11 @@ public class Query<T>{
 
     public Query<T> min(String column) {
         this.selects.add(String.format("MIN(`%s`)", column));
+        return this;
+    }
+
+    public Query<T> join(BaseModel model, String foreignKey, String localKey) {
+        this.joins.add(new JoinStatement<>(model, foreignKey, localKey));
         return this;
     }
 }
