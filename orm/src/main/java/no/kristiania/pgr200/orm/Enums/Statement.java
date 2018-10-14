@@ -1,4 +1,4 @@
-package no.kristiania.pgr200.orm;
+package no.kristiania.pgr200.orm.Enums;
 
 public enum Statement {
     SELECT("SELECT"),
