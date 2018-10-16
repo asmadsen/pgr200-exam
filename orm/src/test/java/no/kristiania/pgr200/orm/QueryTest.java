@@ -6,8 +6,15 @@ import no.kristiania.pgr200.orm.Enums.SqlOperator;
 import no.kristiania.pgr200.orm.TestData.UserModel;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 public class QueryTest {
     @Test
@@ -137,5 +144,20 @@ public class QueryTest {
                 .where("name", SqlOperator.Equals, "Jane Doe", false);
 
         assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `age` FROM `users` WHERE `name` = ? OR `name` = ?");
+    }
+
+    @Test
+    public void shouldInsertDifferentDataTypes() throws SQLException {
+        Query query = new Query("users", "id", "name", "age")
+                .where("name", SqlOperator.Equals, "John Doe")
+                .whereIsNull("email")
+                .where("age", SqlOperator.GreaterThan, 18);
+
+        PreparedStatement statement = mock(PreparedStatement.class);
+        query.populateStatement(statement);
+
+        verify(statement).setObject(eq(1), eq("John Doe"));
+        verify(statement).setObject(eq(2), eq(18));
+        verify(statement, times(2)).setObject(anyInt(), any());
     }
 }

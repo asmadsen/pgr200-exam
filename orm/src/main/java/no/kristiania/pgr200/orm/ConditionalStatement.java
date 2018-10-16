@@ -48,4 +48,8 @@ public class ConditionalStatement<T> {
     public T getValue() {
         return this.value;
     }
+
+    public SqlOperator getOperator() {
+        return operator;
+    }
 }
