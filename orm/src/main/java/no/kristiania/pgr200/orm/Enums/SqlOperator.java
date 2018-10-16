@@ -1,4 +1,4 @@
-package no.kristiania.pgr200.orm;
+package no.kristiania.pgr200.orm.Enums;
 
 public enum SqlOperator {
     Addition("+"),
@@ -24,16 +24,26 @@ public enum SqlOperator {
     Not("NOT"),
     Or("OR"),
     Null("NULL"),
-    IsNull("IS NULL"),
+    NotNull("NOT NULL", false),
+    IsNull("IS NULL", false),
     Unique("UNIQUE");
 
     private final String operator;
+    private final boolean hasValue;
     SqlOperator(String operator) {
+        this(operator, true);
+    }
+
+    SqlOperator(String operator, boolean hasValue) {
         this.operator = operator;
+        this.hasValue = hasValue;
     }
 
     public String getOperator(){
         return this.operator;
     }
 
+    public boolean hasValue() {
+        return hasValue;
+    }
 }

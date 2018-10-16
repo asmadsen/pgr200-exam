@@ -1,5 +1,8 @@
 package no.kristiania.pgr200.orm;
 
+import no.kristiania.pgr200.orm.Enums.SqlOperator;
+import no.kristiania.pgr200.orm.Enums.Statement;
+
 import java.util.LinkedList;
 import java.util.StringJoiner;
 
@@ -23,6 +26,7 @@ public class ConditionalStatement<T> {
     public String getSqlStatement() {
         if (this.key.contains(".") && !this.key.matches(".*`[.]`.*"))
             this.key = String.format("%s`.`%s", this.key.split("[.]")[0], this.key.split("[.]")[1]);
+        if(!operator.hasValue()) return String.format("`%s` %s", this.key, operator.getOperator());
         return String.format("`%s` %s %s", this.key, operator.getOperator(), "?");
     }
 
