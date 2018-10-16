@@ -4,6 +4,8 @@ import no.kristiania.pgr200.orm.Enums.JoinType;
 import no.kristiania.pgr200.orm.Enums.OrderDirection;
 import no.kristiania.pgr200.orm.Enums.SqlOperator;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -195,5 +197,14 @@ public class Query<T> {
     public <X extends BaseModel> Query<T> join(Query<X> query, String alias, String foreignKey, String localKey) {
         this.joins.add(new JoinStatement<X>(query, alias, foreignKey, localKey));
         return this;
+    }
+
+    public void populateStatement(PreparedStatement statement) throws SQLException {
+        int counter = 1;
+        for (ConditionalStatement where : this.wheres) {
+            if (where.getOperator().hasValue()) {
+                statement.setObject(counter++, where.getValue());
+            }
+        }
     }
 }
