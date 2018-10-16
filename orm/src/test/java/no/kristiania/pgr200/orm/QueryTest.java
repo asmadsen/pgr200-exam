@@ -1,5 +1,6 @@
 package no.kristiania.pgr200.orm;
 
+import no.kristiania.pgr200.orm.Enums.JoinType;
 import no.kristiania.pgr200.orm.Enums.OrderDirection;
 import no.kristiania.pgr200.orm.Enums.SqlOperator;
 import no.kristiania.pgr200.orm.TestData.UserModel;
@@ -82,10 +83,22 @@ public class QueryTest {
         assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `users`.`id`, `users`.`name` FROM `roles` LEFT JOIN `users` ON `users`.`id` = `roles`.`user_id`");
 
         query = new Query("roles", "id", "name")
+                .join(new UserModel(), "id", "user_id", JoinType.InnerJoin)
+                .select("users.id", "users.name");
+
+        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `users`.`id`, `users`.`name` FROM `roles` INNER JOIN `users` ON `users`.`id` = `roles`.`user_id`");
+
+        query = new Query("roles", "id", "name")
                 .join(new Query<>("users", "id", "name").where("id", SqlOperator.Equals, 1), "users", "id", "user_id")
                 .select("users.id", "users.name");
 
         assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `users`.`id`, `users`.`name` FROM `roles` LEFT JOIN (SELECT `id`, `name` FROM `users` WHERE `id` = ?) ON `users`.`id` = `roles`.`user_id`");
+
+        query = new Query("roles", "id", "name")
+                .join(new Query<>("users", "id", "name").where("id", SqlOperator.Equals, 1), "users", "id", "user_id", JoinType.FullOuterJoin)
+                .select("users.id", "users.name");
+
+        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `users`.`id`, `users`.`name` FROM `roles` FULL OUTER JOIN (SELECT `id`, `name` FROM `users` WHERE `id` = ?) ON `users`.`id` = `roles`.`user_id`");
     }
 
     @Test
@@ -94,6 +107,21 @@ public class QueryTest {
                 .where("id", SqlOperator.Equals, 1);
 
         assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name` FROM `users` WHERE `id` = ?");
+
+        query = new Query("users", "id", "name")
+                .whereEquals("id", 1);
+
+        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name` FROM `users` WHERE `id` = ?");
+
+        query = new Query("users", "id", "name")
+                .whereNot("id", 1);
+
+        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name` FROM `users` WHERE `id` NOT ?");
+
+        query = new Query("users", "id", "name")
+                .whereIsNull("name");
+
+        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name` FROM `users` WHERE `name` IS NULL");
     }
 
     @Test

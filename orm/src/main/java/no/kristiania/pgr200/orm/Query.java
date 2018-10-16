@@ -16,9 +16,6 @@ public class Query<T> {
     private LinkedHashSet<String> groupBy;
     private LinkedHashMap<String, OrderDirection> orderBy;
 
-    private StringJoiner select, from, join, where;
-    private List<String> values;
-
     public Query(String table, String... columns) {
         this(table);
         this.select(columns);
@@ -99,12 +96,13 @@ public class Query<T> {
     public Query<T> delete() {
         return this;
     }
-    public Query<T> whereNot(String column, String value) {
+
+    public <V> Query<T> whereNot(String column, V value) {
         where(column, SqlOperator.Not, value);
         return this;
     }
 
-    public Query<T> whereEquals(String column, String value) {
+    public <V> Query<T> whereEquals(String column, V value) {
         where(column, SqlOperator.Equals, value);
         return this;
     }
@@ -181,6 +179,11 @@ public class Query<T> {
 
     public Query<T> join(BaseModel model, String foreignKey, String localKey) {
         this.joins.add(new JoinStatement<>(model, foreignKey, localKey));
+        return this;
+    }
+
+    public Query<T> join(BaseModel model, String foreignKey, String localKey, JoinType joinType) {
+        this.joins.add(new JoinStatement<>(model, foreignKey, localKey, joinType));
         return this;
     }
 
