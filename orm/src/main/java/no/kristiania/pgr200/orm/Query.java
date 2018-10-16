@@ -28,6 +28,7 @@ public class Query<T> {
         this.table = table;
         this.selects = new LinkedHashSet<>();
         this.groupBy = new LinkedHashSet<>();
+        this.wheres = new LinkedList<>();
         this.joins = new LinkedList<>();
         this.orderBy = new LinkedHashMap<>();
     }
@@ -54,15 +55,14 @@ public class Query<T> {
 //        return this;
 //    }
 
-    public Query<T> join(Query<T> query, String foreignKey, String localKey, JoinType type) {
-        return this;
-    }
+
 
     public <V> Query<T> where(String key, SqlOperator operator, V value) {
-        return this.where(key, operator, value, false);
+        return this.where(key, operator, value, true);
     }
 
-    public <V> Query<T> where(String key, SqlOperator operator, V value, boolean or) {
+    public <V> Query<T> where(String key, SqlOperator operator, V value, boolean useAnd) {
+        this.wheres.add(new ConditionalStatement<>(key, operator, value, useAnd));
         return this;
     }
 
@@ -92,8 +92,8 @@ public class Query<T> {
         return this;
     }
 
-    public Query<T> first() {
-        return this;
+    public T first() {
+        return null;
     }
 
     public Query<T> delete() {
@@ -125,20 +125,22 @@ public class Query<T> {
                 String.join(", ", this.selects),
                 this.table
         ));
-        if (this.joins != null && this.joins.size() > 0) {
+        if (this.joins.size() > 0) {
             this.joins.forEach(join -> {
                 sql.append(" ")
-                   .append(join.getSqlStatement().replace("?", this.table));
+                   .append(join.getSqlStatement(this.table));
             });
         }
-        if (this.wheres != null && this.wheres.size() > 0) {
+        if (this.wheres.size() > 0) {
             // TODO: add where statements
+            sql.append(" ")
+               .append(ConditionalStatement.buildStatements(this.wheres));
         }
-        if (this.groupBy != null && this.groupBy.size() > 0) {
+        if (this.groupBy.size() > 0) {
             sql.append(" GROUP BY ")
                .append(String.join(", ", this.groupBy));
         }
-        if (this.orderBy != null && this.orderBy.size() > 0) {
+        if (this.orderBy.size() > 0) {
             sql.append(" ORDER BY ")
                .append(String.join(
                        ", ",
@@ -179,6 +181,16 @@ public class Query<T> {
 
     public Query<T> join(BaseModel model, String foreignKey, String localKey) {
         this.joins.add(new JoinStatement<>(model, foreignKey, localKey));
+        return this;
+    }
+
+    public <X extends BaseModel> Query<T> join(Query<X> query, String alias, String foreignKey, String localKey, JoinType joinType) {
+        this.joins.add(new JoinStatement<X>(query, alias, foreignKey, localKey, joinType));
+        return this;
+    }
+
+    public <X extends BaseModel> Query<T> join(Query<X> query, String alias, String foreignKey, String localKey) {
+        this.joins.add(new JoinStatement<X>(query, alias, foreignKey, localKey));
         return this;
     }
 }

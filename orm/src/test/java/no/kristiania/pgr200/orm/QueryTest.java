@@ -80,30 +80,34 @@ public class QueryTest {
                 .select("users.id", "users.name");
 
         assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `users`.`id`, `users`.`name` FROM `roles` LEFT JOIN `users` ON `users`.`id` = `roles`.`user_id`");
+
+        query = new Query("roles", "id", "name")
+                .join(new Query<>("users", "id", "name").where("id", SqlOperator.Equals, 1), "users", "id", "user_id")
+                .select("users.id", "users.name");
+
+        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `users`.`id`, `users`.`name` FROM `roles` LEFT JOIN (SELECT `id`, `name` FROM `users` WHERE `id` = ?) ON `users`.`id` = `roles`.`user_id`");
     }
 
-    @Ignore
     @Test
     public void shouldComposeWhereStatement() {
         Query query = new Query("users", "id", "name")
                 .where("id", SqlOperator.Equals, 1);
 
-        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name` FROM `users` WHERE `id` = 1");
+        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name` FROM `users` WHERE `id` = ?");
     }
 
-    @Ignore
     @Test
     public void shouldComposeMultiWhereStatement() {
         Query query = new Query("users", "id", "name", "age")
                 .where("name", SqlOperator.Equals, "John Doe")
                 .where("age", SqlOperator.GreaterThan, 18);
 
-        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `age` FROM `users` WHERE `name` = \"John Doe\" AND `age` > 18");
+        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `age` FROM `users` WHERE `name` = ? AND `age` > ?");
 
         query = new Query("users", "id", "name", "age")
                 .where("name", SqlOperator.Equals, "John Doe")
-                .where("name", SqlOperator.Equals, "Jane Doe", true);
+                .where("name", SqlOperator.Equals, "Jane Doe", false);
 
-        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `age` FROM `users` WHERE `name` = \"John Doe\" OR `name` = \"Jane Doe\"");
+        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `age` FROM `users` WHERE `name` = ? OR `name` = ?");
     }
 }

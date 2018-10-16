@@ -35,23 +35,25 @@ public class JoinStatement<T extends BaseModel> {
     }
 
 
-    public String getSqlStatement() {
+    public String getSqlStatement(String table) {
         if (this.query != null) {
             return String.format(
-                    "%s (%s) ON `%s`.`%s` = `?`.`%s`",
+                    "%s (%s) ON `%s`.`%s` = `%s`.`%s`",
                     this.type.getSql(),
                     this.query.getSqlStatement(),
                     this.alias,
                     this.foreignKey,
+                    table,
                     this.localKey
             );
         }
         return String.format(
-                "%s `%s` ON `%s`.`%s` = `?`.`%s`",
+                "%s `%s` ON `%s`.`%s` = `%s`.`%s`",
                 this.type.getSql(),
                 this.model.getTable(),
                 this.model.getTable(),
                 this.foreignKey,
+                table,
                 this.localKey
         );
     }
