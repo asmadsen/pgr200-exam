@@ -19,10 +19,12 @@ namespace Server {
     }
 
     interface BaseModel implements Pagination, Relation {
+        #attributes : Map<String, ColumnValue<T>>
         -dbState : BaseModel
         -exists : boolean
         ---
         -isDirty() : boolean
+        +getAttributes() : Map<String, ColumnValue<T>>
         +save() : boolean
         +update(attributes : Map) : boolean
         +all() : List<User>
