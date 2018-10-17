@@ -5,6 +5,8 @@ public enum Statement {
     DISTINCT("DISTINCT"),
     INSERT("INSERT INTO"),
     VALUES("VALUES"),
+    UPDATE("UPDATE"),
+    SET("SET"),
     FROM("FROM"),
     JOIN("JOIN"),
     ON("ON"),

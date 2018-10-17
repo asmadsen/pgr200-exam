@@ -3,7 +3,7 @@ package no.kristiania.pgr200.orm;
 
 import no.kristiania.pgr200.orm.Enums.JoinType;
 
-public class JoinStatement<T extends BaseModel> {
+public class JoinStatement<T extends BaseRecord> {
     private T model;
     private Query query;
     private String foreignKey;
