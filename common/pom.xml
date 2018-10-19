@@ -27,6 +27,12 @@
             <version>13.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>no.kristiania.pgr200</groupId>
+            <artifactId>orm</artifactId>
+            <version>0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
