@@ -42,10 +42,14 @@ public class ConditionalStatement<T> {
         for (ConditionalStatement statementPart : list) {
             statement = statementPart.getSqlStatement(statement);
         }
-        return String.format("%s %s", Statement.WHERE, statement);
+        return String.format("%s %s", Statement.WHERE.getStatement(), statement);
     }
 
     public T getValue() {
         return this.value;
+    }
+
+    public SqlOperator getOperator() {
+        return operator;
     }
 }

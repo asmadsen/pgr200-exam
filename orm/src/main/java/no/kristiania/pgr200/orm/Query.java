@@ -4,6 +4,8 @@ import no.kristiania.pgr200.orm.Enums.JoinType;
 import no.kristiania.pgr200.orm.Enums.OrderDirection;
 import no.kristiania.pgr200.orm.Enums.SqlOperator;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,7 +50,7 @@ public class Query<T> {
         return this;
     }
 
-//    public Query<T> join(Class<? extends BaseModel> table, String foreignKey, String localKey, JoinType type){
+//    public Query<T> join(Class<? extends BaseRecord> table, String foreignKey, String localKey, JoinType type){
 //        return this;
 //    }
 
@@ -177,23 +179,32 @@ public class Query<T> {
         return this;
     }
 
-    public Query<T> join(BaseModel model, String foreignKey, String localKey) {
+    public Query<T> join(BaseRecord model, String foreignKey, String localKey) {
         this.joins.add(new JoinStatement<>(model, foreignKey, localKey));
         return this;
     }
 
-    public Query<T> join(BaseModel model, String foreignKey, String localKey, JoinType joinType) {
+    public Query<T> join(BaseRecord model, String foreignKey, String localKey, JoinType joinType) {
         this.joins.add(new JoinStatement<>(model, foreignKey, localKey, joinType));
         return this;
     }
 
-    public <X extends BaseModel> Query<T> join(Query<X> query, String alias, String foreignKey, String localKey, JoinType joinType) {
+    public <X extends BaseRecord> Query<T> join(Query<X> query, String alias, String foreignKey, String localKey, JoinType joinType) {
         this.joins.add(new JoinStatement<X>(query, alias, foreignKey, localKey, joinType));
         return this;
     }
 
-    public <X extends BaseModel> Query<T> join(Query<X> query, String alias, String foreignKey, String localKey) {
+    public <X extends BaseRecord> Query<T> join(Query<X> query, String alias, String foreignKey, String localKey) {
         this.joins.add(new JoinStatement<X>(query, alias, foreignKey, localKey));
         return this;
+    }
+
+    public void populateStatement(PreparedStatement statement) throws SQLException {
+        int counter = 1;
+        for (ConditionalStatement where : this.wheres) {
+            if (where.getOperator().hasValue()) {
+                statement.setObject(counter++, where.getValue());
+            }
+        }
     }
 }
