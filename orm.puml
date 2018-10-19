@@ -53,7 +53,6 @@ namespace Orm {
     }
 
 
-
     interface Pagination {
         ---
         +paginate()
