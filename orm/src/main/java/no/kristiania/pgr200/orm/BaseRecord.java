@@ -45,7 +45,30 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
         return false;
     }
 
-    public abstract List<T> all() throws SQLException;
+    public final List<T> all() throws SQLException {
+        ResultSet results = queryStatement(
+                new Query<T>(this.getTable(), state.getAttributes().keySet().toArray(new String[0])));
+        List<T> list = new LinkedList<>();
+        while (results.next()) list.add(newInstance(results));
+        return list;
+    }
+
+    public final T findById(UUID id) throws SQLException {
+        ResultSet results = queryStatement(
+                new Query<T>(this.getTable(), state.getAttributes().keySet().toArray(new String[0]))
+                        .whereEquals("id", id));
+        if (results.next()) return newInstance(results);
+        return null;
+    }
+
+    /**
+     * The pointer should be set to the row you wish to use.
+     * This is part of the template method findById and all
+     * @param resultSet Pointer is set at the row to use, populate the model with this row
+     * @return Returns a new instance with values from the resultset
+     * @throws SQLException
+     */
+    protected abstract T newInstance(ResultSet resultSet) throws SQLException;
 
     // TODO: Refactor to be more readable
     protected String insertStatement() {
