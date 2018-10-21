@@ -10,8 +10,11 @@ import org.mockito.Mockito;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.*;
 
 public class QueryExecutionTest {
@@ -21,6 +24,24 @@ public class QueryExecutionTest {
     @Before
     public void beforeEach(){
         model = Mockito.spy(new UserModel(new Faker().name().fullName(), new Faker().internet().emailAddress()));
+    }
+
+    @Test
+    public void shouldFindRecordById() throws SQLException {
+         setupDatabase();
+         model.save();
+         User user = new UserModel().findById(model.getState().getPrimaryKey());
+         assertThat(user)
+                 .hasFieldOrPropertyWithValue("id", model.getState().getId())
+                 .hasFieldOrPropertyWithValue("name", model.getState().getName())
+                 .hasFieldOrPropertyWithValue("email", model.getState().getEmail());
+    }
+
+    @Test
+    public void shouldReturnNullIfNotExisting() throws SQLException {
+         setupDatabase();
+         User user = new UserModel().findById(UUID.randomUUID());
+         assertThat(user).isNull();
     }
 
     @Test
