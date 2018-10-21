@@ -4,8 +4,8 @@ import no.kristiania.pgr200.orm.Enums.SqlOperator;
 import no.kristiania.pgr200.orm.Enums.Statement;
 import org.apache.commons.lang3.SerializationUtils;
 
-import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -45,6 +45,7 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
         return false;
     }
 
+    public abstract List<T> all() throws SQLException;
 
     // TODO: Refactor to be more readable
     protected String insertStatement() {
@@ -69,6 +70,12 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
                 ConditionalStatement.buildStatements(list));
     }
 
+    protected ResultSet queryStatement(Query query) throws SQLException {
+        PreparedStatement preparedStatement = DatabaseConnection.connection.prepareStatement(query.getSqlStatement());
+        query.populateStatement(preparedStatement);
+        return preparedStatement.executeQuery();
+    }
+
     private int executeStatement(String statement, boolean insert) throws SQLException {
         PreparedStatement preparedStatement = DatabaseConnection.connection.prepareStatement(statement);
         int count = 1;
@@ -81,8 +88,7 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
             preparedStatement.setObject(count++, value.getValue().getValue());
         }
         if(!insert) preparedStatement.setObject(count, state.getPrimaryKey());
-        int rows = preparedStatement.executeUpdate();
-        return rows;
+        return preparedStatement.executeUpdate();
     }
 
     public boolean exists(){

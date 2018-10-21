@@ -1,5 +1,7 @@
 package no.kristiania.pgr200.orm;
 
+import java.util.List;
+
 public class GenericRecord extends BaseRecord {
     @Override
     public String getTable() {
@@ -9,5 +11,10 @@ public class GenericRecord extends BaseRecord {
     @Override
     public boolean save() {
         return false;
+    }
+
+    @Override
+    public List all() {
+        return null;
     }
 }

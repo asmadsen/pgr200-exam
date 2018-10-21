@@ -9,9 +9,8 @@ import org.mockito.Mockito;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.UUID;
+import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -22,6 +21,17 @@ public class QueryExecutionTest {
     @Before
     public void beforeEach(){
         model = Mockito.spy(new UserModel(new Faker().name().fullName(), new Faker().internet().emailAddress()));
+    }
+
+    @Test
+    public void shouldFetchAllRecords() throws SQLException {
+        setupDatabase();
+        for (int i = 0; i < 10; i++) {
+            UserModel userModel = new UserModel(new Faker().name().fullName(), new Faker().internet().emailAddress());
+            userModel.save();
+        }
+        List<User> list = new UserModel().all();
+        assertEquals(10, list.size());
     }
 
     @Test
