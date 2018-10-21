@@ -57,4 +57,19 @@ class User extends BaseModel<User> {
     public String name;
     @NotNull @Min(18)
     public int age;
+
+    @Override
+    public UUID getPrimaryKey() {
+        return id;
+    }
+
+    @Override
+    public void setPrimaryKey(UUID uuid) {
+        this.id = uuid;
+    }
+
+    @Override
+    public int compareTo(@org.jetbrains.annotations.NotNull User user) {
+        return 0;
+    }
 }

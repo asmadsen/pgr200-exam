@@ -18,23 +18,24 @@ namespace Common {
 
 namespace Orm {
 
-    interface IBaseModel<T> {
+    interface IBaseModel<T> extends Comparable, Serializable {
         ---
         +validate() : Set<ConstraintViolation>
         +populateAttributes(attributes : Map<String, ColumnValue>)
         +getAttributes() : Map<String, ColumnValue>
+        +compareTo(model : IBaseModel)
     }
 
 
     abstract class BaseRecord<T> implements Pagination {
         #state : BaseModel<T>
-        -dbState : BaseRecord
-        -exists : boolean
+        -dbState : BaseModel<T>
         -deleteFunctionality : DeleteFunctionality
         ---
         #Bootstrap() : void
         #getDeleteFunctionality() : DeleteFunctionality
         -isDirty() : boolean
+        -exists() : boolean
         -- State manipulators --
         +setAttribute(name : String, value : V | ColumnValue)
         +getAttribute(name : String) : ColumnValue

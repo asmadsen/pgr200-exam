@@ -5,10 +5,7 @@ import no.kristiania.pgr200.orm.IBaseModel;
 
 import javax.validation.ConstraintViolation;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class User implements IBaseModel<User> {
 
@@ -80,5 +77,38 @@ public class User implements IBaseModel<User> {
             } catch (IllegalAccessException ignored) { }
         }
         return attributes;
+    }
+
+    @Override
+    public UUID getPrimaryKey() {
+        return getId();
+    }
+
+    @Override
+    public void setPrimaryKey(UUID uuid) {
+        this.id = uuid;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof User) {
+            return this.getId().equals(((User) obj).getId()) &&
+                    this.getEmail().equals(((User) obj).getEmail()) &&
+                    this.getName().equals(((User) obj).getName());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email);
+    }
+
+    @Override
+    public int compareTo(User user) {
+        return Comparator.comparing(User::getId)
+                .thenComparing(User::getEmail)
+                .thenComparing(User::getName)
+                .compare(this, user);
     }
 }
