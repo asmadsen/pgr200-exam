@@ -1,7 +1,5 @@
 package no.kristiania.pgr200.orm;
 
-import no.kristiania.pgr200.orm.Enums.SqlOperator;
-import no.kristiania.pgr200.orm.Enums.Statement;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.sql.PreparedStatement;
@@ -10,7 +8,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 public abstract class BaseRecord<T extends IBaseModel<T>> {
-    protected T state;
+    private T state;
     private T dbState;
 
     public abstract String getTable();
@@ -29,17 +27,37 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
     }
 
     private boolean update() throws SQLException {
-        if (isDirty() && executeStatement(updateStatement(), false) > 0) {
-            setDbState(SerializationUtils.clone(state));
-            return true;
+        if(isDirty()){
+            UpdateQuery updateQuery = new UpdateQuery(getTable());
+            state.getAttributes().forEach((k,v) -> updateQuery.set(k, v.getValue()));
+            PreparedStatement statement = DatabaseConnection.connection.prepareStatement(updateQuery.getSqlStatement());
+            updateQuery.populateStatement(statement);
+            if (statement.executeUpdate() > 0) {
+                setDbState(SerializationUtils.clone(state));
+                return true;
+            }
         }
         return false;
     }
 
     private boolean create() throws SQLException {
         state.setPrimaryKey(UUID.randomUUID());
-        if(executeStatement(insertStatement(), true) > 0) {
+        InsertQuery insertQuery = new InsertQuery(getTable()).insert(this);
+        PreparedStatement statement = DatabaseConnection.connection.prepareStatement(insertQuery.getSqlStatement());
+        insertQuery.populateStatement(statement);
+        if(statement.executeUpdate() > 0) {
             setDbState(SerializationUtils.clone(state));
+            return true;
+        }
+        return false;
+    }
+
+    public boolean destroy() throws SQLException {
+        DeleteQuery deleteQuery = new DeleteQuery(getTable()).whereEquals("id", state.getPrimaryKey());
+        PreparedStatement statement = DatabaseConnection.connection.prepareStatement(deleteQuery.getSqlStatement());
+        deleteQuery.populateStatement(statement);
+        if(statement.executeUpdate() == 1) {
+            setDbState(null);
             return true;
         }
         return false;
@@ -47,7 +65,7 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
 
     public final List<T> all() throws SQLException {
         ResultSet results = queryStatement(
-                new Query<T>(this.getTable(), state.getAttributes().keySet().toArray(new String[0])));
+                new SelectQuery(this.getTable(), state.getAttributes().keySet().toArray(new String[0])));
         List<T> list = new LinkedList<>();
         while (results.next()) list.add(newInstance(results));
         return list;
@@ -55,7 +73,7 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
 
     public final T findById(UUID id) throws SQLException {
         ResultSet results = queryStatement(
-                new Query<T>(this.getTable(), state.getAttributes().keySet().toArray(new String[0]))
+                new SelectQuery(this.getTable(), state.getAttributes().keySet().toArray(new String[0]))
                         .whereEquals("id", id));
         if (results.next()) return newInstance(results);
         return null;
@@ -70,51 +88,13 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
      */
     protected abstract T newInstance(ResultSet resultSet) throws SQLException;
 
-    // TODO: Refactor to be more readable
-    protected String insertStatement() {
-        StringJoiner values = new StringJoiner(", ");
-        state.getAttributes().keySet().forEach(e -> values.add("?"));
-        return String.format("%s `%s` (`%s`) %s (%s);",
-                Statement.INSERT.getStatement(), getTable(), String.join("`, `", state.getAttributes().keySet()),
-                Statement.VALUES, values.toString());
-    }
-
-    // TODO: Refactor to be more readable
-    protected String updateStatement() {
-        StringJoiner columns = new StringJoiner(", ");
-        state.getAttributes().entrySet().stream()
-                .filter(set -> !set.getKey().equals("id"))
-                .forEach(e -> columns.add("`" + e.getKey() + "` " + SqlOperator.Equals.getOperator() + " ?"));
-        LinkedList<ConditionalStatement> list = new LinkedList<>();
-        list.add(new ConditionalStatement<>("id", SqlOperator.Equals, state.getPrimaryKey()));
-        return String.format("%s `%s` %s %s %s;",
-                Statement.UPDATE.getStatement(), getTable(),
-                Statement.SET.getStatement(), columns.toString(),
-                ConditionalStatement.buildStatements(list));
-    }
-
-    protected ResultSet queryStatement(Query query) throws SQLException {
+    private ResultSet queryStatement(SelectQuery query) throws SQLException {
         PreparedStatement preparedStatement = DatabaseConnection.connection.prepareStatement(query.getSqlStatement());
         query.populateStatement(preparedStatement);
         return preparedStatement.executeQuery();
     }
 
-    private int executeStatement(String statement, boolean insert) throws SQLException {
-        PreparedStatement preparedStatement = DatabaseConnection.connection.prepareStatement(statement);
-        int count = 1;
-        for (Map.Entry<String, ColumnValue> value : state.getAttributes().entrySet()) {
-            if(!insert && value.getKey().equals("id")) continue;
-            if (insert && value.getKey().equals("id")) {
-                preparedStatement.setObject(count++, value.getValue().getValue());
-                continue;
-            }
-            preparedStatement.setObject(count++, value.getValue().getValue());
-        }
-        if(!insert) preparedStatement.setObject(count, state.getPrimaryKey());
-        return preparedStatement.executeUpdate();
-    }
-
-    public boolean exists(){
+    private boolean exists(){
         return getState().getPrimaryKey() != null;
     }
 
@@ -126,7 +106,7 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
         return state;
     }
 
-    public void setState(T state) {
+    protected void setState(T state) {
         this.state = state;
     }
 

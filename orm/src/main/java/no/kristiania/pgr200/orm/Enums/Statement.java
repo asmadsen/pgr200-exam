@@ -6,6 +6,7 @@ public enum Statement {
     INSERT("INSERT INTO"),
     VALUES("VALUES"),
     UPDATE("UPDATE"),
+    DELETE("DELETE FROM"),
     SET("SET"),
     FROM("FROM"),
     JOIN("JOIN"),

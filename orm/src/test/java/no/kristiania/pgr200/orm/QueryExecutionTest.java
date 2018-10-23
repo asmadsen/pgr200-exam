@@ -27,6 +27,18 @@ public class QueryExecutionTest {
     }
 
     @Test
+    public void shouldDestroyRecord() throws SQLException {
+        setupDatabase();
+        model.save();
+        UUID id = model.getState().getPrimaryKey();
+        User user = new UserModel().findById(id);
+        assertThat(user).isNotNull();
+        model.destroy();
+        user = new UserModel().findById(id);
+        assertThat(user).isNull();
+    }
+
+    @Test
     public void shouldFindRecordById() throws SQLException {
          setupDatabase();
          model.save();
@@ -60,7 +72,6 @@ public class QueryExecutionTest {
         setupDatabase();
         when(model.save()).thenCallRealMethod();
         verify(model, times(1)).save();
-        verify(model, times(1)).insertStatement();
     }
 
     @Test
@@ -69,7 +80,6 @@ public class QueryExecutionTest {
         model.save();
         model.getState().setName(new Faker().name().fullName());
         when(model.save()).thenCallRealMethod();
-        verify(model, times(1)).updateStatement();
     }
 
     @Test
@@ -78,9 +88,7 @@ public class QueryExecutionTest {
         when(model.save()).thenCallRealMethod();
         when(model.isDirty()).thenCallRealMethod();
         when(model.save()).thenCallRealMethod();
-        verify(model, times(1)).insertStatement();
         assertEquals(model.getState(), model.getDbState());
-        verify(model, times(0)).updateStatement();
     }
 
     @Test
@@ -90,19 +98,7 @@ public class QueryExecutionTest {
         User oldDbState = model.getDbState();
         model.getState().setName(new Faker().name().fullName());
         when(model.save()).thenCallRealMethod();
-        verify(model, times(1)).updateStatement();
-        verify(model, times(1)).insertStatement();
         assertNotEquals(0, oldDbState.compareTo(model.getDbState()));
-    }
-
-    @Test
-    public void shouldBuildInsert() {
-        assertEquals("INSERT INTO `users` (`name`, `id`, `email`) VALUES (?, ?, ?);", model.insertStatement());
-    }
-
-    @Test
-    public void shouldBuildUpdate() {
-         assertEquals("UPDATE `users` SET `name` = ?, `email` = ? WHERE `id` = ?;", model.updateStatement());
     }
 
     private void setupDatabase() throws SQLException {
