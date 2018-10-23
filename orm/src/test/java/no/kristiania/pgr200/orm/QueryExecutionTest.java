@@ -2,14 +2,18 @@ package no.kristiania.pgr200.orm;
 import com.github.javafaker.Faker;
 import no.kristiania.pgr200.orm.TestData.User;
 import no.kristiania.pgr200.orm.TestData.UserModel;
+import org.apache.commons.lang3.SerializationUtils;
 import org.flywaydb.core.Flyway;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,13 +96,51 @@ public class QueryExecutionTest {
     }
 
     @Test
+    public void shouldCreateWithFill() throws SQLException {
+        setupDatabase();
+        Map<String, ColumnValue> attributes = new HashMap<>();
+        attributes.put("name", new ColumnValue<>("John Doe"));
+        attributes.put("email", new ColumnValue<>("john@example.com"));
+
+        new UserModel().create(attributes);
+        List<User> user = new UserModel().all();
+        assertThat(user.size()).isEqualTo(1);
+        assertThat(user.get(0))
+                .hasFieldOrPropertyWithValue("name", "John Doe")
+                .hasFieldOrPropertyWithValue("email", "john@example.com");
+    }
+
+    @Test
+    public void shouldFillModelState(){
+        Map<String, ColumnValue> attributes = new HashMap<>();
+        attributes.put("name", new ColumnValue<>("John Doe"));
+        attributes.put("email", new ColumnValue<>("john@example.com"));
+
+        UserModel model = new UserModel();
+        model.fill(attributes);
+        assertThat(model.getState())
+                .hasFieldOrPropertyWithValue("name", "John Doe")
+                .hasFieldOrPropertyWithValue("email", "john@example.com");
+    }
+
+    @Test
     public void shouldChangeDbState() throws SQLException {
         setupDatabase();
         when(model.save()).thenCallRealMethod();
-        User oldDbState = model.getDbState();
+        User oldDbState = SerializationUtils.clone(model.getDbState());
         model.getState().setName(new Faker().name().fullName());
         when(model.save()).thenCallRealMethod();
-        assertNotEquals(0, oldDbState.compareTo(model.getDbState()));
+        assertNotEquals(oldDbState, model.getDbState());
+    }
+
+    @Test
+    public void shouldGetResults() throws SQLException {
+        setupDatabase();
+        UserModel model = new UserModel("John Doe", "doe@example.com");
+        model.save();
+        SelectQuery query = new SelectQuery<>(model).count("id").groupBy("id");
+        List<User> results = query.get();
+        assertEquals(1, results.size());
     }
 
     private void setupDatabase() throws SQLException {

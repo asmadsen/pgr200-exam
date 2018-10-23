@@ -19,7 +19,7 @@ public class DeleteQueryTest {
     public void shouldComposeDeleteStatement(){
         DeleteQuery query = new DeleteQuery("users").whereEquals("id", 15);
 
-        assertThat(query.getSqlStatement()).isEqualTo("DELETE FROM `users` WHERE `id` = ?;");
+        assertThat(query.getSqlStatement()).isEqualTo("DELETE FROM `users` WHERE `id` = ?");
     }
 
     @Test
@@ -32,5 +32,11 @@ public class DeleteQueryTest {
 
         verify(statement).setObject(eq(1), eq(15));
         verify(statement, times(1)).setObject(anyInt(), anyInt());
+    }
+
+    @Test
+    public void shouldBuildDeleteWithoutWheres(){
+         DeleteQuery query = new DeleteQuery("users");
+        assertThat(query.getSqlStatement()).isEqualTo("DELETE FROM `users`");
     }
 }
