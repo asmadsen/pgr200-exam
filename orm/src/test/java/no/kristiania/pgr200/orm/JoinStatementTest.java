@@ -23,7 +23,7 @@ public class JoinStatementTest {
 
     @Test
     public void shouldParseSubQueryJoin() {
-        Query<UserModel> mockQuery = mock(Query.class);
+        SelectQuery mockQuery = mock(SelectQuery.class);
         String subQuery = "SELECT * FROM `USERS` WHERE `id` = 1";
         when(mockQuery.getSqlStatement()).thenReturn(subQuery);
         JoinStatement<UserModel> statement = new JoinStatement<>(

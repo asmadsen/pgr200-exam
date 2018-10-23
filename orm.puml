@@ -83,10 +83,19 @@ namespace Orm {
         +forceDelete(force : boolean) : boolean - Default
     }
 
-    class Query {
+    class BaseQuery<T extends BaseQuery<T>> {
         -table : string
-        -selects : Set<string>
         -wheres : LinkedList<ConditionalStatement>
+        ---
+        +where(key : string, operator : SqlOperator, value : T, useAnd : boolean = true)
+        +whereNot(column : String, value : V)
+        +whereEquals(column : String, value : V)
+        +whereIsNull(column : String)
+        +populateStatement(statement : PreparedStatement)
+    }
+
+    class SelectQuery extends BaseQuery {
+        -selects : Set<string>
         -joins : LinkedList<JoinStatement>
         -groupBy : LinkedHashSet<string>
         -orderBy : LinkedHashSet<string>
@@ -95,17 +104,38 @@ namespace Orm {
         +select(columns : string...)
         +join(table : Class<? extends BaseRecord>, foreignKey : string, localKey : string, type : JoinType)
         +join(query : Query, foreignKey : string, localKey : string, type : JoinType)
-        +where(key : string, operator : SqlOperator, value : T, useAnd : boolean = true)
         +having(key : string, operator : SqlOperator, value : T, useAnd : boolean = true)
         +groupBy(column : string...)
         +orderBy(column : string...)
         +get()
         +first()
         +delete() : boolean
+        +getSqlStatement() : String
     }
 
-    Query "1" o-- "*" ConditionalStatement
-    Query "1" o-- "*" JoinStatement
+    SelectQuery "1" o-- "*" ConditionalStatement
+    SelectQuery "1" o-- "*" JoinStatement
+
+    class UpdateQuery extends BaseQuery {
+        -sets : LinkedList<ConditionalStatement>
+        ---
+        +set(column : String, value : V)
+        +getSqlStatement() : String
+    }
+
+    UpdateQuery "1" o-- "*" ConditionalStatement
+
+    class InsertQuery<T> extends BaseQuery {
+        -model : T
+        ---
+        +set(column : String, value : V)
+        +getSqlStatement() : String
+    }
+
+    class DeleteQuery<T> extends BaseQuery {
+        ---
+        +getSqlStatement() : String
+    }
 
     class ConditionalStatement<T> {
         key : string
@@ -120,7 +150,7 @@ namespace Orm {
 
     class JoinStatement {
         table : Class<BaseRecord>
-        query : Query
+        query : SelectQuery
         foreignKey : string
         localKey : string
         type : JoinType
@@ -132,7 +162,7 @@ namespace Orm {
     }
 
     JoinStatement "1" o-- "1" JoinType
-    JoinStatement "1" o-- "0..1" Query
+    JoinStatement "1" o-- "0..1" SelectQuery
     JoinStatement "1" o-- "0..1" BaseRecord
 
     enum SqlOperator {

@@ -5,7 +5,7 @@ import no.kristiania.pgr200.orm.Enums.JoinType;
 
 public class JoinStatement<T extends BaseRecord> {
     private T model;
-    private Query query;
+    private SelectQuery query;
     private String foreignKey;
     private String localKey;
     private String alias;
@@ -22,7 +22,7 @@ public class JoinStatement<T extends BaseRecord> {
         this(model, foreignKey, localKey, JoinType.LeftJoin);
     }
 
-    public JoinStatement(Query<T> query, String alias, String foreignKey, String localKey, JoinType joinType) {
+    public JoinStatement(SelectQuery query, String alias, String foreignKey, String localKey, JoinType joinType) {
         this.query = query;
         this.alias = alias;
         this.foreignKey = foreignKey;
@@ -30,7 +30,7 @@ public class JoinStatement<T extends BaseRecord> {
         this.type = joinType;
     }
 
-    public JoinStatement(Query<T> query, String alias, String foreignKey, String localKey) {
+    public JoinStatement(SelectQuery query, String alias, String foreignKey, String localKey) {
         this(query, alias, foreignKey, localKey, JoinType.LeftJoin);
     }
 
