@@ -53,7 +53,7 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
 
     public boolean destroy() throws SQLException {
         DeleteQuery deleteQuery = new DeleteQuery(getTable()).whereEquals("id", state.getPrimaryKey());
-        if(deleteQuery.get() == 1) {
+        if(deleteQuery.get() > 0) {
             setDbState(null);
             return true;
         }
