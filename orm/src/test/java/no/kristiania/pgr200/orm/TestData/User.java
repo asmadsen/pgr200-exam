@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class User implements IBaseModel<User> {
+public class User extends BaseModel<User> {
 
     protected UUID id;
     public String name;
@@ -49,36 +49,4 @@ public class User implements IBaseModel<User> {
         this.email = email;
     }
 
-
-    @Override
-    public Set<ConstraintViolation<User>> validate() {
-        return null;
-    }
-
-    @SuppressWarnings("Duplicates")
-    @Override
-    public void populateAttributes(Map<String, ColumnValue> attributes) {
-        Class thisClass = getClass();
-        for (Map.Entry<String, ColumnValue> entry : attributes.entrySet()) {
-            try {
-                Field field = thisClass.getDeclaredField(entry.getKey());
-                field.setAccessible(true);
-                field.set(this, entry.getValue().getValue());
-            } catch (NoSuchFieldException | IllegalAccessException ignored) { }
-        }
-    }
-
-
-    @Override
-    public Map<String, ColumnValue> getAttributes() {
-        Map<String, ColumnValue> attributes = new HashMap<>();
-        for (Field field : getClass().getDeclaredFields()) {
-            if(field.isSynthetic()) continue;
-            field.setAccessible(true);
-            try {
-                attributes.put(field.getName(), new ColumnValue<>(field.get(this)));
-            } catch (IllegalAccessException ignored) { }
-        }
-        return attributes;
-    }
 }
