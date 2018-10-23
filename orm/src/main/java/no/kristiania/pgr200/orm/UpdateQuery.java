@@ -77,7 +77,7 @@ public class UpdateQuery<T> {
     }
 
     public int get() throws SQLException {
-        PreparedStatement statement = DatabaseConnection.connection.prepareStatement(getSqlStatement());
+        PreparedStatement statement = Orm.connection.prepareStatement(getSqlStatement());
         populateStatement(statement);
         return statement.executeUpdate();
     }

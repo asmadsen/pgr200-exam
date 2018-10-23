@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -143,12 +142,19 @@ public class QueryExecutionTest {
         assertEquals(1, results.size());
     }
 
+    @Test
+    public void shouldReturnFalseWhenRecordNotFound() throws SQLException {
+        setupDatabase();
+        assertThat(model.destroy()).isFalse();
+        verify(model, times(1)).destroy();
+    }
+
     private void setupDatabase() throws SQLException {
         Flyway flyway = new Flyway();
         flyway.setDataSource("jdbc:h2:mem:conference_server;DB_CLOSE_DELAY=-1", "sa", "sa");
         flyway.clean();
         flyway.migrate();
-        DatabaseConnection.setConnection(DriverManager.getConnection(
+        new Orm().setDatasource(DriverManager.getConnection(
                 "jdbc:h2:mem:conference_server;DB_CLOSE_DELAY=-1", "sa", "sa"));
     }
 }

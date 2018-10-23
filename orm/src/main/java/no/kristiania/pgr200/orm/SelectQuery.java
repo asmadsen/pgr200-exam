@@ -110,7 +110,7 @@ public class SelectQuery<T extends BaseRecord<V>, V extends IBaseModel<V>> {
     }
 
     public List<V> get() throws SQLException {
-        PreparedStatement statement = DatabaseConnection.connection.prepareStatement(getSqlStatement());
+        PreparedStatement statement = Orm.connection.prepareStatement(getSqlStatement());
         populateStatement(statement);
         ResultSet resultSet = statement.executeQuery();
         List<V> results = new LinkedList<>();
@@ -126,7 +126,7 @@ public class SelectQuery<T extends BaseRecord<V>, V extends IBaseModel<V>> {
 
     public V first() throws SQLException {
         limit(1);
-        PreparedStatement statement = DatabaseConnection.connection.prepareStatement(getSqlStatement());
+        PreparedStatement statement = Orm.connection.prepareStatement(getSqlStatement());
         populateStatement(statement);
         ResultSet resultSet = statement.executeQuery();
         if(resultSet.next()) {
