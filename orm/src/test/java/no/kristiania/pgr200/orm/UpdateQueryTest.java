@@ -20,7 +20,7 @@ public class UpdateQueryTest {
     public void shouldComposeUpdateStatement(){
         UpdateQuery query = new UpdateQuery("users").set("name", "some name").whereEquals("id", 15);
 
-        assertThat(query.getSqlStatement()).isEqualTo("UPDATE `users` SET `name` = ? WHERE `id` = ?;");
+        assertThat(query.getSqlStatement()).isEqualTo("UPDATE `users` SET `name` = ? WHERE `id` = ?");
     }
 
     @Test

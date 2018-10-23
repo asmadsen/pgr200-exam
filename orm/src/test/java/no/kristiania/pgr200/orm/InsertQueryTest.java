@@ -22,7 +22,7 @@ public class InsertQueryTest {
         UserModel model = new UserModel(UUID.randomUUID(), "John Doe", "john@example.com");
         InsertQuery query = new InsertQuery("users").insert(model);
 
-        assertThat(query.getSqlStatement()).isEqualTo("INSERT INTO `users` (`name`, `id`, `email`) VALUES (?, ?, ?);");
+        assertThat(query.getSqlStatement()).isEqualTo("INSERT INTO `users` (`name`, `id`, `email`) VALUES (?, ?, ?)");
     }
 
     @Test

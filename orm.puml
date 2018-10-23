@@ -3,9 +3,9 @@
 namespace Common {
     class User extends BaseModel {
         +id : int
-        +name : string
+        +name : String
         @Validate(String::class, notNull = true)
-        +email : string
+        +email : String
     }
 
     abstract class BaseModel<T> implements Orm.IBaseModel {
@@ -18,7 +18,7 @@ namespace Common {
 
 namespace Orm {
 
-    interface IBaseModel<T> extends Comparable, Serializable {
+    interface IBaseModel<T> extends Serializable {
         ---
         +validate() : Set<ConstraintViolation>
         +populateAttributes(attributes : Map<String, ColumnValue>)
@@ -70,7 +70,7 @@ namespace Orm {
     }
 
     class SoftDelete implements DeleteFunctionality {
-        #deleted_at : string
+        #deleted_at : String
         ---
         +restore() : BaseRecord
         +delete() : boolean
@@ -83,67 +83,82 @@ namespace Orm {
         +forceDelete(force : boolean) : boolean - Default
     }
 
-    class BaseQuery<T extends BaseQuery<T>> {
-        -table : string
+    class SelectQuery<T extends BaseRecord<V>, V extends IBaseModel<V>> {
+        -model : T
+        -table : String
+        -selects : Set<String>
+        -joins : LinkedList<JoinStatement>
         -wheres : LinkedList<ConditionalStatement>
+        -groupBy : LinkedHashSet<String>
+        -orderBy : LinkedHashSet<String>
+        -having : LinkedList<ConditionalStatement>
         ---
-        +where(key : string, operator : SqlOperator, value : T, useAnd : boolean = true)
+        +select(columns : String...)
+        +join(table : Class<? extends BaseRecord>, foreignKey : String, localKey : String, type : JoinType)
+        +join(query : Query, foreignKey : String, localKey : String, type : JoinType)
+        +where(key : String, operator : SqlOperator, value : T, useAnd : boolean = true)
         +whereNot(column : String, value : V)
         +whereEquals(column : String, value : V)
         +whereIsNull(column : String)
-        +populateStatement(statement : PreparedStatement)
-    }
-
-    class SelectQuery extends BaseQuery {
-        -selects : Set<string>
-        -joins : LinkedList<JoinStatement>
-        -groupBy : LinkedHashSet<string>
-        -orderBy : LinkedHashSet<string>
-        -having : LinkedList<ConditionalStatement>
-        ---
-        +select(columns : string...)
-        +join(table : Class<? extends BaseRecord>, foreignKey : string, localKey : string, type : JoinType)
-        +join(query : Query, foreignKey : string, localKey : string, type : JoinType)
-        +having(key : string, operator : SqlOperator, value : T, useAnd : boolean = true)
-        +groupBy(column : string...)
-        +orderBy(column : string...)
-        +get()
-        +first()
+        +having(key : String, operator : SqlOperator, value : T, useAnd : boolean = true)
+        +groupBy(column : String...)
+        +orderBy(column : String...)
+        +get() : List<T>
+        +first() : T
         +delete() : boolean
         +getSqlStatement() : String
+        +populateStatement(statement : PreparedStatement)
     }
 
     SelectQuery "1" o-- "*" ConditionalStatement
     SelectQuery "1" o-- "*" JoinStatement
 
-    class UpdateQuery extends BaseQuery {
+    class UpdateQuery {
+        -table : String
         -sets : LinkedList<ConditionalStatement>
+        -wheres : LinkedList<ConditionalStatement>
         ---
         +set(column : String, value : V)
+        +where(key : String, operator : SqlOperator, value : T, useAnd : boolean = true)
+        +whereNot(column : String, value : V)
+        +whereEquals(column : String, value : V)
+        +whereIsNull(column : String)
+        +populateStatement(statement : PreparedStatement)
         +getSqlStatement() : String
     }
 
     UpdateQuery "1" o-- "*" ConditionalStatement
 
-    class InsertQuery<T> extends BaseQuery {
+    class InsertQuery<T> {
         -model : T
+        -table : String
         ---
         +set(column : String, value : V)
+        +where(key : String, operator : SqlOperator, value : T, useAnd : boolean = true)
+        +whereNot(column : String, value : V)
+        +whereEquals(column : String, value : V)
+        +whereIsNull(column : String)
+        +populateStatement(statement : PreparedStatement)
         +getSqlStatement() : String
     }
 
-    class DeleteQuery<T> extends BaseQuery {
+    class DeleteQuery<T> {
+        -table : String
+        -wheres : LinkedList<ConditionalStatement>
         ---
+        +populateStatement(statement : PreparedStatement)
         +getSqlStatement() : String
     }
+
+    DeleteQuery "1" o-- "*" ConditionalStatement
 
     class ConditionalStatement<T> {
-        key : string
+        key : String
         operator : SqlOperator
         value : T
         useAnd : boolean = true
         ---
-        getStatement() : string
+        getStatement() : String
     }
 
     ConditionalStatement "1" o-- "1" SqlOperator
@@ -151,8 +166,8 @@ namespace Orm {
     class JoinStatement {
         table : Class<BaseRecord>
         query : SelectQuery
-        foreignKey : string
-        localKey : string
+        foreignKey : String
+        localKey : String
         type : JoinType
     }
 

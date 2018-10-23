@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public interface IBaseModel<T> extends Comparable<T>, Serializable {
+public interface IBaseModel<T> extends Serializable {
     Set<ConstraintViolation<T>> validate();
     void populateAttributes(Map<String, ColumnValue> attributes);
     Map<String, ColumnValue> getAttributes();

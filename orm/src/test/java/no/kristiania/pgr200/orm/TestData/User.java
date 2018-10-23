@@ -103,12 +103,4 @@ public class User implements IBaseModel<User> {
     public int hashCode() {
         return Objects.hash(id, name, email);
     }
-
-    @Override
-    public int compareTo(User user) {
-        return Comparator.comparing(User::getId)
-                .thenComparing(User::getEmail)
-                .thenComparing(User::getName)
-                .compare(this, user);
-    }
 }

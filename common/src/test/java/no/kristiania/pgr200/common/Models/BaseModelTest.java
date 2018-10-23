@@ -67,9 +67,4 @@ class User extends BaseModel<User> {
     public void setPrimaryKey(UUID uuid) {
         this.id = uuid;
     }
-
-    @Override
-    public int compareTo(@org.jetbrains.annotations.NotNull User user) {
-        return 0;
-    }
 }

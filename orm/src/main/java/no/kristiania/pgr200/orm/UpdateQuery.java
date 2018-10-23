@@ -8,17 +8,47 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-public class UpdateQuery extends BaseQuery<UpdateQuery> {
-    private LinkedList<ConditionalStatement> sets;
+public class UpdateQuery<T> {
+    private final String table;
+    private LinkedList<ConditionalStatement> sets, wheres;
 
     public UpdateQuery(String table) {
-        super(table);
+        this.table = table;
         this.sets = new LinkedList<>();
+        this.wheres = new LinkedList<>();
     }
 
     public <V> UpdateQuery set(String column, V value){
         sets.add(new ConditionalStatement<>(column, SqlOperator.Equals, value));
         return this;
+    }
+
+    public <V> UpdateQuery<T> where(String key, SqlOperator operator, V value) {
+        return this.where(key, operator, value, true);
+    }
+
+    public <V> UpdateQuery<T> where(String key, SqlOperator operator, V value, boolean useAnd) {
+        this.wheres.add(new ConditionalStatement<>(key, operator, value, useAnd));
+        return this;
+    }
+
+    public <V> UpdateQuery<T> whereNot(String column, V value) {
+        where(column, SqlOperator.Not, value);
+        return this;
+    }
+
+    public <V> UpdateQuery<T> whereEquals(String column, V value) {
+        where(column, SqlOperator.Equals, value);
+        return this;
+    }
+
+    public UpdateQuery<T> whereIsNull(String column) {
+        where(column, SqlOperator.IsNull, null);
+        return this;
+    }
+
+    protected String getTable() {
+        return table;
     }
 
     String getSqlStatement() {
@@ -31,20 +61,24 @@ public class UpdateQuery extends BaseQuery<UpdateQuery> {
                             .map(ConditionalStatement::getSqlStatement)
                             .collect(Collectors.toList())));
         }
-        if (getWheres().size() > 0) {
+        if (this.wheres.size() > 0) {
             sql.append(" ")
-                    .append(ConditionalStatement.buildStatements(getWheres())).append(";");
+                    .append(ConditionalStatement.buildStatements(this.wheres));
         }
         return sql.toString();
     }
 
-    @Override
     public void populateStatement(PreparedStatement statement) throws SQLException {
-        for (ConditionalStatement where : this.sets) {
-            if (where.getOperator().hasValue()) {
-                statement.setObject(counter++, where.getValue());
-            }
-        }
-        super.populateStatement(statement);
+        int counter = 1;
+        for (ConditionalStatement set : this.sets)
+            if (set.getOperator().hasValue()) statement.setObject(counter++, set.getValue());
+        for (ConditionalStatement where : this.wheres)
+            if (where.getOperator().hasValue()) statement.setObject(counter++, where.getValue());
+    }
+
+    public int get() throws SQLException {
+        PreparedStatement statement = DatabaseConnection.connection.prepareStatement(getSqlStatement());
+        populateStatement(statement);
+        return statement.executeUpdate();
     }
 }
