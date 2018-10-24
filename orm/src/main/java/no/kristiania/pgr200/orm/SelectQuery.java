@@ -39,7 +39,7 @@ public class SelectQuery<T extends BaseRecord<V>, V extends IBaseModel<V>> {
     public SelectQuery<T, V> select(String... columns) {
         Arrays.stream(columns)
               .map(column -> String.join(".", Arrays.stream(column.split("\\."))
-                                                    .map(part -> String.format("`%s`", part))
+                                                    .map(part -> String.format(Orm.quote + "%s" + Orm.quote, part))
                                                     .collect(Collectors.toList()))
               )
               .forEach(column -> this.selects.add(column));
@@ -93,7 +93,7 @@ public class SelectQuery<T extends BaseRecord<V>, V extends IBaseModel<V>> {
 
     public SelectQuery<T, V> groupBy(String... columns) {
         Arrays.stream(columns)
-              .map(column -> String.format("`%s`", column))
+              .map(column -> String.format(Orm.quote + "%s" + Orm.quote, column))
               .forEach(column -> this.groupBy.add(column));
         return this;
     }
@@ -105,7 +105,7 @@ public class SelectQuery<T extends BaseRecord<V>, V extends IBaseModel<V>> {
     }
 
     public SelectQuery<T, V> orderBy(String column, OrderDirection direction) {
-        this.orderBy.put(String.format("`%s`", column), direction);
+        this.orderBy.put(String.format(Orm.quote + "%s" + Orm.quote, column), direction);
         return this;
     }
 
@@ -155,7 +155,7 @@ public class SelectQuery<T extends BaseRecord<V>, V extends IBaseModel<V>> {
     public String getSqlStatement() {
         StringBuilder sql = new StringBuilder();
         sql.append(String.format(
-                "SELECT %s FROM `%s`",
+                "SELECT %s FROM " + Orm.quote + "%s" + Orm.quote,
                 String.join(", ", this.selects),
                 getTable()
         ));
@@ -192,27 +192,27 @@ public class SelectQuery<T extends BaseRecord<V>, V extends IBaseModel<V>> {
     }
 
     public SelectQuery<T, V> count(String column) {
-        this.selects.add(String.format("COUNT(`%s`)", column));
+        this.selects.add(String.format("COUNT(" + Orm.quote + "%s" + Orm.quote + ")", column));
         return this;
     }
 
     public SelectQuery<T, V> average(String column) {
-        this.selects.add(String.format("AVG(`%s`)", column));
+        this.selects.add(String.format("AVG(" + Orm.quote + "%s" + Orm.quote + ")", column));
         return this;
     }
 
     public SelectQuery<T, V> sum(String column) {
-        this.selects.add(String.format("SUM(`%s`)", column));
+        this.selects.add(String.format("SUM(" + Orm.quote + "%s" + Orm.quote + ")", column));
         return this;
     }
 
     public SelectQuery<T, V> max(String column) {
-        this.selects.add(String.format("MAX(`%s`)", column));
+        this.selects.add(String.format("MAX(" + Orm.quote + "%s" + Orm.quote + ")", column));
         return this;
     }
 
     public SelectQuery<T, V> min(String column) {
-        this.selects.add(String.format("MIN(`%s`)", column));
+        this.selects.add(String.format("MIN(" + Orm.quote + "%s" + Orm.quote + ")", column));
         return this;
     }
 
