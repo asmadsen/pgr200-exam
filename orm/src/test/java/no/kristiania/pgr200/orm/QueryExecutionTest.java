@@ -33,7 +33,7 @@ public class QueryExecutionTest {
     public void shouldDestroyRecord() throws SQLException {
         setupDatabase();
         model.save();
-        UUID id = model.getState().getPrimaryKey();
+        UUID id = model.getState().getId();
         User user = new UserModel().findById(id);
         assertThat(user).isNotNull();
         model.destroy();
@@ -45,7 +45,7 @@ public class QueryExecutionTest {
     public void shouldFindRecordById() throws SQLException {
          setupDatabase();
          model.save();
-         User user = new UserModel().findById(model.getState().getPrimaryKey());
+         User user = new UserModel().findById(model.getState().getId());
          assertThat(user)
                  .hasFieldOrPropertyWithValue("id", model.getState().getId())
                  .hasFieldOrPropertyWithValue("name", model.getState().getName())

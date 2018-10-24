@@ -73,20 +73,31 @@ public class User implements IBaseModel<User> {
             if(field.isSynthetic()) continue;
             field.setAccessible(true);
             try {
-                attributes.put(field.getName(), new ColumnValue<>(field.get(this)));
+                Object value = field.get(this);
+                if(value != null) value = new ColumnValue<>(field.get(this));
+                attributes.put(field.getName(), (ColumnValue) value);
             } catch (IllegalAccessException ignored) { }
         }
         return attributes;
     }
 
     @Override
-    public UUID getPrimaryKey() {
-        return getId();
+    public void setAttribute(String column, Object value) {
+        try {
+            getClass().getDeclaredField(column).set(this, value);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void setPrimaryKey(UUID uuid) {
-        this.id = uuid;
+    public ColumnValue getAttribute(String column) {
+        try {
+            return new ColumnValue<>(getClass().getDeclaredField(column).get(this));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

@@ -25,12 +25,12 @@ public class Role implements IBaseModel<Role> {
     }
 
     @Override
-    public UUID getPrimaryKey() {
-        return null;
+    public void setAttribute(String column, Object value) {
+
     }
 
     @Override
-    public void setPrimaryKey(UUID uuid) {
-
+    public ColumnValue getAttribute(String column) {
+        return null;
     }
 }
