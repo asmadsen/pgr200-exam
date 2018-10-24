@@ -11,15 +11,15 @@ import java.util.UUID;
 public class ProfilePictureModel extends BaseRecord<ProfilePicture> {
 
     public ProfilePictureModel() {
-        this.model = new ProfilePicture();
+        this.setState(new ProfilePicture());
     }
 
     public ProfilePictureModel(UUID id, UUID userId, String pictureUrl) {
-        this.model = new ProfilePicture(id, userId, pictureUrl);
+        this.setState(new ProfilePicture(id, userId, pictureUrl));
     }
 
     public ProfilePictureModel(UUID userId, String pictureUrl) {
-        this.model = new ProfilePicture(null, userId, pictureUrl);
+        this.setState(new ProfilePicture(null, userId, pictureUrl));
     }
 
     @Override

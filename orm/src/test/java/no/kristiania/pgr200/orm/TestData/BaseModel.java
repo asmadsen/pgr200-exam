@@ -9,12 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class BaseModel<T> implements IBaseModel<T> {
+public abstract class BaseModel<T> implements IBaseModel<T> {
     @Override
     public Set<ConstraintViolation<T>> validate() {
         return null;
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     public void populateAttributes(Map<String, ColumnValue> attributes) {
         Class thisClass = getClass();
@@ -27,6 +28,8 @@ public class BaseModel<T> implements IBaseModel<T> {
         }
     }
 
+
+    @SuppressWarnings("Duplicates")
     @Override
     public Map<String, ColumnValue> getAttributes() {
         Map<String, ColumnValue> attributes = new HashMap<>();
@@ -34,9 +37,30 @@ public class BaseModel<T> implements IBaseModel<T> {
             if(field.isSynthetic()) continue;
             field.setAccessible(true);
             try {
-                attributes.put(field.getName(), new ColumnValue<>(field.get(this)));
+                Object value = field.get(this);
+                if(value != null) value = new ColumnValue<>(field.get(this));
+                attributes.put(field.getName(), (ColumnValue) value);
             } catch (IllegalAccessException ignored) { }
         }
         return attributes;
+    }
+
+    @Override
+    public void setAttribute(String column, Object value) {
+        try {
+            getClass().getDeclaredField(column).set(this, value);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public ColumnValue getAttribute(String column) {
+        try {
+            return new ColumnValue<>(getClass().getDeclaredField(column).get(this));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

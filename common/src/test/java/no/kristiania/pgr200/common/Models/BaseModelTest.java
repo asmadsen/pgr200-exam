@@ -57,4 +57,14 @@ class User extends BaseModel<User> {
     public String name;
     @NotNull @Min(18)
     public int age;
+
+    @Override
+    public void setAttribute(String column, Object value) {
+
+    }
+
+    @Override
+    public ColumnValue getAttribute(String column) {
+        return null;
+    }
 }

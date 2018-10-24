@@ -13,92 +13,112 @@ import no.kristiania.pgr200.orm.Utils.RecordUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.sql.SQLException;
 import java.util.*;
 
 public abstract class BaseRecord<T extends IBaseModel<T>> {
-    protected IBaseModel state;
-    protected T model;
-    private BaseRecord dbState;
+    private T state;
+    private T dbState;
 
     public abstract String getTable();
 
-    public String getPrimaryKey() {
+    public String getPrimaryKey(){
         return "id";
     }
 
     protected boolean save() {
-        try {
-            String statement;
-            if (!exists()) {
-                statement = insertStatement();
-                if (executeStatement(statement, true) > 0) return true;
-            } else {
-                statement = updateStatement();
-                if (executeStatement(statement, false) > 0) {
-                    return true;
+        if(isDirty()){
+            try {
+                if (exists()) {
+                    if (update()) return true;
                 } else {
-                    statement = insertStatement();
-                    if (executeStatement(statement, true) > 0) return true;
+                    if(create()) return true;
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return false;
     }
 
-    protected boolean create() {
-        return false;
-    }
-
-    public T getModel() {
-        return model;
-    }
-
-    // TODO: Refactor to be more readable
-    protected String insertStatement() {
-        StringJoiner values = new StringJoiner(", ");
-        model.getAttributes().keySet().forEach(e -> values.add("?"));
-        return String.format("%s `%s` (`%s`) %s (%s);",
-                             Statement.INSERT.getStatement(),
-                             getTable(),
-                             String.join("`, `", model.getAttributes().keySet()),
-                             Statement.VALUES,
-                             values.toString());
-    }
-
-    // TODO: Refactor to be more readable
-    protected String updateStatement() {
-        StringJoiner columns = new StringJoiner(", ");
-        model.getAttributes().entrySet().stream()
-             .filter(set -> !set.getKey().equals("id"))
-             .forEach(e -> columns.add("`" + e.getKey() + "` " + SqlOperator.Equals.getOperator() + " ?"));
-        LinkedList<ConditionalStatement> list = new LinkedList<>();
-        list.add(new ConditionalStatement<>("id", SqlOperator.Equals, model.getAttributes().get("id").getValue()));
-        return String.format("%s `%s` %s %s %s;",
-                             Statement.UPDATE.getStatement(), getTable(),
-                             Statement.SET.getStatement(), columns.toString(),
-                             ConditionalStatement.buildStatements(list));
-    }
-
-    private int executeStatement(String statement, boolean insert) throws SQLException {
-        PreparedStatement preparedStatement = DatabaseConnection.connection.prepareStatement(statement);
-        int count = 1;
-        for (Map.Entry<String, ColumnValue> value : model.getAttributes().entrySet()) {
-            if (!insert && value.getKey().equals("id")) continue;
-            if (insert && value.getKey().equals("id")) {
-                preparedStatement.setObject(count++, UUID.randomUUID());
-                continue;
+    private boolean update() throws SQLException {
+        if(isDirty()){
+            UpdateQuery updateQuery = new UpdateQuery(getTable());
+            state.getAttributes().forEach((k,v) -> updateQuery.set(k, v.getValue()));
+            if (updateQuery.get() > 0) {
+                setDbState(SerializationUtils.clone(state));
+                return true;
             }
-            preparedStatement.setObject(count++, value.getValue().getValue());
         }
-        if (!insert) preparedStatement.setObject(count, model.getAttributes().get("id").getValue());
-        return preparedStatement.executeUpdate();
+        return false;
     }
 
-    public boolean exists() {
+    public boolean create() throws SQLException {
+        state.setAttribute(getPrimaryKey(), UUID.randomUUID());
+        InsertQuery insertQuery = new InsertQuery(getTable()).insert(this);
+        if(insertQuery.get() > 0) {
+            setDbState(SerializationUtils.clone(state));
+            return true;
+        }
         return false;
+    }
+
+    public boolean create(Map<String, ColumnValue> attributes) throws SQLException {
+        state.populateAttributes(attributes);
+        return create();
+    }
+
+    public boolean destroy() throws SQLException {
+        if(exists()){
+            DeleteQuery deleteQuery = new DeleteQuery(getTable()).whereEquals("id",
+                    state.getAttributes().get(getPrimaryKey()).getValue());
+            if(deleteQuery.get() > 0) {
+                setDbState(null);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public final List<T> all() throws SQLException {
+        return new SelectQuery<>(this, state.getAttributes().keySet().toArray(new String[0])).get();
+
+    }
+
+    public final T findById(UUID id) throws SQLException {
+        return new SelectQuery<>(this, state.getAttributes().keySet().toArray(new String[0]))
+                .whereEquals("id", id).first();
+    }
+
+    public T fill(Map<String, ColumnValue> attributes){
+        state.populateAttributes(attributes);
+        return state;
+    }
+
+    private boolean exists(){
+        return getState().getAttributes().get(getPrimaryKey()) != null;
+    }
+
+    public boolean isDirty(){
+        return !this.getState().equals(getDbState());
+    }
+
+    public T getState() {
+        return state;
+    }
+
+    protected void setState(T state) {
+        this.state = state;
+    }
+
+    public T getDbState() {
+        return dbState;
+    }
+
+    public void setDbState(T dbState) {
+        this.dbState = dbState;
     }
 
     public Map<String, AbstractRelation> getRelations() {

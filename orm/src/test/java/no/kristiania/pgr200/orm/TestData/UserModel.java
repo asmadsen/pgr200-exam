@@ -16,14 +16,11 @@ public class UserModel extends BaseRecord<User>{
 
     public UserModel() {
         super();
-        model = new User();
+        setState(new User());
     }
 
     public UserModel(UUID id, String name, String email){
-        model = new User();
-        model.setId(id);
-        model.setName(name);
-        model.setEmail(email);
+        setState(new User(id, name, email));
     }
 
     public UserModel(String fullName, String emailAddress) {
@@ -34,7 +31,6 @@ public class UserModel extends BaseRecord<User>{
     public String getTable() {
         return "users";
     }
-
     @Relation
     public HasOne<PhoneModel> phone() {
         return this.hasOne(PhoneModel.class, "userId", "id");
