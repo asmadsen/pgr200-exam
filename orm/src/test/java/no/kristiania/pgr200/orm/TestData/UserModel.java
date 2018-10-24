@@ -38,7 +38,7 @@ public class UserModel extends BaseRecord<User>{
 
     @Relation
     public HasMany<ProfilePictureModel> profilePictures() {
-        return new HasMany<>(ProfilePictureModel.class, "userId", "id");
+        return this.hasMany(ProfilePictureModel.class, "userId", "id");
     }
 
     @Relation

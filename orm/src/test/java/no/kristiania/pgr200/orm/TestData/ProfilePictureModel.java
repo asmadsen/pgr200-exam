@@ -29,6 +29,6 @@ public class ProfilePictureModel extends BaseRecord<ProfilePicture> {
 
     @Relation
     public HasOne<UserModel> user() {
-        return new HasOne<>(UserModel.class, "id", "userId");
+        return this.hasOne(UserModel.class, "id", "userId");
     }
 }

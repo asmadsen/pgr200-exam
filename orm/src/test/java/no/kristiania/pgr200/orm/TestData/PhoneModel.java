@@ -27,6 +27,6 @@ public class PhoneModel extends BaseRecord<Phone> {
 
     @Relation
     public BelongsTo<UserModel> user() {
-        return new BelongsTo<>(UserModel.class, "id", "userId");
+        return this.belongsTo(UserModel.class, "id", "userId");
     }
 }

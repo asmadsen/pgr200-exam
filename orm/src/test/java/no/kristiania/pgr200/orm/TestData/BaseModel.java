@@ -63,4 +63,7 @@ public abstract class BaseModel<T> implements IBaseModel<T> {
         }
         return null;
     }
+
+    public abstract boolean equals(Object other);
+    public abstract int hashCode();
 }

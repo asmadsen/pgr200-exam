@@ -32,11 +32,36 @@ public abstract class BaseModel<T> implements IBaseModel<T> {
     public Map<String, ColumnValue> getAttributes() {
         Map<String, ColumnValue> attributes = new HashMap<>();
         for (Field field : getClass().getDeclaredFields()) {
+            if(field.isSynthetic()) continue;
             field.setAccessible(true);
             try {
-                attributes.put(field.getName(), new ColumnValue<>(field.get(this)));
+                Object value = field.get(this);
+                if(value != null) value = new ColumnValue<>(field.get(this));
+                attributes.put(field.getName(), (ColumnValue) value);
             } catch (IllegalAccessException ignored) { }
         }
         return attributes;
     }
+
+    @Override
+    public void setAttribute(String column, Object value) {
+        try {
+            getClass().getDeclaredField(column).set(this, value);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public ColumnValue getAttribute(String column) {
+        try {
+            return new ColumnValue<>(getClass().getDeclaredField(column).get(this));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public abstract boolean equals(Object other);
+    public abstract int hashCode();
 }

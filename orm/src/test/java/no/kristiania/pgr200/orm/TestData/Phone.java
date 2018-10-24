@@ -1,5 +1,6 @@
 package no.kristiania.pgr200.orm.TestData;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Phone extends BaseModel<Phone> {
@@ -54,5 +55,21 @@ public class Phone extends BaseModel<Phone> {
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof Phone) {
+            return this.getId().equals(((Phone) other).getId()) &&
+                    this.getUserId().equals(((Phone) other).getUserId()) &&
+                    this.getPhoneNumber().equals(((Phone) other).getPhoneNumber()) &&
+            this.isVerified() == ((Phone) other).isVerified();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, phoneNumber, verified);
     }
 }

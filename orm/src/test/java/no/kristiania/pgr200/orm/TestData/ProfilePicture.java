@@ -5,6 +5,7 @@ import no.kristiania.pgr200.orm.IBaseModel;
 
 import javax.validation.ConstraintViolation;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,5 +45,20 @@ public class ProfilePicture extends BaseModel<ProfilePicture> {
 
     public void setPictureUrl(String pictureUrl) {
         this.pictureUrl = pictureUrl;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof ProfilePicture) {
+            return this.getId().equals(((ProfilePicture) other).getId()) &&
+                    this.getUserId().equals(((ProfilePicture) other).getUserId()) &&
+                    this.getPictureUrl().equals(((ProfilePicture) other).getPictureUrl());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, pictureUrl);
     }
 }
