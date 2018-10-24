@@ -59,12 +59,12 @@ class User extends BaseModel<User> {
     public int age;
 
     @Override
-    public UUID getPrimaryKey() {
-        return id;
+    public void setAttribute(String column, Object value) {
+
     }
 
     @Override
-    public void setPrimaryKey(UUID uuid) {
-        this.id = uuid;
+    public ColumnValue getAttribute(String column) {
+        return null;
     }
 }
