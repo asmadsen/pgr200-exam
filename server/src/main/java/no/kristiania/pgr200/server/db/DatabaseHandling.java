@@ -8,7 +8,6 @@ public class DatabaseHandling {
     public static Connection con;
 
     public Connection createConnection() throws SQLException {
-        System.out.println(ConferenceServer.DATASOURCE);
         return DriverManager.getConnection(
                 ConferenceServer.DATASOURCE,
                 ConferenceServer.USER,
@@ -21,13 +20,5 @@ public class DatabaseHandling {
             con = db.createConnection();
         }
         return con;
-    }
-
-    public static ResultSet selectStatement(PreparedStatement statement) throws SQLException {
-        return statement.executeQuery();
-    }
-
-    public static void executeStatement(PreparedStatement statement) throws SQLException {
-        statement.executeUpdate();
     }
 }

@@ -9,11 +9,11 @@ import java.util.UUID;
 public class PhoneModel extends BaseRecord<Phone> {
 
     public PhoneModel() {
-        this.setState(new Phone());
+        super(new Phone());
     }
 
     public PhoneModel(UUID id, UUID userId, String phoneNumber, boolean verified) {
-        this.setState(new Phone(id, userId, phoneNumber, verified));
+        super(new Phone(id, userId, phoneNumber, verified));
     }
 
     public PhoneModel(UUID userId, String phoneNumber, boolean verified) {

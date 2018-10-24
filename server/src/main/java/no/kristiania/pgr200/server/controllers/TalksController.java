@@ -19,14 +19,12 @@ public class TalksController extends BaseController {
 
     private HttpRequest httpRequest;
     private HttpResponse httpResponse;
-    private TalkModel talk;
     private Gson gson;
     private JsonObject body;
 
     public TalksController(HttpRequest httpRequest){
         this.httpRequest = httpRequest;
         this.httpResponse = new HttpResponse();
-        this.talk = new TalkModel();
         this.body = new JsonObject();
         this.gson = new GsonBuilder().setPrettyPrinting().create();
     }
@@ -40,7 +38,7 @@ public class TalksController extends BaseController {
         return httpResponse;
     }
 
-    @ApiRequest(action = HttpMethod.GET, route = "/api/talks/\\d+")
+    @ApiRequest(action = HttpMethod.GET, route = "/api/talks/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
     public HttpResponse show() throws Exception {
         body.add("value", new JsonParser().parse(gson.toJson(
                 new TalkModel().findById(UUID.fromString(httpRequest.getUri().split("/")[3])))));
@@ -52,26 +50,34 @@ public class TalksController extends BaseController {
 
     @ApiRequest(action = HttpMethod.POST, route = "/api/talks")
     public HttpResponse create( ) throws SQLException {
-        System.out.println("TEST POST Create");
-        TalkModel model = new TalkModel(httpRequest.getJson());
-        JsonElement jsonElement = null;
+        TalkModel model = new TalkModel(httpRequest.getJson().getAsJsonObject());
         if (model.create()) {
-            jsonElement = new JsonParser().parse(gson.toJson(model.getState()));
+            body.add("value", new JsonParser().parse(gson.toJson(model.getState())));
+        } else{
+            return new HttpResponse(HttpStatus.UnprocessableEntity);
         }
-        if(jsonElement == null) return new HttpResponse(HttpStatus.UnprocessableEntity);
-        return new HttpResponse(HttpStatus.Created, jsonElement);
+        return new HttpResponse(HttpStatus.Created, body);
     }
 
-    @ApiRequest(action = HttpMethod.PATCH, route = "/api/talks/\\d+")
+    @ApiRequest(action = HttpMethod.PUT, route = "/api/talks/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
     public HttpResponse update(){
-        System.out.println("TEST PATCH Update");
-        return null;
+        TalkModel model = new TalkModel(httpRequest.getUri().split("/")[3], httpRequest.getJson().getAsJsonObject());
+        if(model.save()){
+            body.add("value", new JsonParser().parse(gson.toJson(model.getState())));
+        } else {
+            return new HttpResponse(HttpStatus.UnprocessableEntity);
+        }
+        return new HttpResponse(HttpStatus.OK, body);
     }
 
-    @ApiRequest(action = HttpMethod.DELETE, route = "/api/talks/\\d+")
-    public HttpResponse destroy(){
-        System.out.println("TEST DELETE Destroy");
-        return null;
+    @ApiRequest(action = HttpMethod.DELETE, route = "/api/talks/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+    public HttpResponse destroy() throws SQLException {
+        TalkModel model = new TalkModel(httpRequest.getUri().split("/")[3], httpRequest.getJson().getAsJsonObject());
+        if(model.destroy()){
+            return new HttpResponse(HttpStatus.NoContent);
+        } else {
+            return new HttpResponse(HttpStatus.BadRequest);
+        }
     }
 
     @ApiRequest(action = HttpMethod.GET, route = "/api/talks/schedule")

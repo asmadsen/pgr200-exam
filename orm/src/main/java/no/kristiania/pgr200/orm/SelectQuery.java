@@ -3,6 +3,7 @@ package no.kristiania.pgr200.orm;
 import no.kristiania.pgr200.orm.Enums.JoinType;
 import no.kristiania.pgr200.orm.Enums.OrderDirection;
 import no.kristiania.pgr200.orm.Enums.SqlOperator;
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -118,8 +119,9 @@ public class SelectQuery<T extends BaseRecord<V>, V extends IBaseModel<V>> {
             Map<String, ColumnValue> attributes = new HashMap<>();
             for (String columnName : getColumnNames(resultSet.getMetaData()))
                 attributes.put(columnName, new ColumnValue<>(resultSet.getObject(columnName)));
-            model.getState().populateAttributes(attributes);
-            results.add(model.getState());
+            V state = SerializationUtils.clone(model.getState());
+            state.populateAttributes(attributes);
+            results.add(state);
         }
         return results;
     }
@@ -134,8 +136,9 @@ public class SelectQuery<T extends BaseRecord<V>, V extends IBaseModel<V>> {
             for (String columnName : getColumnNames(resultSet.getMetaData())) {
                 attributes.put(columnName, new ColumnValue<>(resultSet.getObject(columnName)));
             }
-            model.getState().populateAttributes(attributes);
-            return model.getState();
+            V state = SerializationUtils.clone(model.getState());
+            state.populateAttributes(attributes);
+            return state;
         }
         return null;
     }

@@ -1,9 +1,6 @@
 package no.kristiania.pgr200.orm;
 
-import jdk.nashorn.internal.ir.ReturnNode;
 import no.kristiania.pgr200.orm.Annotations.Relation;
-import no.kristiania.pgr200.orm.Enums.SqlOperator;
-import no.kristiania.pgr200.orm.Enums.Statement;
 import no.kristiania.pgr200.orm.Relations.AbstractRelation;
 import no.kristiania.pgr200.orm.Relations.BelongsTo;
 import no.kristiania.pgr200.orm.Relations.HasMany;
@@ -12,7 +9,6 @@ import no.kristiania.pgr200.orm.Utils.RecordUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.PreparedStatement;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.sql.SQLException;
@@ -22,13 +18,25 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
     private T state;
     private T dbState;
 
+    public BaseRecord(T state) {
+        setState(state);
+        if(getState().getAttributes().get(getPrimaryKey()) != null &&
+                getState().getAttributes().get(getPrimaryKey()).getValue() != null){
+            try {
+                setDbState(findById((UUID) getState().getAttributes().get(getPrimaryKey()).getValue()));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public abstract String getTable();
 
     public String getPrimaryKey(){
         return "id";
     }
 
-    protected boolean save() {
+    public boolean save() {
         if(isDirty()){
             try {
                 if (exists()) {
@@ -43,9 +51,10 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
         return false;
     }
 
-    private boolean update() throws SQLException {
+    public boolean update() throws SQLException {
         if(isDirty()){
-            UpdateQuery updateQuery = new UpdateQuery(getTable());
+            UpdateQuery updateQuery = new UpdateQuery(getTable()).whereEquals(getPrimaryKey(),
+                    state.getAttribute(getPrimaryKey()).getValue());
             state.getAttributes().forEach((k,v) -> updateQuery.set(k, v.getValue()));
             if (updateQuery.get() > 0) {
                 setDbState(SerializationUtils.clone(state));
