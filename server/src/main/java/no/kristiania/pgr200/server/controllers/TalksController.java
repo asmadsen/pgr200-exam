@@ -12,6 +12,7 @@ import no.kristiania.pgr200.server.annotations.ApiRequest;
 import no.kristiania.pgr200.server.models.TalkModel;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 @ApiController("/talks")
 public class TalksController extends BaseController {
@@ -32,7 +33,7 @@ public class TalksController extends BaseController {
 
     @ApiRequest(action = HttpMethod.GET, route = "/api/talks")
     public HttpResponse index() throws Exception {
-        body.add("values", new JsonParser().parse(gson.toJson(TalkModel.all())));
+        body.add("values", new JsonParser().parse(gson.toJson(new TalkModel().all())));
         httpResponse.setHeaders(getHeaders(gson.toJson(body)));
         httpResponse.setBody(gson.toJson(body));
         httpResponse.setStatus(HttpStatus.OK);
@@ -42,7 +43,7 @@ public class TalksController extends BaseController {
     @ApiRequest(action = HttpMethod.GET, route = "/api/talks/\\d+")
     public HttpResponse show() throws Exception {
         body.add("value", new JsonParser().parse(gson.toJson(
-                TalkModel.findBy(Integer.parseInt(httpRequest.getUri().split("/")[3])))));
+                new TalkModel().findById(UUID.fromString(httpRequest.getUri().split("/")[3])))));
         httpResponse.setHeaders(getHeaders(gson.toJson(body)));
         httpResponse.setBody(gson.toJson(body));
         httpResponse.setStatus(HttpStatus.OK);
@@ -51,11 +52,14 @@ public class TalksController extends BaseController {
 
     @ApiRequest(action = HttpMethod.POST, route = "/api/talks")
     public HttpResponse create( ) throws SQLException {
-//        System.out.println("TEST POST Create");
-//        JsonElement jsonElement = new TalkModel(httpRequest.getJson()).create();
-//        if(jsonElement == null) return new HttpResponse(HttpStatus.UnprocessableEntity);
-//        return new HttpResponse(HttpStatus.Created, jsonElement);
-        return null;
+        System.out.println("TEST POST Create");
+        TalkModel model = new TalkModel(httpRequest.getJson());
+        JsonElement jsonElement = null;
+        if (model.create()) {
+            jsonElement = new JsonParser().parse(gson.toJson(model.getState()));
+        }
+        if(jsonElement == null) return new HttpResponse(HttpStatus.UnprocessableEntity);
+        return new HttpResponse(HttpStatus.Created, jsonElement);
     }
 
     @ApiRequest(action = HttpMethod.PATCH, route = "/api/talks/\\d+")

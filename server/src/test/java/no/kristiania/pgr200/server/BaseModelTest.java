@@ -1,6 +1,7 @@
 package no.kristiania.pgr200.server;
 
 import com.github.javafaker.Faker;
+import no.kristiania.pgr200.common.Models.Talk;
 import no.kristiania.pgr200.server.models.TalkModel;
 import org.junit.*;
 
@@ -29,7 +30,7 @@ public class BaseModelTest {
     @Test
     public void shouldReturnTalksList() throws Exception {
         new TalkModel(getFakeTitle(), getFakeDescription(12));
-        List<TalkModel> talks = TalkModel.all();
+        List<Talk> talks = new TalkModel().all();
         assertEquals(1, talks.size());
     }
 }

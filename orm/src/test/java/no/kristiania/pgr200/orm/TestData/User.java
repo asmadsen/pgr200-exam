@@ -1,10 +1,5 @@
 package no.kristiania.pgr200.orm.TestData;
 
-import no.kristiania.pgr200.orm.ColumnValue;
-import no.kristiania.pgr200.orm.IBaseModel;
-
-import javax.validation.ConstraintViolation;
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class User extends BaseModel<User> {
