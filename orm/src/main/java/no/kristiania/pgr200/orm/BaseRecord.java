@@ -1,5 +1,18 @@
 package no.kristiania.pgr200.orm;
 
+import jdk.nashorn.internal.ir.ReturnNode;
+import no.kristiania.pgr200.orm.Annotations.Relation;
+import no.kristiania.pgr200.orm.Enums.SqlOperator;
+import no.kristiania.pgr200.orm.Enums.Statement;
+import no.kristiania.pgr200.orm.Relations.AbstractRelation;
+import no.kristiania.pgr200.orm.Relations.BelongsTo;
+import no.kristiania.pgr200.orm.Relations.HasMany;
+import no.kristiania.pgr200.orm.Relations.HasOne;
+import no.kristiania.pgr200.orm.Utils.RecordUtils;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.PreparedStatement;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.sql.SQLException;
@@ -106,5 +119,76 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
 
     public void setDbState(T dbState) {
         this.dbState = dbState;
+    }
+
+    public Map<String, AbstractRelation> getRelations() {
+        Map<String, AbstractRelation> relations = new HashMap<>();
+        for (Method declaredMethod : getClass().getDeclaredMethods()) {
+            if (!declaredMethod.isAnnotationPresent(Relation.class)) continue;
+            if (!declaredMethod.getReturnType().getSuperclass().equals(AbstractRelation.class)) continue;
+            try {
+                AbstractRelation<? extends BaseRecord> relation = (AbstractRelation<? extends BaseRecord>) declaredMethod.invoke(this);
+                relations.put(
+                        declaredMethod.getName(),
+                        relation
+                );
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+        return relations;
+    }
+
+    protected <V extends BaseRecord> HasOne<V> hasOne(Class<V> modelClass) {
+        String primaryKey = this.getPrimaryKey();
+        String foreignKey = RecordUtils.GuessForeignKey(this, primaryKey);
+        return this.hasOne(modelClass, foreignKey, primaryKey);
+    }
+
+    protected <V extends BaseRecord> HasOne<V> hasOne(Class<V> modelClass, String foreignKey) {
+        String primaryKey = this.getPrimaryKey();
+        return this.hasOne(modelClass, foreignKey, primaryKey);
+    }
+
+    protected <V extends BaseRecord> HasOne<V> hasOne(Class<V> modelClass, String foreignKey, String localKey) {
+        return new HasOne<>(modelClass, foreignKey, localKey);
+    }
+
+    protected <V extends BaseRecord> BelongsTo<V> belongsTo(Class<V> modelClass) {
+        try {
+            V model = modelClass.newInstance();
+            String primaryKey = model.getPrimaryKey();
+            String foreignKey = RecordUtils.GuessForeignKey(model, primaryKey);
+            return this.belongsTo(modelClass, foreignKey, primaryKey);
+        } catch (InstantiationException | IllegalAccessException ignored) {}
+        return null;
+    }
+
+    protected <V extends BaseRecord> BelongsTo<V> belongsTo(Class<V> modelClass, String foreignKey) {
+        try {
+            V model = modelClass.newInstance();
+            String primaryKey = model.getPrimaryKey();
+            return this.belongsTo(modelClass, foreignKey, primaryKey);
+        } catch (InstantiationException | IllegalAccessException ignored) {}
+        return null;
+    }
+
+    protected <V extends BaseRecord> BelongsTo<V> belongsTo(Class<V> modelClass, String foreignKey, String localKey) {
+        return new BelongsTo<>(modelClass, foreignKey, localKey);
+    }
+
+    protected <V extends BaseRecord> HasMany<V> hasMany(Class<V> modelClass) {
+        String primaryKey = this.getPrimaryKey();
+        String foreignKey = RecordUtils.GuessForeignKey(this, primaryKey);
+        return this.hasMany(modelClass, foreignKey, primaryKey);
+    }
+
+    protected <V extends BaseRecord> HasMany<V> hasMany(Class<V> modelClass, String foreignKey) {
+        String primaryKey = this.getPrimaryKey();
+        return this.hasMany(modelClass, foreignKey, primaryKey);
+    }
+
+    protected <V extends BaseRecord> HasMany<V> hasMany(Class<V> modelClass, String foreignKey, String localKey) {
+        return new HasMany<>(modelClass, foreignKey, localKey);
     }
 }

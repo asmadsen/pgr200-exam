@@ -5,32 +5,31 @@ import no.kristiania.pgr200.orm.IBaseModel;
 
 import javax.validation.ConstraintViolation;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-public class Role implements IBaseModel<Role> {
+public class Role extends BaseModel<Role> {
+    protected UUID id;
+
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
     @Override
-    public Set<ConstraintViolation<Role>> validate() {
-        return null;
+    public boolean equals(Object other) {
+        if (other instanceof User) {
+            return this.getId().equals(((User) other).getId());
+        }
+        return false;
     }
 
     @Override
-    public void populateAttributes(Map<String, ColumnValue> attributes) {
-
-    }
-
-    @Override
-    public Map<String, ColumnValue> getAttributes() {
-        return null;
-    }
-
-    @Override
-    public void setAttribute(String column, Object value) {
-
-    }
-
-    @Override
-    public ColumnValue getAttribute(String column) {
-        return null;
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

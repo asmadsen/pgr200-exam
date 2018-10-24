@@ -1,6 +1,5 @@
-package no.kristiania.pgr200.common.Models;
+package no.kristiania.pgr200.orm.TestData;
 
-import no.kristiania.pgr200.common.Utils.Utils;
 import no.kristiania.pgr200.orm.ColumnValue;
 import no.kristiania.pgr200.orm.IBaseModel;
 
@@ -13,9 +12,10 @@ import java.util.Set;
 public abstract class BaseModel<T> implements IBaseModel<T> {
     @Override
     public Set<ConstraintViolation<T>> validate() {
-        return Utils.validator().validate((T) this);
+        return null;
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     public void populateAttributes(Map<String, ColumnValue> attributes) {
         Class thisClass = getClass();
@@ -28,6 +28,8 @@ public abstract class BaseModel<T> implements IBaseModel<T> {
         }
     }
 
+
+    @SuppressWarnings("Duplicates")
     @Override
     public Map<String, ColumnValue> getAttributes() {
         Map<String, ColumnValue> attributes = new HashMap<>();
