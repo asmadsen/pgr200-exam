@@ -49,7 +49,7 @@ public class DeleteQuery<T> {
 
     public String getSqlStatement() {
         StringBuilder sql = new StringBuilder();
-        sql.append(String.format("%s `%s`", Statement.DELETE.getStatement(), getTable()));
+        sql.append(String.format("%s " + Orm.quote + "%s" + Orm.quote, Statement.DELETE.getStatement(), getTable()));
         if (this.wheres.size() > 0) {
             sql.append(" ")
                     .append(ConditionalStatement.buildStatements(this.wheres));

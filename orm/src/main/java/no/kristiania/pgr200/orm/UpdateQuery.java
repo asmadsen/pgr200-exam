@@ -53,7 +53,7 @@ public class UpdateQuery<T> {
 
     String getSqlStatement() {
         StringBuilder sql = new StringBuilder();
-        sql.append(String.format("%s `%s`", Statement.UPDATE.getStatement(), getTable()));
+        sql.append(String.format("%s " + Orm.quote + "%s" + Orm.quote, Statement.UPDATE.getStatement(), getTable()));
         if(this.sets.size() > 0) {
             sql.append(" ").append(Statement.SET.getStatement()).append(" ");
             sql.append(String.join(", ",

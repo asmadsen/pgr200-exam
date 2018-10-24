@@ -38,7 +38,7 @@ public class JoinStatement<T extends BaseRecord> {
     public String getSqlStatement(String table) {
         if (this.query != null) {
             return String.format(
-                    "%s (%s) ON `%s`.`%s` = `%s`.`%s`",
+                    "%s (%s) ON " + Orm.quote + "%s" + Orm.quote + "." + Orm.quote + "%s" + Orm.quote + " = " + Orm.quote + "%s" + Orm.quote + "." + Orm.quote + "%s" + Orm.quote,
                     this.type.getSql(),
                     this.query.getSqlStatement(),
                     this.alias,
@@ -48,7 +48,7 @@ public class JoinStatement<T extends BaseRecord> {
             );
         }
         return String.format(
-                "%s `%s` ON `%s`.`%s` = `%s`.`%s`",
+                "%s " + Orm.quote + "%s" + Orm.quote + " ON " + Orm.quote + "%s" + Orm.quote + "." + Orm.quote + "%s" + Orm.quote + " = " + Orm.quote + "%s" + Orm.quote + "." + Orm.quote + "%s" + Orm.quote,
                 this.type.getSql(),
                 this.model.getTable(),
                 this.model.getTable(),

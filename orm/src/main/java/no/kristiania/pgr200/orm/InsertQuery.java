@@ -23,8 +23,8 @@ public class InsertQuery<T extends IBaseModel<T>> {
         StringBuilder sql = new StringBuilder();
         StringJoiner values = new StringJoiner(", ");
         model.getAttributes().keySet().forEach(e -> values.add("?"));
-        sql.append(String.format("%s `%s` (`%s`) %s (%s)",
-                Statement.INSERT.getStatement(), getTable(), String.join("`, `", model.getAttributes().keySet()),
+        sql.append(String.format("%s " + Orm.quote + "%s" + Orm.quote + " (" + Orm.quote + "%s" + Orm.quote + ") %s (%s)",
+                Statement.INSERT.getStatement(), getTable(), String.join(Orm.quote + ", " + Orm.quote, model.getAttributes().keySet()),
                 Statement.VALUES, values.toString()));
         return sql.toString();
     }

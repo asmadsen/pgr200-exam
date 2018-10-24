@@ -24,10 +24,10 @@ public class ConditionalStatement<T> {
     }
 
     public String getSqlStatement() {
-        if (this.key.contains(".") && !this.key.matches(".*`[.]`.*"))
-            this.key = String.format("%s`.`%s", this.key.split("[.]")[0], this.key.split("[.]")[1]);
-        if(!operator.hasValue()) return String.format("`%s` %s", this.key, operator.getOperator());
-        return String.format("`%s` %s %s", this.key, operator.getOperator(), "?");
+        if (this.key.contains(".") && !this.key.matches(".*" + Orm.quote + "[.]" + Orm.quote + ".*"))
+            this.key = String.format("%s" + Orm.quote + "." + Orm.quote + "%s", this.key.split("[.]")[0], this.key.split("[.]")[1]);
+        if(!operator.hasValue()) return String.format(Orm.quote + "%s" + Orm.quote + " %s", this.key, operator.getOperator());
+        return String.format(Orm.quote + "%s" + Orm.quote + " %s %s", this.key, operator.getOperator(), "?");
     }
 
     public String getSqlStatement(String sqlStatement) {
