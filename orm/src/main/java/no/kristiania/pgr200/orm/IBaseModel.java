@@ -4,12 +4,11 @@ import javax.validation.ConstraintViolation;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 public interface IBaseModel<T> extends Serializable {
     Set<ConstraintViolation<T>> validate();
     void populateAttributes(Map<String, ColumnValue> attributes);
     Map<String, ColumnValue> getAttributes();
-    UUID getPrimaryKey();
-    void setPrimaryKey(UUID uuid);
+    void setAttribute(String column, Object value);
+    ColumnValue getAttribute(String column);
 }

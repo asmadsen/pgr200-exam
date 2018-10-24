@@ -11,15 +11,21 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
 
     public abstract String getTable();
 
+    public String getPrimaryKey(){
+        return "id";
+    }
+
     protected boolean save() {
-        try {
-            if (exists()) {
-                if (update()) return true;
-            } else {
-                if(create()) return true;
+        if(isDirty()){
+            try {
+                if (exists()) {
+                    if (update()) return true;
+                } else {
+                    if(create()) return true;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return false;
     }
@@ -37,7 +43,7 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
     }
 
     public boolean create() throws SQLException {
-        state.setPrimaryKey(UUID.randomUUID());
+        state.setAttribute(getPrimaryKey(), UUID.randomUUID());
         InsertQuery insertQuery = new InsertQuery(getTable()).insert(this);
         if(insertQuery.get() > 0) {
             setDbState(SerializationUtils.clone(state));
@@ -52,10 +58,13 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
     }
 
     public boolean destroy() throws SQLException {
-        DeleteQuery deleteQuery = new DeleteQuery(getTable()).whereEquals("id", state.getPrimaryKey());
-        if(deleteQuery.get() > 0) {
-            setDbState(null);
-            return true;
+        if(exists()){
+            DeleteQuery deleteQuery = new DeleteQuery(getTable()).whereEquals("id",
+                    state.getAttributes().get(getPrimaryKey()).getValue());
+            if(deleteQuery.get() > 0) {
+                setDbState(null);
+                return true;
+            }
         }
         return false;
     }
@@ -76,7 +85,7 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
     }
 
     private boolean exists(){
-        return getState().getPrimaryKey() != null;
+        return getState().getAttributes().get(getPrimaryKey()) != null;
     }
 
     public boolean isDirty(){
