@@ -2,13 +2,13 @@ package no.kristiania.pgr200.orm.TestData;
 
 import no.kristiania.pgr200.orm.Annotations.Relation;
 import no.kristiania.pgr200.orm.BaseRecord;
-import no.kristiania.pgr200.orm.Relations.HasMany;
-import no.kristiania.pgr200.orm.Relations.HasManyThrough;
-import no.kristiania.pgr200.orm.Relations.HasOne;
+import no.kristiania.pgr200.orm.Relations.AbstractRelation;
 
 import java.util.UUID;
 
-public class UserModel extends BaseRecord<User>{
+public class UserModel extends BaseRecord<UserModel, User>{
+
+    public AbstractRelation<PhoneModel, Phone, UserModel> phoneRelation;
 
     public UserModel() {
         super(new User());
@@ -26,6 +26,13 @@ public class UserModel extends BaseRecord<User>{
     public String getTable() {
         return "users";
     }
+
+    @Relation
+    public AbstractRelation<PhoneModel, Phone, UserModel> phone() {
+        return phoneRelation;
+    }
+
+    /*
     @Relation
     public HasOne<PhoneModel> phone() {
         return this.hasOne(PhoneModel.class, "userId", "id");
@@ -40,4 +47,5 @@ public class UserModel extends BaseRecord<User>{
     public HasManyThrough<UserModel> friends() {
         return new HasManyThrough<>(UserModel.class, "friends_table", "userId", "id", "friendId", "id");
     }
+    */
 }

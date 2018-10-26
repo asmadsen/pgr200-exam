@@ -2,27 +2,32 @@ package no.kristiania.pgr200.orm;
 
 import no.kristiania.pgr200.orm.Annotations.Relation;
 import no.kristiania.pgr200.orm.Relations.AbstractRelation;
-import no.kristiania.pgr200.orm.Relations.BelongsTo;
-import no.kristiania.pgr200.orm.Relations.HasMany;
-import no.kristiania.pgr200.orm.Relations.HasOne;
-import no.kristiania.pgr200.orm.Utils.RecordUtils;
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.apache.commons.lang3.SerializationUtils;
-
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public abstract class BaseRecord<T extends IBaseModel<T>> {
-    private T state;
-    private T dbState;
+public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseModel<S>> {
+    private S state;
+    private S dbState;
 
-    public BaseRecord(T state) {
+    public BaseRecord(Class<S> modelClass) {
+        try {
+            this.state = modelClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException ignored) {
+        }
+    }
+
+    public BaseRecord(S state) {
         setState(state);
         if(getState().getAttributes().get(getPrimaryKey()) != null &&
                 getState().getAttributes().get(getPrimaryKey()).getValue() != null){
-            setDbState(findById((UUID) getState().getAttributes().get(getPrimaryKey()).getValue()));
+            //setDbState(findById((UUID) getState().getAttributes().get(getPrimaryKey()).getValue()).getState());
         }
     }
 
@@ -30,6 +35,15 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
 
     public String getPrimaryKey(){
         return "id";
+    }
+
+    public T newModelInstance() {
+        try {
+            return (T) getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public boolean save() {
@@ -97,7 +111,7 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
 
     public final List<T> all() {
         try {
-            return new SelectQuery<>(this, state.getAttributes().keySet().toArray(new String[0])).get();
+            return this.newQuery().get();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -106,7 +120,7 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
 
     public final T findById(UUID id) {
         try {
-            return new SelectQuery<>(this, state.getAttributes().keySet().toArray(new String[0]))
+            return this.newQuery()
                     .whereEquals("id", id).first();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -114,9 +128,14 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
         return null;
     }
 
-    public T fill(Map<String, ColumnValue> attributes){
-        state.populateAttributes(attributes);
-        return state;
+    public SelectQuery<T, S> newQuery() throws SQLException {
+        return new SelectQuery<>((T) this, state.getAttributes().keySet().toArray(new String[0]));
+    }
+
+
+    public BaseRecord<T, S> fill(Map<String, ColumnValue> attributes){
+        this.state.populateAttributes(attributes);
+        return this;
     }
 
     private boolean exists(){
@@ -127,29 +146,29 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
         return !this.getState().equals(getDbState());
     }
 
-    public T getState() {
+    public S getState() {
         return state;
     }
 
-    protected void setState(T state) {
+    protected void setState(S state) {
         this.state = state;
     }
 
-    public T getDbState() {
+    public S getDbState() {
         return dbState;
     }
 
-    public void setDbState(T dbState) {
+    public void setDbState(S dbState) {
         this.dbState = dbState;
     }
 
-    public Map<String, AbstractRelation> getRelations() {
-        Map<String, AbstractRelation> relations = new HashMap<>();
+    public Map<String, AbstractRelation<?, ?, T>> getRelations() {
+        Map<String, AbstractRelation<?, ?, T>> relations = new HashMap<>();
         for (Method declaredMethod : getClass().getDeclaredMethods()) {
             if (!declaredMethod.isAnnotationPresent(Relation.class)) continue;
-            if (!declaredMethod.getReturnType().getSuperclass().equals(AbstractRelation.class)) continue;
+            //if (!declaredMethod.getReturnType().getSuperclass().equals(AbstractRelation.class)) continue;
             try {
-                AbstractRelation<? extends BaseRecord> relation = (AbstractRelation<? extends BaseRecord>) declaredMethod.invoke(this);
+                AbstractRelation<?, ?, T> relation = (AbstractRelation<?, ?, T>) declaredMethod.invoke(this);
                 relations.put(
                         declaredMethod.getName(),
                         relation
@@ -159,58 +178,5 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
             }
         }
         return relations;
-    }
-
-    protected <V extends BaseRecord> HasOne<V> hasOne(Class<V> modelClass) {
-        String primaryKey = this.getPrimaryKey();
-        String foreignKey = RecordUtils.GuessForeignKey(this, primaryKey);
-        return this.hasOne(modelClass, foreignKey, primaryKey);
-    }
-
-    protected <V extends BaseRecord> HasOne<V> hasOne(Class<V> modelClass, String foreignKey) {
-        String primaryKey = this.getPrimaryKey();
-        return this.hasOne(modelClass, foreignKey, primaryKey);
-    }
-
-    protected <V extends BaseRecord> HasOne<V> hasOne(Class<V> modelClass, String foreignKey, String localKey) {
-        return new HasOne<>(modelClass, foreignKey, localKey);
-    }
-
-    protected <V extends BaseRecord> BelongsTo<V> belongsTo(Class<V> modelClass) {
-        try {
-            V model = modelClass.newInstance();
-            String primaryKey = model.getPrimaryKey();
-            String foreignKey = RecordUtils.GuessForeignKey(model, primaryKey);
-            return this.belongsTo(modelClass, foreignKey, primaryKey);
-        } catch (InstantiationException | IllegalAccessException ignored) {}
-        return null;
-    }
-
-    protected <V extends BaseRecord> BelongsTo<V> belongsTo(Class<V> modelClass, String foreignKey) {
-        try {
-            V model = modelClass.newInstance();
-            String primaryKey = model.getPrimaryKey();
-            return this.belongsTo(modelClass, foreignKey, primaryKey);
-        } catch (InstantiationException | IllegalAccessException ignored) {}
-        return null;
-    }
-
-    protected <V extends BaseRecord> BelongsTo<V> belongsTo(Class<V> modelClass, String foreignKey, String localKey) {
-        return new BelongsTo<>(modelClass, foreignKey, localKey);
-    }
-
-    protected <V extends BaseRecord> HasMany<V> hasMany(Class<V> modelClass) {
-        String primaryKey = this.getPrimaryKey();
-        String foreignKey = RecordUtils.GuessForeignKey(this, primaryKey);
-        return this.hasMany(modelClass, foreignKey, primaryKey);
-    }
-
-    protected <V extends BaseRecord> HasMany<V> hasMany(Class<V> modelClass, String foreignKey) {
-        String primaryKey = this.getPrimaryKey();
-        return this.hasMany(modelClass, foreignKey, primaryKey);
-    }
-
-    protected <V extends BaseRecord> HasMany<V> hasMany(Class<V> modelClass, String foreignKey, String localKey) {
-        return new HasMany<>(modelClass, foreignKey, localKey);
     }
 }

@@ -20,6 +20,7 @@ public abstract class BaseModel<T> implements IBaseModel<T> {
     public void populateAttributes(Map<String, ColumnValue> attributes) {
         Class thisClass = getClass();
         for (Map.Entry<String, ColumnValue> entry : attributes.entrySet()) {
+            if (entry.getValue() == null) continue;
             try {
                 Field field = thisClass.getDeclaredField(entry.getKey());
                 field.setAccessible(true);

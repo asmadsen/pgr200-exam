@@ -1,12 +1,10 @@
 package no.kristiania.pgr200.orm.TestData;
 
-import no.kristiania.pgr200.orm.Annotations.Relation;
 import no.kristiania.pgr200.orm.BaseRecord;
-import no.kristiania.pgr200.orm.Relations.BelongsTo;
 
 import java.util.UUID;
 
-public class PhoneModel extends BaseRecord<Phone> {
+public class PhoneModel extends BaseRecord<PhoneModel, Phone> {
 
     public PhoneModel() {
         super(new Phone());
@@ -25,8 +23,10 @@ public class PhoneModel extends BaseRecord<Phone> {
         return "phone";
     }
 
+    /*
     @Relation
     public BelongsTo<UserModel> user() {
         return this.belongsTo(UserModel.class, "id", "userId");
     }
+    */
 }

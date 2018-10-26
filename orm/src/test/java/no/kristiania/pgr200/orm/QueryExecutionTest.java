@@ -34,7 +34,7 @@ public class QueryExecutionTest {
         setupDatabase();
         model.save();
         UUID id = model.getState().getId();
-        User user = new UserModel().findById(id);
+        UserModel user = new UserModel().findById(id);
         assertThat(user).isNotNull();
         model.destroy();
         user = new UserModel().findById(id);
@@ -45,8 +45,8 @@ public class QueryExecutionTest {
     public void shouldFindRecordById() throws SQLException {
          setupDatabase();
          model.save();
-         User user = new UserModel().findById(model.getState().getId());
-         assertThat(user)
+         UserModel user = new UserModel().findById(model.getState().getId());
+         assertThat(user.getState())
                  .hasFieldOrPropertyWithValue("id", model.getState().getId())
                  .hasFieldOrPropertyWithValue("name", model.getState().getName())
                  .hasFieldOrPropertyWithValue("email", model.getState().getEmail());
@@ -55,7 +55,7 @@ public class QueryExecutionTest {
     @Test
     public void shouldReturnNullIfNotExisting() throws SQLException {
          setupDatabase();
-         User user = new UserModel().findById(UUID.randomUUID());
+         UserModel user = new UserModel().findById(UUID.randomUUID());
          assertThat(user).isNull();
     }
 
@@ -66,7 +66,7 @@ public class QueryExecutionTest {
             UserModel userModel = new UserModel(new Faker().name().fullName(), new Faker().internet().emailAddress());
             userModel.save();
         }
-        List<User> list = new UserModel().all();
+        List<UserModel> list = new UserModel().all();
         assertEquals(10, list.size());
     }
 
@@ -102,9 +102,9 @@ public class QueryExecutionTest {
         attributes.put("email", new ColumnValue<>("john@example.com"));
 
         new UserModel().create(attributes);
-        List<User> user = new UserModel().all();
+        List<UserModel> user = new UserModel().all();
         assertThat(user.size()).isEqualTo(1);
-        assertThat(user.get(0))
+        assertThat(user.get(0).getState())
                 .hasFieldOrPropertyWithValue("name", "John Doe")
                 .hasFieldOrPropertyWithValue("email", "john@example.com");
     }

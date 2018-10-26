@@ -1,14 +1,10 @@
 package no.kristiania.pgr200.orm.TestData;
 
-import no.kristiania.pgr200.orm.Annotations.Relation;
 import no.kristiania.pgr200.orm.BaseRecord;
-import no.kristiania.pgr200.orm.Relations.HasOne;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
-public class ProfilePictureModel extends BaseRecord<ProfilePicture> {
+public class ProfilePictureModel extends BaseRecord<ProfilePictureModel, ProfilePicture> {
 
     public ProfilePictureModel() {
         super(new ProfilePicture());
@@ -27,8 +23,10 @@ public class ProfilePictureModel extends BaseRecord<ProfilePicture> {
         return "profile_picture";
     }
 
+    /*
     @Relation
     public HasOne<UserModel> user() {
         return this.hasOne(UserModel.class, "id", "userId");
     }
+    */
 }
