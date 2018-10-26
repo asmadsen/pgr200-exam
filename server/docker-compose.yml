@@ -1,10 +1,10 @@
 version: '3.5'
 services:
-  mysql:
-    image: "mysql:5.7"
+  postgres:
+    image: "postgres"
     ports:
-    - "3306:3306"
+    - "5432:5432"
     volumes:
-    - /srv/docker/conference:/var/lib/mysql
+    - /srv/docker/conference:/var/lib/postgresql/data
     environment:
-      MYSQL_ROOT_PASSWORD: testkake
+      POSTGRES_PASSWORD: postgres

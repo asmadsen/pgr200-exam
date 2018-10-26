@@ -178,7 +178,6 @@ namespace Orm {
 
     JoinStatement "1" o-- "1" JoinType
     JoinStatement "1" o-- "0..1" SelectQuery
-    JoinStatement "1" o-- "0..1" BaseRecord
 
     enum SqlOperator {
 

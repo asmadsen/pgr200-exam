@@ -81,7 +81,7 @@ public class RecordRelationsTest {
 
     @Test
     public void shouldHaveHelperMethodsToDefineRelations() {
-        BaseRecord<User> user = new BaseRecord<User>() {
+        BaseRecord<User> user = new BaseRecord<User>(new User()) {
             @Override
             public String getTable() {
                 return "users";

@@ -1,8 +1,7 @@
 package no.kristiania.pgr200.server.controllers;
 
 
-import com.google.gson.*;
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import com.google.gson.JsonParser;
 import no.kristiania.pgr200.common.Http.HttpMethod;
 import no.kristiania.pgr200.common.Http.HttpRequest;
 import no.kristiania.pgr200.common.Http.HttpResponse;
@@ -11,66 +10,77 @@ import no.kristiania.pgr200.server.annotations.ApiController;
 import no.kristiania.pgr200.server.annotations.ApiRequest;
 import no.kristiania.pgr200.server.models.TalkModel;
 
-import java.sql.SQLException;
+import java.util.UUID;
 
 @ApiController("/talks")
 public class TalksController extends BaseController {
 
-    private HttpRequest httpRequest;
-    private HttpResponse httpResponse;
-    private TalkModel talk;
-    private Gson gson;
-    private JsonObject body;
-
     public TalksController(HttpRequest httpRequest){
-        this.httpRequest = httpRequest;
-        this.httpResponse = new HttpResponse();
-        this.talk = new TalkModel();
-        this.body = new JsonObject();
-        this.gson = new GsonBuilder().setPrettyPrinting().create();
+        super(httpRequest);
+
     }
 
-    @ApiRequest(action = HttpMethod.GET, route = "/api/talks")
-    public HttpResponse index() throws Exception {
-        body.add("values", new JsonParser().parse(gson.toJson(TalkModel.all())));
-        httpResponse.setHeaders(getHeaders(gson.toJson(body)));
-        httpResponse.setBody(gson.toJson(body));
+    @Override
+    @ApiRequest(action = HttpMethod.GET, route = "/talks")
+    public HttpResponse index() {
+        getBody().add("values", new JsonParser().parse(getGsonBuilder().toJson(new TalkModel().all())));
+        httpResponse.setHeaders(getHeaders(getGsonBuilder().toJson(getBody())));
+        httpResponse.setBody(getGsonBuilder().toJson(getBody()));
         httpResponse.setStatus(HttpStatus.OK);
         return httpResponse;
     }
 
-    @ApiRequest(action = HttpMethod.GET, route = "/api/talks/\\d+")
-    public HttpResponse show() throws Exception {
-        body.add("value", new JsonParser().parse(gson.toJson(
-                TalkModel.findBy(Integer.parseInt(httpRequest.getUri().split("/")[3])))));
-        httpResponse.setHeaders(getHeaders(gson.toJson(body)));
-        httpResponse.setBody(gson.toJson(body));
+    @Override
+    @ApiRequest(action = HttpMethod.GET, route = "/talks" + uuidPath)
+    public HttpResponse show() {
+        if(!validateUUID(getHttpRequest().getUri().split("/")[2])) {
+            getBody().add("error", getErrorMessage("Could not find Talk with id: " + getHttpRequest().getUri().replaceFirst("/", "")));
+            return new HttpResponse(HttpStatus.BadRequest, getBody());
+        }
+        getBody().add("value", new JsonParser().parse(getGsonBuilder().toJson(
+                new TalkModel().findById(UUID.fromString(getHttpRequest().getUri().split("/")[2])))));
+        httpResponse.setHeaders(getHeaders(getGsonBuilder().toJson(getBody())));
+        httpResponse.setBody(getGsonBuilder().toJson(getBody()));
         httpResponse.setStatus(HttpStatus.OK);
         return httpResponse;
     }
 
-    @ApiRequest(action = HttpMethod.POST, route = "/api/talks")
-    public HttpResponse create( ) throws SQLException {
-//        System.out.println("TEST POST Create");
-//        JsonElement jsonElement = new TalkModel(httpRequest.getJson()).create();
-//        if(jsonElement == null) return new HttpResponse(HttpStatus.UnprocessableEntity);
-//        return new HttpResponse(HttpStatus.Created, jsonElement);
-        return null;
+    @Override
+    @ApiRequest(action = HttpMethod.POST, route = "/talks")
+    public HttpResponse create( )  {
+        TalkModel model = new TalkModel(getHttpRequest().getJson().getAsJsonObject());
+        if (model.create()) {
+            getBody().add("value", new JsonParser().parse(getGsonBuilder().toJson(model.getState())));
+        } else{
+            return new HttpResponse(HttpStatus.UnprocessableEntity);
+        }
+        return new HttpResponse(HttpStatus.Created, getBody());
     }
 
-    @ApiRequest(action = HttpMethod.PATCH, route = "/api/talks/\\d+")
+    @Override
+    @ApiRequest(action = HttpMethod.PUT, route = "/talks" + uuidPath)
     public HttpResponse update(){
-        System.out.println("TEST PATCH Update");
-        return null;
+        TalkModel model = new TalkModel(getHttpRequest().getUri().split("/")[1], getHttpRequest().getJson().getAsJsonObject());
+        if(model.save()){
+            getBody().add("value", new JsonParser().parse(getGsonBuilder().toJson(model.getState())));
+        } else {
+            return new HttpResponse(HttpStatus.UnprocessableEntity);
+        }
+        return new HttpResponse(HttpStatus.OK, getBody());
     }
 
-    @ApiRequest(action = HttpMethod.DELETE, route = "/api/talks/\\d+")
-    public HttpResponse destroy(){
-        System.out.println("TEST DELETE Destroy");
-        return null;
+    @Override
+    @ApiRequest(action = HttpMethod.DELETE, route = "/talks" + uuidPath)
+    public HttpResponse destroy() {
+        TalkModel model = new TalkModel(getHttpRequest().getUri().split("/")[1], getHttpRequest().getJson().getAsJsonObject());
+        if(model.destroy()){
+            return new HttpResponse(HttpStatus.NoContent);
+        } else {
+            return new HttpResponse(HttpStatus.BadRequest);
+        }
     }
 
-    @ApiRequest(action = HttpMethod.GET, route = "/api/talks/schedule")
+    @ApiRequest(action = HttpMethod.GET, route = "/schedule")
     public HttpResponse allInASchedule(){
         System.out.println("TEST GET All in a schedule");
         return null;

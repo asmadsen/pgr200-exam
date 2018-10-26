@@ -7,10 +7,10 @@ import no.kristiania.pgr200.common.Http.HttpStatus;
 import no.kristiania.pgr200.server.annotations.ApiController;
 import no.kristiania.pgr200.server.annotations.ApiRequest;
 
-@ApiController("/schedule")
-public class ScheduleController extends BaseController {
+@ApiController("/topic")
+public class TopicController extends BaseController{
 
-    public ScheduleController(HttpRequest httpRequest){
+    public TopicController(HttpRequest httpRequest){
         super(httpRequest);
     }
 
