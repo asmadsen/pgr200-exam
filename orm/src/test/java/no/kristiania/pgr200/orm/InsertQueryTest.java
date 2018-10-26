@@ -3,6 +3,7 @@ package no.kristiania.pgr200.orm;
 import no.kristiania.pgr200.orm.TestData.UserModel;
 import org.junit.Test;
 
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -18,7 +19,9 @@ import static org.mockito.Mockito.verify;
 public class InsertQueryTest {
 
     @Test
-    public void shouldComposeInsertStatement(){
+    public void shouldComposeInsertStatement() throws SQLException {
+        Orm.connection = DriverManager.getConnection(
+                "jdbc:h2:mem:conference_server;DB_CLOSE_DELAY=-1", "sa", "sa");
         UserModel model = new UserModel(UUID.randomUUID(), "John Doe", "john@example.com");
         InsertQuery query = new InsertQuery("users").insert(model);
 
@@ -27,6 +30,8 @@ public class InsertQueryTest {
 
     @Test
     public void shouldPopulateStatement() throws SQLException {
+        Orm.connection = DriverManager.getConnection(
+                "jdbc:h2:mem:conference_server;DB_CLOSE_DELAY=-1", "sa", "sa");
         UserModel model = new UserModel(UUID.randomUUID(), "John Doe", "john@example.com");
         InsertQuery query = new InsertQuery("users").insert(model);
 

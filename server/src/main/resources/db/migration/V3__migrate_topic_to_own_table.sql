@@ -1,0 +1,7 @@
+ALTER TABLE talks DROP COLUMN topic;
+ALTER TABLE talks ADD topic_id UUID;
+
+CREATE TABLE topics (
+  id UUID NOT NULL PRIMARY KEY,
+  topic VARCHAR(255) NOT NULL
+)

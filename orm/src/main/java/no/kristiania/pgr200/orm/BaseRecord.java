@@ -22,11 +22,7 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
         setState(state);
         if(getState().getAttributes().get(getPrimaryKey()) != null &&
                 getState().getAttributes().get(getPrimaryKey()).getValue() != null){
-            try {
-                setDbState(findById((UUID) getState().getAttributes().get(getPrimaryKey()).getValue()));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            setDbState(findById((UUID) getState().getAttributes().get(getPrimaryKey()).getValue()));
         }
     }
 
@@ -64,12 +60,16 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
         return false;
     }
 
-    public boolean create() throws SQLException {
+    public boolean create() {
         state.setAttribute(getPrimaryKey(), UUID.randomUUID());
         InsertQuery insertQuery = new InsertQuery(getTable()).insert(this);
-        if(insertQuery.get() > 0) {
-            setDbState(SerializationUtils.clone(state));
-            return true;
+        try {
+            if(insertQuery.get() > 0) {
+                setDbState(SerializationUtils.clone(state));
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return false;
     }
@@ -79,26 +79,39 @@ public abstract class BaseRecord<T extends IBaseModel<T>> {
         return create();
     }
 
-    public boolean destroy() throws SQLException {
+    public boolean destroy() {
         if(exists()){
             DeleteQuery deleteQuery = new DeleteQuery(getTable()).whereEquals("id",
                     state.getAttributes().get(getPrimaryKey()).getValue());
-            if(deleteQuery.get() > 0) {
-                setDbState(null);
-                return true;
+            try {
+                if(deleteQuery.get() > 0) {
+                    setDbState(null);
+                    return true;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return false;
     }
 
-    public final List<T> all() throws SQLException {
-        return new SelectQuery<>(this, state.getAttributes().keySet().toArray(new String[0])).get();
-
+    public final List<T> all() {
+        try {
+            return new SelectQuery<>(this, state.getAttributes().keySet().toArray(new String[0])).get();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public final T findById(UUID id) throws SQLException {
-        return new SelectQuery<>(this, state.getAttributes().keySet().toArray(new String[0]))
-                .whereEquals("id", id).first();
+    public final T findById(UUID id) {
+        try {
+            return new SelectQuery<>(this, state.getAttributes().keySet().toArray(new String[0]))
+                    .whereEquals("id", id).first();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public T fill(Map<String, ColumnValue> attributes){

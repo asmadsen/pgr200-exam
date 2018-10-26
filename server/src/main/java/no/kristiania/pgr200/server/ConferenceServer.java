@@ -2,6 +2,8 @@ package no.kristiania.pgr200.server;
 
 import no.kristiania.pgr200.common.Http.HttpParser;
 import no.kristiania.pgr200.common.Http.HttpRequest;
+import no.kristiania.pgr200.common.Http.HttpResponse;
+import no.kristiania.pgr200.common.Http.HttpStatus;
 import no.kristiania.pgr200.orm.Orm;
 import no.kristiania.pgr200.server.db.DatabaseHandling;
 import org.flywaydb.core.Flyway;
@@ -29,7 +31,7 @@ public class ConferenceServer implements Runnable {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
         Flyway flyway = new Flyway();
         flyway.setDataSource("jdbc:postgresql://localhost/postgres", "postgres", "postgres");
         flyway.setSchemas("conference_server");
@@ -53,7 +55,12 @@ public class ConferenceServer implements Runnable {
             HttpRequest httpRequest = new HttpParser().parseRequest(in);
             RequestHandler requestHandler = new RequestHandler(httpRequest);
             if(httpRequest.getUri() != null || httpRequest.getHttpMethod() != null) {
-                requestHandler.processRequest(out);
+                if(!httpRequest.getUri().startsWith("/api")) {
+                    new HttpResponse(HttpStatus.NotFound).writeToStream(out);
+                } else {
+                    httpRequest.setUri(httpRequest.getUri().replaceFirst("/api", ""));
+                    requestHandler.processRequest(out);
+                }
             }
             connection.close();
         } catch (Exception e) {
