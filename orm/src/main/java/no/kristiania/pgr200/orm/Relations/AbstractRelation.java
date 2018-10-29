@@ -1,21 +1,22 @@
 package no.kristiania.pgr200.orm.Relations;
 
 import no.kristiania.pgr200.orm.BaseRecord;
+import no.kristiania.pgr200.orm.Enums.SqlOperator;
+import no.kristiania.pgr200.orm.Generics.Listable;
 import no.kristiania.pgr200.orm.IBaseModel;
 import no.kristiania.pgr200.orm.SelectQuery;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Collection;
+import java.util.List;
 
-public abstract class AbstractRelation<T extends BaseRecord<T, M>, M extends IBaseModel<M>, P extends BaseRecord<P, ? extends IBaseModel<?>>> {
+public abstract class AbstractRelation<T extends BaseRecord<T, M>, M extends IBaseModel<M>, P extends BaseRecord<P, ?>> {
     protected SelectQuery<T, M> query;
-    protected P parent;
-    protected T related;
+    protected final P parent;
+    protected final T related;
 
     protected static boolean AddsConstraints = true;
 
-
-    protected String foreignKey;
-    protected String localKey;
     protected Class<T> relationRecord;
 
     public AbstractRelation(SelectQuery<T, M> query, P parent) {
@@ -36,20 +37,14 @@ public abstract class AbstractRelation<T extends BaseRecord<T, M>, M extends IBa
 
     abstract public void addEagerConstraints(Collection<P> models);
 
-    abstract public Collection<P> initRelation(Collection<P> models, String relation);
+    abstract public List<P> initRelation(List<P> models, String relation);
 
-    abstract public Collection<P> match(Collection<P> models, Collection<T> results, String relation);
+    abstract public List<P> match(List<P> models, Collection<T> results, String relation);
 
-    abstract public Collection<T> getResults();
+    abstract public Listable<T> getResults();
 
-    public Collection<T> getEager() {
-        return this.get();
-    }
-
-    private Collection<T> get() {
-        return null;
-
-        //return this.query.get();
+    public Listable<T> getEager() {
+        return this.getResults();
     }
 
     public SelectQuery<T, M> getQuery() {

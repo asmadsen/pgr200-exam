@@ -85,7 +85,7 @@ public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
         return this;
     }
 
-    public Collection<T> eagerLoadRelations(Collection<T> models) {
+    public List<T> eagerLoadRelations(List<T> models) {
         for (Map.Entry<String, Consumer<AbstractRelation<?, ?, T>>> entry : this.eagerLoads.entrySet()) {
             if (!entry.getKey().contains(".")) {
                 models = this.eagerLoadRelation(models, entry.getKey(), entry.getValue());
@@ -94,10 +94,12 @@ public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
         return models;
     }
 
-    private <R extends BaseRecord<R, O>, O extends IBaseModel<O>> Collection<T> eagerLoadRelation(Collection<T> models, String name, Consumer<AbstractRelation<?, ?, T>> constraints) {
+    private <R extends BaseRecord<R, O>, O extends IBaseModel<O>> List<T> eagerLoadRelation(List<T> models, String name, Consumer<AbstractRelation<?, ?, T>> constraints) {
         Map<String, AbstractRelation<?, ?, T>> relations = this.getModel().getRelations();
 
         AbstractRelation<R, O, T> relation = (AbstractRelation<R, O, T>) relations.get(name);
+
+        if (relation == null) return models;
 
         relation.addEagerConstraints(models);
 
@@ -108,7 +110,7 @@ public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
 
         return relation.match(
                 relation.initRelation(models, name),
-                relation.getEager(), name
+                relation.getEager().getListValue(), name
         );
     }
 
@@ -120,7 +122,14 @@ public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
         int counter = 1;
         for (ConditionalStatement where : this.wheres) {
             if (where.getOperator().hasValue()) {
-                statement.setObject(counter++, where.getValue());
+                Collection listValue = where.getListValue();
+                if (listValue != null) {
+                    for (Object o : listValue) {
+                        statement.setObject(counter++, o);
+                    }
+                } else {
+                    statement.setObject(counter++, where.getValue());
+                }
             }
         }
     }
@@ -136,6 +145,11 @@ public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
 
     public <X> SelectQuery<T, V> whereNot(String column, X value) {
         where(column, SqlOperator.Not, value);
+        return this;
+    }
+
+    public SelectQuery<T, V> whereNotNull(String column) {
+        where(column, SqlOperator.NotNull, null);
         return this;
     }
 
@@ -171,39 +185,37 @@ public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
         return this;
     }
 
-    public List<T> get() throws SQLException {
-        PreparedStatement statement = Orm.connection.prepareStatement(getSqlStatement());
-        populateStatement(statement);
-        ResultSet resultSet = statement.executeQuery();
+    public List<T> get() {
         List<T> results = new LinkedList<>();
-        while(resultSet.next()){
-            Map<String, ColumnValue> attributes = new HashMap<>();
-            for (String columnName : getColumnNames(resultSet.getMetaData()))
-                attributes.put(columnName, new ColumnValue<>(resultSet.getObject(columnName)));
-            T entry = this.getModel().newModelInstance();
-            entry.getState().populateAttributes(attributes);
-            results.add(entry);
+        try {
+            PreparedStatement statement = Orm.connection.prepareStatement(getSqlStatement());
+            populateStatement(statement);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Map<String, ColumnValue> attributes = new HashMap<>();
+                for (String columnName : getColumnNames(resultSet.getMetaData()))
+                    attributes.put(columnName, new ColumnValue<>(resultSet.getObject(columnName)));
+                T entry = this.getModel().newModelInstance();
+                V state = entry.newStateInstance();
+                state.populateAttributes(attributes);
+                entry.setState(state);
+                state = entry.newStateInstance();
+                state.populateAttributes(attributes);
+                entry.setDbState(state);
+                results.add(entry);
+            }
+            results = this.eagerLoadRelations(results);
+        } catch (SQLException ignored) {
+            System.out.println(ignored);
         }
         return results;
     }
 
-    public T first() throws SQLException {
+    public T first() {
         limit(1);
-        PreparedStatement statement = Orm.connection.prepareStatement(getSqlStatement());
-        populateStatement(statement);
-        ResultSet resultSet = statement.executeQuery();
-        if(resultSet.next()) {
-            Map<String, ColumnValue> attributes = new HashMap<>();
-            for (String columnName : getColumnNames(resultSet.getMetaData())) {
-                attributes.put(columnName, new ColumnValue<>(resultSet.getObject(columnName)));
-            }
-            T entry = this.getModel().newModelInstance();
-            entry.getState().populateAttributes(attributes);
-            return entry;
-            /*S state = SerializationUtils.clone(model.getState());
-            state.populateAttributes(attributes);
-            return state;
-            */
+        List<T> list = this.get();
+        if (list.size() > 0) {
+            return list.get(0);
         }
         return null;
     }

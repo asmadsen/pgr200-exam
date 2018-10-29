@@ -24,7 +24,7 @@ public enum SqlOperator {
     Not("NOT"),
     Or("OR"),
     Null("NULL"),
-    NotNull("NOT NULL", false),
+    NotNull("IS NOT NULL", false),
     IsNull("IS NULL", false),
     Unique("UNIQUE");
 

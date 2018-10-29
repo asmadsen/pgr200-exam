@@ -1,41 +1,91 @@
 package no.kristiania.pgr200.orm.Query;
 
+import com.github.javafaker.Faker;
+import no.kristiania.pgr200.orm.Orm;
 import no.kristiania.pgr200.orm.Relations.AbstractRelation;
 import no.kristiania.pgr200.orm.SelectQuery;
-import no.kristiania.pgr200.orm.TestData.Phone;
-import no.kristiania.pgr200.orm.TestData.PhoneModel;
-import no.kristiania.pgr200.orm.TestData.User;
-import no.kristiania.pgr200.orm.TestData.UserModel;
+import no.kristiania.pgr200.orm.TestData.*;
+import no.kristiania.pgr200.orm.TestUtils;
+import org.flywaydb.core.Flyway;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class RelationQueryTest {
+    Faker faker = new Faker();
+
+    @Before
+    public void setupDb() throws SQLException {
+        TestUtils.setupDatabase();
+    }
+
     @Test
-    public void shouldCallRelationMethods() throws SQLException {
-        UserModel userModel = new UserModel();
-        AbstractRelation<PhoneModel, Phone, UserModel> phoneMock = mock(AbstractRelation.class);
-        userModel.phoneRelation = phoneMock;
+    public void shouldGetHasOneRelationship() {
+        UserModel userModel = UserModel.Create(null, faker.funnyName().name(), faker.internet().emailAddress());
+        PhoneModel phoneModel = PhoneModel.Create(null, userModel.getPrimaryKeyValue(), faker.phoneNumber().cellPhone());
 
-        SelectQuery<UserModel, User> query = userModel.newQuery().with("phone");
+        UserModel result = userModel.newQuery().with("phone").whereEquals("id", userModel.getPrimaryKeyValue()).first();
+        assertThat(result.getState()).isEqualTo(userModel.getState());
+        assertThat(result.getRelation("phone", PhoneModel.class).getValue().getState()).isEqualTo(phoneModel.getState());
+    }
 
-        List<UserModel> users = new ArrayList<>();
+    @Test
+    public void shouldGetBelongsToRelationship() {
+        UserModel userModel = UserModel.Create(null, faker.funnyName().name(), faker.internet().emailAddress());
+        PhoneModel phoneModel = PhoneModel.Create(null, userModel.getPrimaryKeyValue(), faker.phoneNumber().cellPhone());
 
-        UserModel user = (UserModel) userModel.newModelInstance();
+        assertThat(phoneModel.getRelation("user", UserModel.class).getValue()).isEqualTo(userModel);
 
-        user.fill(new User(null, "Ola Nordmann", "ola@nordmann.no").getAttributes());
-        users.add(user);
+        PhoneModel result = phoneModel.newQuery().with("user").whereEquals("id", phoneModel.getPrimaryKeyValue()).first();
+        assertThat(result.getState()).isEqualTo(phoneModel.getState());
+        assertThat(result.getRelation("user", UserModel.class).getValue().getState()).isEqualTo(userModel.getState());
+    }
 
-        query.eagerLoadRelations(users);
+    @Test
+    public void shouldGetHasMany() {
+        UserModel userModel = UserModel.Create(null, faker.funnyName().name(), faker.internet().emailAddress());
+        PostModel post1 = PostModel.Create(null,
+                                            faker.name().title(),
+                                            faker.internet().slug(),
+                                            faker.lorem().paragraph(),
+                                            userModel.getPrimaryKeyValue());
+        PostModel post2 = PostModel.Create(null,
+                                           faker.name().title(),
+                                           faker.internet().slug(),
+                                           faker.lorem().paragraph(),
+                                           userModel.getPrimaryKeyValue());
 
-        verify(phoneMock).addEagerConstraints(ArgumentMatchers.eq(users));
-        verify(phoneMock).initRelation(eq(users), eq("phone"));
+        assertThat(userModel.getRelation("posts", PostModel.class).getListValue())
+                .isInstanceOf(Collection.class)
+                .containsOnlyOnce(post1, post2);
+
+        UserModel result = userModel.newQuery().with("posts").whereEquals("id", userModel.getPrimaryKeyValue()).first();
+        assertThat(result.getState()).isEqualTo(userModel.getState());
+        Collection<PostModel> posts = result.getRelation("posts", PostModel.class)
+                                 .getListValue();
+
+        assertThat(posts)
+                .isInstanceOf(Collection.class)
+                .containsOnlyOnce(post1, post2);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenQueryingForUndefinedRelation() {
+        UserModel userModel = UserModel.Create(null, faker.funnyName().name(), faker.internet().emailAddress());
+
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> userModel.getRelation("friends", UserModel.class));
     }
 }

@@ -11,4 +11,5 @@ public interface IBaseModel<T> extends Serializable {
     Map<String, ColumnValue> getAttributes();
     void setAttribute(String column, Object value);
     ColumnValue getAttribute(String column);
+    T newStateInstance();
 }
