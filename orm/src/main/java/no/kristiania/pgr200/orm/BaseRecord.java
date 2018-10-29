@@ -58,15 +58,15 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
         if(isDirty()){
             try {
                 if (exists()) {
-                    if (update()) return true;
+                    if (!update()) return false;
                 } else {
-                    if(create()) return true;
+                    if(!create()) return false;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        return false;
+        return true;
     }
 
     public boolean update() throws SQLException {
@@ -77,9 +77,11 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
             if (updateQuery.get() > 0) {
                 setDbState(SerializationUtils.clone(state));
                 return true;
+            } else {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public boolean create() {
@@ -96,7 +98,7 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
         return false;
     }
 
-    public boolean create(Map<String, ColumnValue> attributes) throws SQLException {
+    public boolean create(Map<String, ColumnValue> attributes) {
         state.populateAttributes(attributes);
         return create();
     }

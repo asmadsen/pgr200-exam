@@ -15,32 +15,32 @@ public class ScheduleController extends BaseController {
     }
 
     @Override
-    @ApiRequest(action = HttpMethod.GET, route = "/")
-    HttpResponse index() {
+    @ApiRequest(action = HttpMethod.GET, route = "/schedule")
+    public HttpResponse index() {
         return new HttpResponse(HttpStatus.NotImplemented);
     }
 
     @Override
-    @ApiRequest(action = HttpMethod.GET, route = uuidPath)
-    HttpResponse show() {
+    @ApiRequest(action = HttpMethod.GET, route = "/schedule" + uuidPath)
+    public HttpResponse show() {
         return new HttpResponse(HttpStatus.NotImplemented);
     }
 
     @Override
-    @ApiRequest(action = HttpMethod.PUT, route = uuidPath)
-    HttpResponse update() {
+    @ApiRequest(action = HttpMethod.PUT, route = "/schedule" + uuidPath)
+    public HttpResponse update() {
         return new HttpResponse(HttpStatus.NotImplemented);
     }
 
     @Override
-    @ApiRequest(action = HttpMethod.POST, route = "/")
-    HttpResponse create() {
+    @ApiRequest(action = HttpMethod.POST, route = "/schedule")
+    public HttpResponse create() {
         return new HttpResponse(HttpStatus.NotImplemented);
     }
 
     @Override
-    @ApiRequest(action = HttpMethod.DELETE, route = uuidPath)
-    HttpResponse destroy() {
+    @ApiRequest(action = HttpMethod.DELETE, route = "/schedule" + uuidPath)
+    public HttpResponse destroy() {
         return new HttpResponse(HttpStatus.NotImplemented);
     }
 }

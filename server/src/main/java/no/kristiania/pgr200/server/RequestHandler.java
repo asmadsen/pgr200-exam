@@ -5,9 +5,7 @@ import no.kristiania.pgr200.common.Http.HttpResponse;
 import no.kristiania.pgr200.common.Http.HttpStatus;
 import no.kristiania.pgr200.server.annotations.ApiRequest;
 import no.kristiania.pgr200.server.annotations.ApiController;
-import no.kristiania.pgr200.server.controllers.BaseController;
-import no.kristiania.pgr200.server.controllers.ScheduleController;
-import no.kristiania.pgr200.server.controllers.TalksController;
+import no.kristiania.pgr200.server.controllers.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -49,10 +47,14 @@ class RequestHandler {
     }
 
     private HashMap<BaseController, ApiController> getControllers(){
-        // TODO: Use enum for controller classes?
         HashMap<BaseController, ApiController> annotations = new HashMap<>();
         annotations.put(new TalksController(httpRequest), TalksController.class.getAnnotation(ApiController.class));
         annotations.put(new ScheduleController(httpRequest), ScheduleController.class.getAnnotation(ApiController.class));
+        annotations.put(new TopicsController(httpRequest), TopicsController.class.getAnnotation(ApiController.class));
+        annotations.put(new DaysController(httpRequest), DaysController.class.getAnnotation(ApiController.class));
+        annotations.put(new ConferenceController(httpRequest), ConferenceController.class.getAnnotation(ApiController.class));
+        annotations.put(new TracksController(httpRequest), TracksController.class.getAnnotation(ApiController.class));
+        annotations.put(new TimeslotController(httpRequest), TimeslotController.class.getAnnotation(ApiController.class));
         return annotations;
     }
 

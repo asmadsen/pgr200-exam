@@ -13,19 +13,19 @@ public class TalkModel extends BaseRecord<TalkModel, Talk> {
     }
 
     public TalkModel(JsonObject talk){
-        super(new Talk(talk.get("title").getAsString(), talk.get("description").getAsString()));
+        super(new Talk(talk));
     }
 
-    public TalkModel(String id, JsonObject talk){
-        super(new Talk(UUID.fromString(id), talk.get("title").getAsString(), talk.get("description").getAsString()));
+    public TalkModel(UUID uuid, JsonObject talk){
+        super(new Talk(uuid, talk));
     }
 
     public TalkModel(String title, String description){
         super(new Talk(title, description));
     }
 
-    public TalkModel(String id, String title, String description){
-        super(new Talk(UUID.fromString(id), title, description));
+    public TalkModel(UUID uuid) {
+        super(new Talk(uuid));
     }
 
     @Override

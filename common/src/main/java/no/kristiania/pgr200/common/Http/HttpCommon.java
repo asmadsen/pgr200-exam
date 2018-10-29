@@ -2,6 +2,8 @@ package no.kristiania.pgr200.common.Http;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -68,7 +70,17 @@ public abstract class HttpCommon {
         this.body = body;
         if (this.headers.containsKey("Content-Type")) {
             if (this.headers.get("Content-Type").equals("application/json")) {
-                this.json = (new Gson()).fromJson(body, JsonElement.class);
+                try {
+                    this.json = (new Gson()).fromJson(body, JsonElement.class);
+                    this.headers.put("Content-Length", String.valueOf(body.length()));
+                } catch (JsonSyntaxException jsonSyntaxException) {
+                    JsonObject error = new JsonObject();
+                    JsonObject malformed = new JsonObject();
+                    malformed.addProperty("message", jsonSyntaxException.getMessage());
+                    error.add("error", malformed);
+                    this.json = error;
+                    this.body = error.toString();
+                }
             }
         }
     }
