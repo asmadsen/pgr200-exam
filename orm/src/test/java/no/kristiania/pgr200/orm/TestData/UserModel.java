@@ -2,13 +2,15 @@ package no.kristiania.pgr200.orm.TestData;
 
 import no.kristiania.pgr200.orm.Annotations.Relation;
 import no.kristiania.pgr200.orm.BaseRecord;
+import no.kristiania.pgr200.orm.Relations.AbstractRelation;
 import no.kristiania.pgr200.orm.Relations.HasMany;
-import no.kristiania.pgr200.orm.Relations.HasManyThrough;
 import no.kristiania.pgr200.orm.Relations.HasOne;
 
 import java.util.UUID;
 
-public class UserModel extends BaseRecord<User>{
+public class UserModel extends BaseRecord<UserModel, User>{
+
+    public AbstractRelation<PhoneModel, Phone, UserModel> phoneRelation;
 
     public UserModel() {
         super(new User());
@@ -22,22 +24,24 @@ public class UserModel extends BaseRecord<User>{
         this(null, fullName, emailAddress);
     }
 
+    public static UserModel Create(UUID id, String name, String email) {
+        UserModel userModel = new UserModel(id, name, email);
+        userModel.save();
+        return userModel;
+    }
+
     @Override
     public String getTable() {
         return "users";
     }
+
     @Relation
-    public HasOne<PhoneModel> phone() {
-        return this.hasOne(PhoneModel.class, "userId", "id");
+    public HasOne<PhoneModel, Phone, UserModel> phone() {
+        return this.hasOne(new PhoneModel(), "user_id", "id");
     }
 
     @Relation
-    public HasMany<ProfilePictureModel> profilePictures() {
-        return this.hasMany(ProfilePictureModel.class, "userId", "id");
-    }
-
-    @Relation
-    public HasManyThrough<UserModel> friends() {
-        return new HasManyThrough<>(UserModel.class, "friends_table", "userId", "id", "friendId", "id");
+    public HasMany<PostModel, Post, UserModel> posts() {
+        return this.hasMany(new PostModel(), "user_id", "id");
     }
 }

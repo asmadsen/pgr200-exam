@@ -5,24 +5,20 @@ import java.util.UUID;
 
 public class Phone extends BaseModel<Phone> {
     protected UUID id;
-    public UUID userId;
-    public String phoneNumber;
-    public boolean verified;
+    public UUID user_id;
+    public String phone_number;
 
     public Phone() {
     }
 
-    public Phone(UUID id, UUID userId, String phoneNumber, boolean verified) {
+    public Phone(UUID id, UUID userId, String phoneNumber) {
         this.id = id;
-        this.userId = userId;
-        this.phoneNumber = phoneNumber;
-        this.verified = verified;
+        this.user_id = userId;
+        this.phone_number = phoneNumber;
     }
 
-    public Phone(UUID userId, String phoneNumber, boolean verified) {
-        this.userId = userId;
-        this.phoneNumber = phoneNumber;
-        this.verified = verified;
+    public Phone(UUID userId, String phoneNumber) {
+        this(null, userId, phoneNumber);
     }
 
     public UUID getId() {
@@ -34,27 +30,19 @@ public class Phone extends BaseModel<Phone> {
     }
 
     public UUID getUserId() {
-        return userId;
+        return user_id;
     }
 
     public void setUserId(UUID userId) {
-        this.userId = userId;
+        this.user_id = userId;
     }
 
     public String getPhoneNumber() {
-        return phoneNumber;
+        return phone_number;
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public boolean isVerified() {
-        return verified;
-    }
-
-    public void setVerified(boolean verified) {
-        this.verified = verified;
+        this.phone_number = phoneNumber;
     }
 
     @Override
@@ -62,14 +50,13 @@ public class Phone extends BaseModel<Phone> {
         if (other instanceof Phone) {
             return this.getId().equals(((Phone) other).getId()) &&
                     this.getUserId().equals(((Phone) other).getUserId()) &&
-                    this.getPhoneNumber().equals(((Phone) other).getPhoneNumber()) &&
-            this.isVerified() == ((Phone) other).isVerified();
+                    this.getPhoneNumber().equals(((Phone) other).getPhoneNumber());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, phoneNumber, verified);
+        return Objects.hash(id, user_id, phone_number);
     }
 }

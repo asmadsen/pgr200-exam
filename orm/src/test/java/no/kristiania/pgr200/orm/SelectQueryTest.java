@@ -4,6 +4,7 @@ import no.kristiania.pgr200.orm.Enums.JoinType;
 import no.kristiania.pgr200.orm.Enums.OrderDirection;
 import no.kristiania.pgr200.orm.Enums.SqlOperator;
 import no.kristiania.pgr200.orm.TestData.RoleModel;
+import no.kristiania.pgr200.orm.TestData.User;
 import no.kristiania.pgr200.orm.TestData.UserModel;
 import org.junit.Test;
 
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class SelectQueryTest {
     @Test
     public void shouldComposeRegularSelectFromTable() {
-        SelectQuery query = new SelectQuery<>(new UserModel(), "id", "name");
+        SelectQuery<UserModel, User> query = new SelectQuery<>((UserModel) (new UserModel()), "id", "name");
 
         assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name` FROM `users`");
     }

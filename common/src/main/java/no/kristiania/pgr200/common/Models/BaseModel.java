@@ -16,6 +16,17 @@ public abstract class BaseModel<T> implements IBaseModel<T> {
         return Utils.validator().validate((T) this);
     }
 
+
+    @Override
+    public T newStateInstance() {
+        try {
+            return (T) getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     public void populateAttributes(Map<String, ColumnValue> attributes) {
         Class thisClass = getClass();

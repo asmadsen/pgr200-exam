@@ -4,7 +4,11 @@ import no.kristiania.pgr200.orm.ColumnValue;
 import no.kristiania.pgr200.orm.IBaseModel;
 
 import javax.validation.ConstraintViolation;
+import java.io.IOException;
+import java.io.Reader;
 import java.lang.reflect.Field;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -17,14 +21,36 @@ public abstract class BaseModel<T> implements IBaseModel<T> {
 
     @SuppressWarnings("Duplicates")
     @Override
+    public T newStateInstance() {
+        try {
+            return (T) getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("Duplicates")
+    @Override
     public void populateAttributes(Map<String, ColumnValue> attributes) {
         Class thisClass = getClass();
         for (Map.Entry<String, ColumnValue> entry : attributes.entrySet()) {
+            if (entry.getValue() == null) continue;
             try {
                 Field field = thisClass.getDeclaredField(entry.getKey());
                 field.setAccessible(true);
-                field.set(this, entry.getValue().getValue());
-            } catch (NoSuchFieldException | IllegalAccessException ignored) { }
+                if (field.getType().equals(entry.getValue().getType())) {
+                    field.set(this, entry.getValue().getValue());
+                } else if (entry.getValue().getValue() instanceof Clob) {
+                    StringBuilder sb = new StringBuilder();
+                    Reader reader = ((Clob) entry.getValue().getValue()).getCharacterStream();
+                    int c;
+                    while ((c = reader.read()) != -1) {
+                        sb.append((char) c);
+                    }
+                    field.set(this, sb.toString());
+                }
+            } catch (NoSuchFieldException | IllegalAccessException | SQLException | IOException ignored) { }
         }
     }
 

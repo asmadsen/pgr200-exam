@@ -30,7 +30,7 @@ public class BaseModelTest {
     @Test
     public void shouldReturnTalksList() throws Exception {
         new TalkModel(getFakeTitle(), getFakeDescription(12));
-        List<Talk> talks = new TalkModel().all();
+        List<TalkModel> talks = new TalkModel().all();
         assertEquals(1, talks.size());
     }
 }

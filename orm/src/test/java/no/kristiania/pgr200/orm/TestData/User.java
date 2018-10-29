@@ -44,9 +44,7 @@ public class User extends BaseModel<User> {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof User) {
-            return this.getId().equals(((User) obj).getId()) &&
-                    this.getEmail().equals(((User) obj).getEmail()) &&
-                    this.getName().equals(((User) obj).getName());
+            return this.hashCode() == obj.hashCode();
         }
         return false;
     }

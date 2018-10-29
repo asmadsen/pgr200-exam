@@ -6,7 +6,7 @@ import no.kristiania.pgr200.orm.BaseRecord;
 
 import java.util.UUID;
 
-public class TalkModel extends BaseRecord<Talk> {
+public class TalkModel extends BaseRecord<TalkModel, Talk> {
 
     public TalkModel(){
         super(new Talk());

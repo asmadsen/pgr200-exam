@@ -1,22 +1,8 @@
 package no.kristiania.pgr200.orm;
 
-import no.kristiania.pgr200.orm.Annotations.Relation;
-import no.kristiania.pgr200.orm.Relations.*;
-import no.kristiania.pgr200.orm.TestData.PhoneModel;
-import no.kristiania.pgr200.orm.TestData.ProfilePictureModel;
-import no.kristiania.pgr200.orm.TestData.User;
-import no.kristiania.pgr200.orm.TestData.UserModel;
-import org.assertj.core.api.MapAssert;
-import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 public class RecordRelationsTest {
+
+    /*
     @Test
     public void shouldConfigureRelationships() {
         UserModel userModel = new UserModel();
@@ -128,8 +114,7 @@ public class RecordRelationsTest {
         when(mockRecord.getPrimaryKey()).thenCallRealMethod();
         Class<? extends Class> baseRecordClass = BaseRecord.class.getClass();
 
-        /* HasOne relationship */
-
+        /* HasOne relationship
         when(mockRecord.hasOne(isA(baseRecordClass))).thenCallRealMethod();
 
         mockRecord.hasOne(UserModel.class);
@@ -140,7 +125,7 @@ public class RecordRelationsTest {
         mockRecord.hasOne(UserModel.class, "userID");
         verify(mockRecord).hasOne(eq(UserModel.class), eq("userID"), eq("id"));
 
-        /* HasMany relationship */
+        /* HasMany relationship
 
         when(mockRecord.hasMany(isA(baseRecordClass))).thenCallRealMethod();
 
@@ -152,7 +137,7 @@ public class RecordRelationsTest {
         mockRecord.hasMany(UserModel.class, "user");
         verify(mockRecord).hasMany(eq(UserModel.class), eq("user"), eq("id"));
 
-        /* BelongsTo relationship */
+        /* BelongsTo relationship
 
         when(mockRecord.belongsTo(isA(baseRecordClass))).thenCallRealMethod();
 
@@ -164,6 +149,7 @@ public class RecordRelationsTest {
         mockRecord.belongsTo(PhoneModel.class, "mobile");
         verify(mockRecord).belongsTo(eq(PhoneModel.class), eq("mobile"), eq("id"));
 
-        /* HasManyThrough relationship */
+        /* HasManyThrough relationship
     }
+    */
 }

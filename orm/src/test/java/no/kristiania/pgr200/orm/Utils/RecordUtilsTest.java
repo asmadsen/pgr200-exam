@@ -2,7 +2,6 @@ package no.kristiania.pgr200.orm.Utils;
 
 import no.kristiania.pgr200.orm.BaseRecord;
 import no.kristiania.pgr200.orm.TestData.PhoneModel;
-import no.kristiania.pgr200.orm.TestData.ProfilePictureModel;
 import no.kristiania.pgr200.orm.TestData.User;
 import no.kristiania.pgr200.orm.TestData.UserModel;
 import org.junit.Test;
@@ -18,17 +17,11 @@ public class RecordUtilsTest {
         assertThat(RecordUtils.GuessForeignKey(new PhoneModel(), "id"))
                 .isEqualTo("phone_id");
 
-        assertThat(RecordUtils.GuessForeignKey(new ProfilePictureModel(), "id"))
-                .isEqualTo("profile_picture_id");
-
         assertThat(RecordUtils.GuessForeignKey(new UserModel()))
                 .isEqualTo("user_id");
 
         assertThat(RecordUtils.GuessForeignKey(new PhoneModel()))
                 .isEqualTo("phone_id");
-
-        assertThat(RecordUtils.GuessForeignKey(new ProfilePictureModel()))
-                .isEqualTo("profile_picture_id");
 
         assertThat(RecordUtils.GuessForeignKey(new BaseRecord(new User()) {
             @Override
