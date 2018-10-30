@@ -1,9 +1,6 @@
 package no.kristiania.pgr200.server.controllers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import no.kristiania.pgr200.common.http.HttpMethod;
 import no.kristiania.pgr200.common.http.HttpRequest;
 import no.kristiania.pgr200.common.http.HttpResponse;
@@ -13,7 +10,6 @@ import no.kristiania.pgr200.server.annotations.ApiRequest;
 
 import javax.validation.ConstraintViolation;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class BaseController<T extends BaseRecord> {
 
@@ -29,7 +25,7 @@ public abstract class BaseController<T extends BaseRecord> {
         this.httpRequest = httpRequest;
         this.httpResponse = new HttpResponse();
         this.responsebody = new JsonObject();
-        this.gsonBuilder = new GsonBuilder().setPrettyPrinting().create();
+        this.gsonBuilder = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
     }
 
     public Map<String, String> getHeaders() {
@@ -44,10 +40,10 @@ public abstract class BaseController<T extends BaseRecord> {
     @ApiRequest(action = HttpMethod.GET, route = "/")
     public abstract HttpResponse index();
 
-    HttpResponse index(T model) {
-        List<T> list = model.all();
-        getResponsebody().add("values", new JsonParser().parse(getGsonBuilder().toJson(
-                list.stream().map(BaseRecord::getState).collect(Collectors.toList()))));
+    HttpResponse index(List<T> models) {
+        JsonArray list = new JsonArray();
+        for (T model : models) list.add(model.toJson());
+        getResponsebody().add("values", list);
         httpResponse.setHeaders(getHeaders());
         httpResponse.setBody(getGsonBuilder().toJson(getResponsebody()));
         httpResponse.setStatus(HttpStatus.OK);
@@ -61,15 +57,13 @@ public abstract class BaseController<T extends BaseRecord> {
         httpResponse.setHeaders(getHeaders());
         if (!validateUUID(getHttpRequest().getUri().split("/")[2])){
             httpResponse.setStatus(HttpStatus.BadRequest);
-            getResponsebody().add("error",
+            addPropertyToBody("error",
                     getErrorMessage("Could not find element with id: " + getHttpRequest().getUri().split("/")[2]));
             httpResponse.setBody(getResponsebody().toString());
         } else {
-            T result = (T) model.findById(getUuidFromUri());
             httpResponse.setStatus(HttpStatus.OK);
-            if(result != null) {
-                addPropertyToBody("value",
-                        new JsonParser().parse(getGsonBuilder().toJson(result.getState())).getAsJsonObject());
+            if(model != null) {
+                addPropertyToBody("value", model.toJson());
             } else {
                 JsonObject object = new JsonObject();
                 object.addProperty("data", "No results");
@@ -84,6 +78,12 @@ public abstract class BaseController<T extends BaseRecord> {
     public abstract HttpResponse update();
 
     HttpResponse update(T model) {
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) {
+            getResponsebody().add("error",
+                    getErrorMessage("Could not find element with id: " + getHttpRequest().getUri().split("/")[2]));
+            httpResponse.setStatus(HttpStatus.BadRequest);
+            httpResponse.setBody(getResponsebody().toString());
+        }
         Set<ConstraintViolation> violations = model.getState().validate();
         httpResponse.setHeaders(getHeaders());
         if (violations.isEmpty() && model.save()) {
