@@ -1,5 +1,6 @@
 package no.kristiania.pgr200.orm;
 
+import com.google.gson.*;
 import no.kristiania.pgr200.orm.annotations.Relation;
 import no.kristiania.pgr200.orm.generics.Listable;
 import no.kristiania.pgr200.orm.relations.AbstractRelation;
@@ -18,6 +19,7 @@ public abstract class BaseRecord<
         T extends BaseRecord<T, S>,
         S extends IBaseModel<S>> {
     private static Logger logger = LoggerFactory.getLogger(BaseRecord.class);
+    private static Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
     private S state;
     private S dbState;
 
@@ -236,6 +238,22 @@ public abstract class BaseRecord<
 
     protected <V extends BaseRecord<V, W>, W extends IBaseModel<W>> HasMany<V, W, T> hasMany(V relation, String foreignKey, String localKey) {
         return new HasMany<>(relation, (T) this, foreignKey, localKey);
+    }
+
+    public JsonObject toJson() {
+        JsonObject object = BaseRecord.gson.toJsonTree(this.getState()).getAsJsonObject();
+        for (Map.Entry<String, Object> entry : this.relations.entrySet()) {
+            if (entry.getValue() instanceof Collection) {
+                JsonArray children = new JsonArray();
+                for (BaseRecord value : ((Collection<BaseRecord>) entry.getValue())) {
+                    children.add(value.toJson());
+                }
+                object.add(entry.getKey(), children);
+            } else {
+                object.add(entry.getKey(), ((BaseRecord) entry.getValue()).toJson());
+            }
+        }
+        return object;
     }
 
     @Override
