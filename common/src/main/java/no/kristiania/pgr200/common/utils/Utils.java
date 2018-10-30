@@ -14,4 +14,13 @@ public class Utils {
         }
         return Utils.validator;
     }
+
+    public static Object primitiveToClassType(Class<?> input) {
+        switch (input.getSimpleName()) {
+            case "int":
+                return Integer.class;
+            default:
+                return input;
+        }
+    }
 }

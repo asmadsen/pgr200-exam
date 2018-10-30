@@ -2,6 +2,9 @@
 
 ![Architecture Overview](doc/conference-server.png)
 
+## Database assignment
+[Video where we solve a bug](https://youtu.be/KL9j5lVmp0c)
+
 
 ## Running the Conference CLI client
 
