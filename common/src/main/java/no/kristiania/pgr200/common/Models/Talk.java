@@ -1,14 +1,18 @@
 package no.kristiania.pgr200.common.Models;
 
+import com.google.gson.JsonObject;
+
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Talk extends BaseModel<Talk> {
 
     protected UUID id;
+    @NotNull
     public String title;
+    @NotNull
     public String description;
-//    public UUID topic_id;
 
     public Talk() {
     }
@@ -16,13 +20,27 @@ public class Talk extends BaseModel<Talk> {
     public Talk(String title, String description){
         setTitle(title);
         setDescription(description);
-
     }
 
     public Talk(UUID id, String title, String description){
         setId(id);
         setTitle(title);
         setDescription(description);
+    }
+
+    public Talk(UUID uuid) {
+        setId(uuid);
+    }
+
+    public Talk(JsonObject talk) {
+        if(talk.get("id") != null) setId(UUID.fromString(talk.get("id").getAsString()));
+        if(talk.get("title") != null) setTitle(talk.get("title").getAsString());
+        if(talk.get("description") != null) setDescription(talk.get("description").getAsString());
+    }
+
+    public Talk(UUID uuid, JsonObject talk) {
+        this(talk);
+        setId(uuid);
     }
 
     public UUID getId() {

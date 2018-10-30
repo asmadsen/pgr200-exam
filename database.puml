@@ -1,0 +1,55 @@
+@startuml
+
+class Conference {
+    id : UUID
+    name : String
+}
+
+Conference "1" -right- "*" Day
+
+class Talk {
+    id : UUID
+    title : varchar
+    description : varchar
+    topic_id : UUID
+}
+
+Talk -- "1..*" Author
+
+class Author {
+    id : UUID
+    name : varchar
+    talk_id : UUID
+}
+
+Talk -left- "0..1" Topic
+
+class Topic {
+    id : UUID
+    topic : varchar
+}
+
+Day -right- "1..*" Track
+
+class Day {
+    id : UUID
+    date : Date
+    conference_id : UUID
+}
+
+Track "1" -down- "*" Timeslot
+
+class Track{
+    id : UUID
+    day_id : UUID
+}
+
+Timeslot -left- "0..1" Talk
+
+class Timeslot {
+    id : UUID
+    talk_id : UUID
+    track_id : UUID
+}
+
+@enduml

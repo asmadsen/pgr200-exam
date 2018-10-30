@@ -126,7 +126,7 @@ public class QueryExecutionTest {
     public void shouldChangeDbState() throws SQLException {
         setupDatabase();
         when(model.save()).thenCallRealMethod();
-        User oldDbState = SerializationUtils.clone(model.getDbState());
+        User oldDbState = model.newStateInstance().withAttributes(model.getDbState().getAttributes());
         model.getState().setName(new Faker().name().fullName());
         when(model.save()).thenCallRealMethod();
         assertNotEquals(oldDbState, model.getDbState());

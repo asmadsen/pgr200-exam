@@ -36,6 +36,7 @@ public class ConferenceServer implements Runnable {
         flyway.setDataSource("jdbc:postgresql://localhost/postgres", "postgres", "postgres");
         flyway.setSchemas("conference_server");
         flyway.setLocations("filesystem:server/src/main/resources/db/migration");
+//        flyway.clean();
         flyway.migrate();
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {

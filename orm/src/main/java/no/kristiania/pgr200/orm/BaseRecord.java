@@ -30,7 +30,7 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
         setState(state);
         if(getState().getAttributes().get(getPrimaryKey()) != null &&
                 getState().getAttributes().get(getPrimaryKey()).getValue() != null){
-            //setDbState(findById((UUID) getState().getAttributes().get(getPrimaryKey()).getValue()).getState());
+            setDbState(findById((UUID) getState().getAttributes().get(getPrimaryKey()).getValue()).getState());
         }
     }
 
@@ -58,15 +58,15 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
         if(isDirty()){
             try {
                 if (exists()) {
-                    if (update()) return true;
+                    if (!update()) return false;
                 } else {
-                    if(create()) return true;
+                    if(!create()) return false;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        return false;
+        return true;
     }
 
     public boolean update() throws SQLException {
@@ -75,11 +75,13 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
                     state.getAttribute(getPrimaryKey()).getValue());
             state.getAttributes().forEach((k,v) -> updateQuery.set(k, v.getValue()));
             if (updateQuery.get() > 0) {
-                setDbState(SerializationUtils.clone(state));
+                setDbState(newStateInstance().withAttributes(state.getAttributes()));
                 return true;
+            } else {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public boolean create() {
@@ -87,7 +89,7 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
         InsertQuery insertQuery = new InsertQuery(getTable()).insert(this);
         try {
             if(insertQuery.get() > 0) {
-                setDbState(SerializationUtils.clone(state));
+                setDbState(newStateInstance().withAttributes(state.getAttributes()));
                 return true;
             }
         } catch (SQLException e) {
@@ -96,7 +98,7 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
         return false;
     }
 
-    public boolean create(Map<String, ColumnValue> attributes) throws SQLException {
+    public boolean create(Map<String, ColumnValue> attributes) {
         state.populateAttributes(attributes);
         return create();
     }

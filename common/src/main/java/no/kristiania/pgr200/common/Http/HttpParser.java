@@ -55,6 +55,7 @@ public class HttpParser {
 
     private String parseBody(InputStreamReader reader, int length) throws IOException {
         StringBuilder builder = new StringBuilder();
+        if(length == 0) return builder.toString();
         int c;
         int read = 0;
         while ((c = reader.read()) != -1) {
