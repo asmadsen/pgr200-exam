@@ -13,6 +13,7 @@ public class Talk extends BaseModel<Talk> {
     public String title;
     @NotNull
     public String description;
+    public UUID topic_id;
 
     public Talk() {
     }
@@ -22,20 +23,15 @@ public class Talk extends BaseModel<Talk> {
         setDescription(description);
     }
 
-    public Talk(UUID id, String title, String description) {
-        setId(id);
-        setTitle(title);
-        setDescription(description);
-    }
-
     public Talk(UUID uuid) {
         setId(uuid);
     }
 
     public Talk(JsonObject talk) {
-        if (talk.get("id") != null) setId(UUID.fromString(talk.get("id").getAsString()));
-        if (talk.get("title") != null) setTitle(talk.get("title").getAsString());
-        if (talk.get("description") != null) setDescription(talk.get("description").getAsString());
+        if(talk.get("id") != null) setId(UUID.fromString(talk.get("id").getAsString()));
+        if(talk.get("title") != null) setTitle(talk.get("title").getAsString());
+        if(talk.get("description") != null) setDescription(talk.get("description").getAsString());
+        if(talk.get("topic_id") != null) setTopic_id(UUID.fromString(talk.get("topic_id").getAsString()));
     }
 
     public Talk(UUID uuid, JsonObject talk) {
@@ -65,6 +61,14 @@ public class Talk extends BaseModel<Talk> {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public UUID getTopic_id() {
+        return topic_id;
+    }
+
+    public void setTopic_id(UUID topic_id) {
+        this.topic_id = topic_id;
     }
 
     @Override

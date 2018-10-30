@@ -81,7 +81,9 @@ public abstract class BaseRecord<
             UpdateQuery<T> updateQuery = new UpdateQuery<>((T) this).whereEquals(getPrimaryKey(),
                                                                                  state.getAttribute(getPrimaryKey())
                                                                                       .getValue());
-            state.getAttributes().forEach((k, v) -> updateQuery.set(k, v.getValue()));
+            state.getAttributes().forEach((k, v) -> {
+                if(v != null) updateQuery.set(k, v.getValue());
+            });
             if (updateQuery.get() > 0) {
                 setDbState(newStateInstance().withAttributes(state.getAttributes()));
                 return true;
@@ -250,7 +252,8 @@ public abstract class BaseRecord<
                 }
                 object.add(entry.getKey(), children);
             } else {
-                object.add(entry.getKey(), ((BaseRecord) entry.getValue()).toJson());
+                if(entry.getValue() != null) object.add(entry.getKey(), ((BaseRecord) entry.getValue()).toJson());
+                else object.add(entry.getKey(), null);
             }
         }
         return object;

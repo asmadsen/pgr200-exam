@@ -5,6 +5,7 @@ import no.kristiania.pgr200.common.http.HttpRequest;
 import no.kristiania.pgr200.common.http.HttpResponse;
 import no.kristiania.pgr200.server.annotations.ApiController;
 import no.kristiania.pgr200.server.annotations.ApiRequest;
+import no.kristiania.pgr200.server.models.TalkModel;
 import no.kristiania.pgr200.server.models.TopicModel;
 
 @ApiController("/topics")
@@ -17,13 +18,13 @@ public class TopicsController extends BaseController<TopicModel>{
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/topics")
     public HttpResponse index() {
-        return index(new TopicModel());
+        return index(new TopicModel().newQuery().get());
     }
 
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/topics" + uuidPath)
     public HttpResponse show() {
-        return show(new TopicModel());
+        return show(new TopicModel().newQuery().first());
     }
 
     @Override

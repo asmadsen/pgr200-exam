@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class InsertQuery<T extends IBaseModel<T>> {
     private final String table;
     private T model;
+    private Map<String, ColumnValue> attributes;
 
     public InsertQuery(String table) {
         this.table = table;
@@ -23,11 +24,13 @@ public class InsertQuery<T extends IBaseModel<T>> {
     String getSqlStatement() {
         StringBuilder sql = new StringBuilder();
         StringJoiner values = new StringJoiner(", ");
-        model.getAttributes().keySet().forEach(e -> values.add("?"));
+        attributes = model.getAttributes();
+        attributes = attributes.entrySet().stream().filter(e -> e.getValue() != null).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        attributes.keySet().forEach(e -> values.add("?"));
         sql.append(String.format("%s %s (%s) %s (%s)",
                                  Statement.INSERT.getStatement(),
                                  Orm.QuoteString(getTable()),
-                                 String.join(", ", model.getAttributes()
+                                 String.join(", ", attributes
                                                         .keySet()
                                                         .stream()
                                                         .map(Orm::QuoteString)
@@ -43,7 +46,7 @@ public class InsertQuery<T extends IBaseModel<T>> {
 
     public void populateStatement(PreparedStatement statement) throws SQLException {
         int counter = 1;
-        for (Map.Entry<String, ColumnValue> value : model.getAttributes().entrySet()) {
+        for (Map.Entry<String, ColumnValue> value : this.attributes.entrySet()) {
             statement.setObject(counter++, value.getValue().getValue());
         }
     }

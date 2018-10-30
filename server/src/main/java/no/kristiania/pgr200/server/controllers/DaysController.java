@@ -21,7 +21,7 @@ public class DaysController extends BaseController<DayModel> {
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/days")
     public HttpResponse index() {
-        return index(new DayModel());
+        return index(new DayModel().newQuery().get());
     }
 
     @Override

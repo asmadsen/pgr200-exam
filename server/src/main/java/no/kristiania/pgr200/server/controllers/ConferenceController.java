@@ -18,7 +18,7 @@ public class ConferenceController extends BaseController<ConferenceModel> {
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/conferences")
     public HttpResponse index() {
-        return index(new ConferenceModel());
+        return index(new ConferenceModel().newQuery().get());
     }
 
     @Override

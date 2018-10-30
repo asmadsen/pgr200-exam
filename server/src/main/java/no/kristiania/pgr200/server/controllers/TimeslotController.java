@@ -17,7 +17,7 @@ public class TimeslotController extends BaseController<TimeslotModel> {
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/timeslots")
     public HttpResponse index() {
-        return index(new TimeslotModel());
+        return index(new TimeslotModel().newQuery().get());
     }
 
     @Override

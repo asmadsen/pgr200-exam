@@ -8,6 +8,7 @@ import no.kristiania.pgr200.common.http.HttpStatus;
 import no.kristiania.pgr200.server.annotations.ApiController;
 import no.kristiania.pgr200.server.annotations.ApiRequest;
 import no.kristiania.pgr200.server.models.TalkModel;
+import no.kristiania.pgr200.server.models.TopicModel;
 
 @ApiController("/talks")
 public class TalksController extends BaseController<TalkModel> {
@@ -19,13 +20,23 @@ public class TalksController extends BaseController<TalkModel> {
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/talks")
     public HttpResponse index() {
-        return index(new TalkModel());
+        return index(new TalkModel().newQuery().with("topic").get());
     }
 
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/talks" + uuidPath)
     public HttpResponse show() {
-        return show(new TalkModel());
+        httpResponse.setHeaders(getHeaders());
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) {
+            getResponsebody().add("error",
+                    getErrorMessage("Could not find element with id: " + getHttpRequest().getUri().split("/")[2]));
+            httpResponse.setStatus(HttpStatus.BadRequest);
+            httpResponse.setBody(getResponsebody().toString());
+            return httpResponse;
+        }
+        TalkModel model = new TalkModel();
+        return show(model.newQuery()
+                .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("topic").first());
     }
 
     @Override
