@@ -1,7 +1,6 @@
 package no.kristiania.pgr200.server;
 
 import com.github.javafaker.Faker;
-import no.kristiania.pgr200.common.Models.Talk;
 import no.kristiania.pgr200.server.models.TalkModel;
 import org.junit.*;
 

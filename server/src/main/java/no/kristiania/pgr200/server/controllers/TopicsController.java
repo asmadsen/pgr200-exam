@@ -1,8 +1,8 @@
 package no.kristiania.pgr200.server.controllers;
 
-import no.kristiania.pgr200.common.Http.HttpMethod;
-import no.kristiania.pgr200.common.Http.HttpRequest;
-import no.kristiania.pgr200.common.Http.HttpResponse;
+import no.kristiania.pgr200.common.http.HttpMethod;
+import no.kristiania.pgr200.common.http.HttpRequest;
+import no.kristiania.pgr200.common.http.HttpResponse;
 import no.kristiania.pgr200.server.annotations.ApiController;
 import no.kristiania.pgr200.server.annotations.ApiRequest;
 import no.kristiania.pgr200.server.models.TopicModel;

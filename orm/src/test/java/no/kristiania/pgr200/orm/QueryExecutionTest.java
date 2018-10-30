@@ -1,8 +1,8 @@
 package no.kristiania.pgr200.orm;
+
 import com.github.javafaker.Faker;
-import no.kristiania.pgr200.orm.TestData.User;
-import no.kristiania.pgr200.orm.TestData.UserModel;
-import org.apache.commons.lang3.SerializationUtils;
+import no.kristiania.pgr200.orm.test_data.User;
+import no.kristiania.pgr200.orm.test_data.UserModel;
 import org.flywaydb.core.Flyway;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,7 @@ public class QueryExecutionTest {
     UserModel model;
 
     @Before
-    public void beforeEach(){
+    public void beforeEach() {
         model = Mockito.spy(new UserModel(new Faker().name().fullName(), new Faker().internet().emailAddress()));
     }
 
@@ -43,20 +43,20 @@ public class QueryExecutionTest {
 
     @Test
     public void shouldFindRecordById() throws SQLException {
-         setupDatabase();
-         model.save();
-         UserModel user = new UserModel().findById(model.getState().getId());
-         assertThat(user.getState())
-                 .hasFieldOrPropertyWithValue("id", model.getState().getId())
-                 .hasFieldOrPropertyWithValue("name", model.getState().getName())
-                 .hasFieldOrPropertyWithValue("email", model.getState().getEmail());
+        setupDatabase();
+        model.save();
+        UserModel user = new UserModel().findById(model.getState().getId());
+        assertThat(user.getState())
+                .hasFieldOrPropertyWithValue("id", model.getState().getId())
+                .hasFieldOrPropertyWithValue("name", model.getState().getName())
+                .hasFieldOrPropertyWithValue("email", model.getState().getEmail());
     }
 
     @Test
     public void shouldReturnNullIfNotExisting() throws SQLException {
-         setupDatabase();
-         UserModel user = new UserModel().findById(UUID.randomUUID());
-         assertThat(user).isNull();
+        setupDatabase();
+        UserModel user = new UserModel().findById(UUID.randomUUID());
+        assertThat(user).isNull();
     }
 
     @Test
@@ -110,7 +110,7 @@ public class QueryExecutionTest {
     }
 
     @Test
-    public void shouldFillModelState(){
+    public void shouldFillModelState() {
         Map<String, ColumnValue> attributes = new HashMap<>();
         attributes.put("name", new ColumnValue<>("John Doe"));
         attributes.put("email", new ColumnValue<>("john@example.com"));

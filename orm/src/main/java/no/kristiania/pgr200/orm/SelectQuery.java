@@ -1,9 +1,9 @@
 package no.kristiania.pgr200.orm;
 
-import no.kristiania.pgr200.orm.Enums.JoinType;
-import no.kristiania.pgr200.orm.Enums.OrderDirection;
-import no.kristiania.pgr200.orm.Enums.SqlOperator;
-import no.kristiania.pgr200.orm.Relations.AbstractRelation;
+import no.kristiania.pgr200.orm.enums.OrderDirection;
+import no.kristiania.pgr200.orm.enums.SqlOperator;
+import no.kristiania.pgr200.orm.overload_helpers.WhereOverloads;
+import no.kristiania.pgr200.orm.relations.AbstractRelation;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,19 +14,20 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
+public class SelectQuery<
+        T extends BaseRecord<T, V>,
+        V extends IBaseModel<V>>
+        implements WhereOverloads<SelectQuery<T, V>> {
     private final String table;
+    protected Map<String, Consumer<AbstractRelation<?, ?, T>>> eagerLoads;
     private T model;
     private Set<String> selects;
     private LinkedList<ConditionalStatement> wheres, having;
-    private LinkedList<JoinStatement> joins;
     private LinkedHashSet<String> groupBy;
     private LinkedHashMap<String, OrderDirection> orderBy;
     private int limit;
 
-    protected Map<String, Consumer<AbstractRelation<?, ?, T>>> eagerLoads;
-
-    public SelectQuery(T model,String... columns) {
+    public SelectQuery(T model, String... columns) {
         this(model);
         this.select(columns);
     }
@@ -37,7 +38,6 @@ public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
         this.selects = new LinkedHashSet<>();
         this.wheres = new LinkedList<>();
         this.groupBy = new LinkedHashSet<>();
-        this.joins = new LinkedList<>();
         this.orderBy = new LinkedHashMap<>();
 
         this.eagerLoads = new HashMap<>();
@@ -66,15 +66,17 @@ public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
     }
 
     public SelectQuery<T, V> with(String... relations) {
-        Map<String, Consumer<AbstractRelation<?, ?, T>>> relationsMap = Arrays.stream(relations).collect(Collectors.toMap(v -> v, v -> ignored -> {}));
+        Map<String, Consumer<AbstractRelation<?, ?, T>>> relationsMap = Arrays.stream(relations)
+                                                                              .collect(Collectors.toMap(v -> v,
+                                                                                                        v -> ignored -> {}));
         return this.with(relationsMap);
     }
 
     public SelectQuery<T, V> with(Map<String, Consumer<AbstractRelation<?, ?, T>>> relations) {
         this.eagerLoads = Stream.of(this.eagerLoads, relations)
-                .map(Map::entrySet)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                                .map(Map::entrySet)
+                                .flatMap(Collection::stream)
+                                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return this;
     }
 
@@ -134,32 +136,8 @@ public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
         }
     }
 
-    public <X> SelectQuery<T, V> where(String key, SqlOperator operator, X value) {
-        return this.where(key, operator, value, true);
-    }
-
     public <X> SelectQuery<T, V> where(String key, SqlOperator operator, X value, boolean useAnd) {
         this.wheres.add(new ConditionalStatement<>(key, operator, value, useAnd));
-        return this;
-    }
-
-    public <X> SelectQuery<T, V> whereNot(String column, X value) {
-        where(column, SqlOperator.Not, value);
-        return this;
-    }
-
-    public SelectQuery<T, V> whereNotNull(String column) {
-        where(column, SqlOperator.NotNull, null);
-        return this;
-    }
-
-    public <X> SelectQuery<T, V> whereEquals(String column, X value) {
-        where(column, SqlOperator.Equals, value);
-        return this;
-    }
-
-    public SelectQuery<T, V> whereIsNull(String column) {
-        where(column, SqlOperator.IsNull, null);
         return this;
     }
 
@@ -227,7 +205,7 @@ public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
     }
 
     public SelectQuery<T, V> limit(int limit) {
-        if(limit < 0) throw new IllegalArgumentException("Limit must be a positive value");
+        if (limit < 0) throw new IllegalArgumentException("Limit must be a positive value");
         this.limit = limit;
         return this;
     }
@@ -239,12 +217,6 @@ public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
                 String.join(", ", this.selects),
                 getTable()
         ));
-        if (this.joins.size() > 0) {
-            this.joins.forEach(join -> {
-                sql.append(" ")
-                   .append(join.getSqlStatement(getTable()));
-            });
-        }
         if (getWheres().size() > 0) {
             // TODO: add where statements
             sql.append(" ")
@@ -293,26 +265,6 @@ public class SelectQuery<T extends BaseRecord<T, V>, V extends IBaseModel<V>> {
 
     public SelectQuery<T, V> min(String column) {
         this.selects.add(String.format("MIN(" + Orm.quote + "%s" + Orm.quote + ")", column));
-        return this;
-    }
-
-    public SelectQuery<T, V> join(BaseRecord model, String foreignKey, String localKey) {
-        this.joins.add(new JoinStatement<>(model, foreignKey, localKey));
-        return this;
-    }
-
-    public SelectQuery<T, V> join(BaseRecord model, String foreignKey, String localKey, JoinType joinType) {
-        this.joins.add(new JoinStatement<>(model, foreignKey, localKey, joinType));
-        return this;
-    }
-
-    public <X extends BaseRecord> SelectQuery<T, V> join(SelectQuery query, String alias, String foreignKey, String localKey, JoinType joinType) {
-        this.joins.add(new JoinStatement<X>(query, alias, foreignKey, localKey, joinType));
-        return this;
-    }
-
-    public <X extends BaseRecord> SelectQuery<T, V> join(SelectQuery query, String alias, String foreignKey, String localKey) {
-        this.joins.add(new JoinStatement<X>(query, alias, foreignKey, localKey));
         return this;
     }
 }

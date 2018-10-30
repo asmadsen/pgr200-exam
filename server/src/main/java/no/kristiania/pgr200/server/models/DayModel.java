@@ -1,10 +1,9 @@
 package no.kristiania.pgr200.server.models;
 
 import com.google.gson.JsonObject;
-import no.kristiania.pgr200.common.Models.Day;
+import no.kristiania.pgr200.common.models.Day;
 import no.kristiania.pgr200.orm.BaseRecord;
 
-import java.text.ParseException;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
 

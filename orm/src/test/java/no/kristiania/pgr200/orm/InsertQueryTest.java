@@ -1,9 +1,8 @@
 package no.kristiania.pgr200.orm;
 
-import no.kristiania.pgr200.orm.TestData.UserModel;
+import no.kristiania.pgr200.orm.test_data.UserModel;
 import org.junit.Test;
 
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -12,9 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class InsertQueryTest {
 

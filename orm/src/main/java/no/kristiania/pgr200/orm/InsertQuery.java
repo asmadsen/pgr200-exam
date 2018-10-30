@@ -1,11 +1,12 @@
 package no.kristiania.pgr200.orm;
 
-import no.kristiania.pgr200.orm.Enums.Statement;
+import no.kristiania.pgr200.orm.enums.Statement;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class InsertQuery<T extends IBaseModel<T>> {
     private final String table;
@@ -23,9 +24,15 @@ public class InsertQuery<T extends IBaseModel<T>> {
         StringBuilder sql = new StringBuilder();
         StringJoiner values = new StringJoiner(", ");
         model.getAttributes().keySet().forEach(e -> values.add("?"));
-        sql.append(String.format("%s " + Orm.quote + "%s" + Orm.quote + " (" + Orm.quote + "%s" + Orm.quote + ") %s (%s)",
-                Statement.INSERT.getStatement(), getTable(), String.join(Orm.quote + ", " + Orm.quote, model.getAttributes().keySet()),
-                Statement.VALUES, values.toString()));
+        sql.append(String.format("%s %s (%s) %s (%s)",
+                                 Statement.INSERT.getStatement(),
+                                 Orm.QuoteString(getTable()),
+                                 String.join(", ", model.getAttributes()
+                                                        .keySet()
+                                                        .stream()
+                                                        .map(Orm::QuoteString)
+                                                        .collect(Collectors.toList())),
+                                 Statement.VALUES, values.toString()));
         return sql.toString();
     }
 

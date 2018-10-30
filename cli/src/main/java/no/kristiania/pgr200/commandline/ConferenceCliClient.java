@@ -1,8 +1,7 @@
 package no.kristiania.pgr200.commandline;
 
-import no.kristiania.pgr200.commandline.Commands.ConferenceClientCommand;
-import no.kristiania.pgr200.commandline.Exceptions.DecodeCommandException;
-import no.kristiania.pgr200.commandline.Http.HttpClient;
+import no.kristiania.pgr200.commandline.commands.ConferenceClientCommand;
+import no.kristiania.pgr200.commandline.exceptions.DecodeCommandException;
 import no.kristiania.pgr200.common.Spinner;
 
 import java.util.Arrays;
@@ -11,17 +10,16 @@ import java.util.Map;
 
 public class ConferenceCliClient {
     private Map<String, Class<? extends ConferenceClientCommand>> commands = new HashMap<>();
-    private HttpClient client;
 
-    public ConferenceCliClient(HttpClient client) {
-        this.client = client;
+    public ConferenceCliClient() {
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Spinner.spin(() -> {
             try {
-                Thread.sleep(5 * 1000);
-            } catch (InterruptedException e) { }
+                Thread.sleep(5L * 1000);
+            } catch (InterruptedException ignored) {
+            }
         }, "Uploading Talk");
     }
 
@@ -30,7 +28,7 @@ public class ConferenceCliClient {
         ConferenceClientCommand command;
         if (this.commands.containsKey(commandString)) {
             try {
-                command = this.commands.get(commandString).newInstance().withHttpClient(this.client);
+                command = this.commands.get(commandString).newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new DecodeCommandException();
             }

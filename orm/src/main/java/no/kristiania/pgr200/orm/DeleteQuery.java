@@ -1,13 +1,14 @@
 package no.kristiania.pgr200.orm;
 
-import no.kristiania.pgr200.orm.Enums.SqlOperator;
-import no.kristiania.pgr200.orm.Enums.Statement;
+import no.kristiania.pgr200.orm.enums.SqlOperator;
+import no.kristiania.pgr200.orm.enums.Statement;
+import no.kristiania.pgr200.orm.overload_helpers.WhereOverloads;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
-public class DeleteQuery<T> {
+public class DeleteQuery<T> implements WhereOverloads<DeleteQuery<T>> {
 
     private final String table;
     private LinkedList<ConditionalStatement> wheres;
@@ -17,28 +18,8 @@ public class DeleteQuery<T> {
         this.wheres = new LinkedList<>();
     }
 
-
-    public <V> DeleteQuery<T> where(String key, SqlOperator operator, V value) {
-        return this.where(key, operator, value, true);
-    }
-
     public <V> DeleteQuery<T> where(String key, SqlOperator operator, V value, boolean useAnd) {
         this.wheres.add(new ConditionalStatement<>(key, operator, value, useAnd));
-        return this;
-    }
-
-    public <V> DeleteQuery<T> whereNot(String column, V value) {
-        where(column, SqlOperator.Not, value);
-        return this;
-    }
-
-    public <V> DeleteQuery<T> whereEquals(String column, V value) {
-        where(column, SqlOperator.Equals, value);
-        return this;
-    }
-
-    public DeleteQuery<T> whereIsNull(String column) {
-        where(column, SqlOperator.IsNull, null);
         return this;
     }
 
@@ -49,10 +30,10 @@ public class DeleteQuery<T> {
 
     public String getSqlStatement() {
         StringBuilder sql = new StringBuilder();
-        sql.append(String.format("%s " + Orm.quote + "%s" + Orm.quote, Statement.DELETE.getStatement(), getTable()));
-        if (this.wheres.size() > 0) {
+        sql.append(String.format("%s %s", Statement.DELETE.getStatement(), Orm.QuoteString(getTable())));
+        if (!this.wheres.isEmpty()) {
             sql.append(" ")
-                    .append(ConditionalStatement.buildStatements(this.wheres));
+               .append(ConditionalStatement.buildStatements(this.wheres));
         }
         return sql.toString();
     }

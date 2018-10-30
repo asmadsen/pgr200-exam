@@ -9,7 +9,7 @@ import static org.junit.Assert.assertNotEquals;
 public class ColumnValueTest {
 
     @Test
-    public void shouldHoldDifferentValues(){
+    public void shouldHoldDifferentValues() {
         ColumnValue columnValue = new ColumnValue<>("String");
         assertThat(columnValue.getType()).isEqualTo(String.class);
         assertThat(columnValue.getValue()).isEqualTo("String");
@@ -20,7 +20,7 @@ public class ColumnValueTest {
     }
 
     @Test
-    public void shouldCompareValues(){
+    public void shouldCompareValues() {
         ColumnValue columnValue1 = new ColumnValue<>("String1");
         ColumnValue columnValue2 = new ColumnValue<>("String2");
 

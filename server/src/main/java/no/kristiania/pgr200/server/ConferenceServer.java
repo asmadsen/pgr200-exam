@@ -1,9 +1,9 @@
 package no.kristiania.pgr200.server;
 
-import no.kristiania.pgr200.common.Http.HttpParser;
-import no.kristiania.pgr200.common.Http.HttpRequest;
-import no.kristiania.pgr200.common.Http.HttpResponse;
-import no.kristiania.pgr200.common.Http.HttpStatus;
+import no.kristiania.pgr200.common.http.HttpParser;
+import no.kristiania.pgr200.common.http.HttpRequest;
+import no.kristiania.pgr200.common.http.HttpResponse;
+import no.kristiania.pgr200.common.http.HttpStatus;
 import no.kristiania.pgr200.orm.Orm;
 import no.kristiania.pgr200.server.db.DatabaseHandling;
 import org.flywaydb.core.Flyway;

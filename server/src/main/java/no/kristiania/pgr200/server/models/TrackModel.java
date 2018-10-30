@@ -1,7 +1,7 @@
 package no.kristiania.pgr200.server.models;
 
 import com.google.gson.JsonObject;
-import no.kristiania.pgr200.common.Models.Track;
+import no.kristiania.pgr200.common.models.Track;
 import no.kristiania.pgr200.orm.BaseRecord;
 
 import java.util.UUID;

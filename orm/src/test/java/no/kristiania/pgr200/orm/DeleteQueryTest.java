@@ -1,7 +1,7 @@
 package no.kristiania.pgr200.orm;
 
-import no.kristiania.pgr200.orm.Enums.SqlOperator;
-import no.kristiania.pgr200.orm.TestData.UserModel;
+import no.kristiania.pgr200.orm.enums.SqlOperator;
+import no.kristiania.pgr200.orm.test_data.UserModel;
 import org.junit.Test;
 
 import java.sql.PreparedStatement;
@@ -11,15 +11,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class DeleteQueryTest {
 
 
     @Test
-    public void shouldComposeDeleteStatement(){
+    public void shouldComposeDeleteStatement() {
         DeleteQuery query = new DeleteQuery("users");
 
         assertThat(query.getSqlStatement()).isEqualTo("DELETE FROM `users`");
@@ -61,7 +59,7 @@ public class DeleteQueryTest {
 
     @Test
     public void shouldPopulateStatement() throws SQLException {
-        DeleteQuery query = new DeleteQuery("users")
+        DeleteQuery query = new DeleteQuery<>("users")
                 .whereEquals("id", 15);
 
         PreparedStatement statement = mock(PreparedStatement.class);
@@ -72,8 +70,8 @@ public class DeleteQueryTest {
     }
 
     @Test
-    public void shouldBuildDeleteWithoutWheres(){
-         DeleteQuery query = new DeleteQuery("users");
+    public void shouldBuildDeleteWithoutWheres() {
+        DeleteQuery query = new DeleteQuery("users");
         assertThat(query.getSqlStatement()).isEqualTo("DELETE FROM `users`");
     }
 }

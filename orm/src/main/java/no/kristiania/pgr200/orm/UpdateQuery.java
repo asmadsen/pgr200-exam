@@ -1,49 +1,36 @@
 package no.kristiania.pgr200.orm;
 
-import no.kristiania.pgr200.orm.Enums.SqlOperator;
-import no.kristiania.pgr200.orm.Enums.Statement;
+import no.kristiania.pgr200.orm.enums.SqlOperator;
+import no.kristiania.pgr200.orm.enums.Statement;
+import no.kristiania.pgr200.orm.overload_helpers.WhereOverloads;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-public class UpdateQuery<T> {
+public class UpdateQuery<
+        T extends BaseRecord<
+                T,
+                ? extends IBaseModel<?>>
+        >
+        implements WhereOverloads<UpdateQuery<T>> {
     private final String table;
     private LinkedList<ConditionalStatement> sets, wheres;
 
-    public UpdateQuery(String table) {
-        this.table = table;
+    public UpdateQuery(T model) {
+        this.table = model.getTable();
         this.sets = new LinkedList<>();
         this.wheres = new LinkedList<>();
     }
 
-    public <V> UpdateQuery set(String column, V value){
+    public <V> UpdateQuery<T> set(String column, V value) {
         sets.add(new ConditionalStatement<>(column, SqlOperator.Equals, value));
         return this;
     }
 
-    public <V> UpdateQuery<T> where(String key, SqlOperator operator, V value) {
-        return this.where(key, operator, value, true);
-    }
-
     public <V> UpdateQuery<T> where(String key, SqlOperator operator, V value, boolean useAnd) {
         this.wheres.add(new ConditionalStatement<>(key, operator, value, useAnd));
-        return this;
-    }
-
-    public <V> UpdateQuery<T> whereNot(String column, V value) {
-        where(column, SqlOperator.Not, value);
-        return this;
-    }
-
-    public <V> UpdateQuery<T> whereEquals(String column, V value) {
-        where(column, SqlOperator.Equals, value);
-        return this;
-    }
-
-    public UpdateQuery<T> whereIsNull(String column) {
-        where(column, SqlOperator.IsNull, null);
         return this;
     }
 
@@ -54,16 +41,16 @@ public class UpdateQuery<T> {
     String getSqlStatement() {
         StringBuilder sql = new StringBuilder();
         sql.append(String.format("%s " + Orm.quote + "%s" + Orm.quote, Statement.UPDATE.getStatement(), getTable()));
-        if(this.sets.size() > 0) {
+        if (this.sets.size() > 0) {
             sql.append(" ").append(Statement.SET.getStatement()).append(" ");
             sql.append(String.join(", ",
-                    sets.stream()
-                            .map(ConditionalStatement::getSqlStatement)
-                            .collect(Collectors.toList())));
+                                   sets.stream()
+                                       .map(ConditionalStatement::getSqlStatement)
+                                       .collect(Collectors.toList())));
         }
         if (this.wheres.size() > 0) {
             sql.append(" ")
-                    .append(ConditionalStatement.buildStatements(this.wheres));
+               .append(ConditionalStatement.buildStatements(this.wheres));
         }
         return sql.toString();
     }

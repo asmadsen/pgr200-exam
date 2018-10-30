@@ -1,8 +1,6 @@
 package no.kristiania.pgr200.common;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 public class Spinner {
@@ -38,11 +36,11 @@ public class Spinner {
     private static class SpinnerTask implements Runnable {
 
         @Override
-        public void run () {
+        public void run() {
             try {
                 System.out.print("\u001B[?25l");
                 while (true) {
-                    for (String spin: Spinner.spinner) {
+                    for (String spin : Spinner.spinner) {
                         System.out.write(("\r" + spin + (Spinner.text != null ? " " + Spinner.text : "")).getBytes());
                         if (Thread.currentThread().isInterrupted()) {
                             return;

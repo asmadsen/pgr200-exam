@@ -1,19 +1,23 @@
 package no.kristiania.pgr200.orm;
 
-import no.kristiania.pgr200.orm.Annotations.Relation;
-import no.kristiania.pgr200.orm.Generics.Listable;
-import no.kristiania.pgr200.orm.Relations.AbstractRelation;
-import no.kristiania.pgr200.orm.Relations.BelongsTo;
-import no.kristiania.pgr200.orm.Relations.HasMany;
-import no.kristiania.pgr200.orm.Relations.HasOne;
-import org.apache.commons.lang3.SerializationUtils;
+import no.kristiania.pgr200.orm.annotations.Relation;
+import no.kristiania.pgr200.orm.generics.Listable;
+import no.kristiania.pgr200.orm.relations.AbstractRelation;
+import no.kristiania.pgr200.orm.relations.BelongsTo;
+import no.kristiania.pgr200.orm.relations.HasMany;
+import no.kristiania.pgr200.orm.relations.HasOne;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.*;
 
-public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseModel<S>> {
+public abstract class BaseRecord<
+        T extends BaseRecord<T, S>,
+        S extends IBaseModel<S>> {
+    private static Logger logger = LoggerFactory.getLogger(BaseRecord.class);
     private S state;
     private S dbState;
 
@@ -22,21 +26,22 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
     public BaseRecord(Class<S> modelClass) {
         try {
             this.state = modelClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException ignored) {
+        } catch (InstantiationException | IllegalAccessException e) {
+            logger.error("Constructor", e);
         }
     }
 
     public BaseRecord(S state) {
         setState(state);
-        if(getState().getAttributes().get(getPrimaryKey()) != null &&
-                getState().getAttributes().get(getPrimaryKey()).getValue() != null){
+        if (getState().getAttributes().get(getPrimaryKey()) != null &&
+                getState().getAttributes().get(getPrimaryKey()).getValue() != null) {
             setDbState(findById((UUID) getState().getAttributes().get(getPrimaryKey()).getValue()).getState());
         }
     }
 
     public abstract String getTable();
 
-    public String getPrimaryKey(){
+    public String getPrimaryKey() {
         return "id";
     }
 
@@ -44,7 +49,7 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
         try {
             return (T) getClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+            logger.error("newModelInstance", e);
         }
         return null;
     }
@@ -55,25 +60,26 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
     }
 
     public boolean save() {
-        if(isDirty()){
+        if (isDirty()) {
             try {
                 if (exists()) {
                     if (!update()) return false;
                 } else {
-                    if(!create()) return false;
+                    if (!create()) return false;
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error("save", e);
             }
         }
         return true;
     }
 
     public boolean update() throws SQLException {
-        if(isDirty()){
-            UpdateQuery updateQuery = new UpdateQuery(getTable()).whereEquals(getPrimaryKey(),
-                    state.getAttribute(getPrimaryKey()).getValue());
-            state.getAttributes().forEach((k,v) -> updateQuery.set(k, v.getValue()));
+        if (isDirty()) {
+            UpdateQuery<T> updateQuery = new UpdateQuery<>((T) this).whereEquals(getPrimaryKey(),
+                                                                                 state.getAttribute(getPrimaryKey())
+                                                                                      .getValue());
+            state.getAttributes().forEach((k, v) -> updateQuery.set(k, v.getValue()));
             if (updateQuery.get() > 0) {
                 setDbState(newStateInstance().withAttributes(state.getAttributes()));
                 return true;
@@ -88,12 +94,12 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
         state.setAttribute(getPrimaryKey(), UUID.randomUUID());
         InsertQuery insertQuery = new InsertQuery(getTable()).insert(this);
         try {
-            if(insertQuery.get() > 0) {
+            if (insertQuery.get() > 0) {
                 setDbState(newStateInstance().withAttributes(state.getAttributes()));
                 return true;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("create", e);
         }
         return false;
     }
@@ -104,16 +110,18 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
     }
 
     public boolean destroy() {
-        if(exists()){
-            DeleteQuery deleteQuery = new DeleteQuery(getTable()).whereEquals("id",
-                    state.getAttributes().get(getPrimaryKey()).getValue());
+        if (exists()) {
+            DeleteQuery deleteQuery = new DeleteQuery<>(getTable()).whereEquals("id",
+                                                                                state.getAttributes()
+                                                                                     .get(getPrimaryKey())
+                                                                                     .getValue());
             try {
-                if(deleteQuery.get() > 0) {
+                if (deleteQuery.get() > 0) {
                     setDbState(null);
                     return true;
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error("destroy", e);
             }
         }
         return false;
@@ -125,7 +133,7 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
 
     public final T findById(UUID id) {
         return this.newQuery()
-                .whereEquals("id", id).first();
+                   .whereEquals("id", id).first();
     }
 
     public SelectQuery<T, S> newQuery() {
@@ -133,16 +141,16 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
     }
 
 
-    public BaseRecord<T, S> fill(Map<String, ColumnValue> attributes){
+    public BaseRecord<T, S> fill(Map<String, ColumnValue> attributes) {
         this.state.populateAttributes(attributes);
         return this;
     }
 
-    private boolean exists(){
+    private boolean exists() {
         return getState().getAttributes().get(getPrimaryKey()) != null;
     }
 
-    public boolean isDirty(){
+    public boolean isDirty() {
         return !this.getState().equals(getDbState());
     }
 
@@ -178,13 +186,13 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
             }
             return new Listable<>((V) relationValue);
         }
-        return new Listable<V>((V) null);
+        return new Listable<>((V) null);
     }
 
     private void loadRelation(String relationName) {
         AbstractRelation<?, ?, T> relation = this.getRelations().get(relationName);
         if (relation == null) {
-            throw new RuntimeException("Tried to load undefined relation `" + relationName + "`");
+            throw new IllegalArgumentException("Tried to load undefined relation `" + relationName + "`");
         }
         relation.addConstraints();
         Listable<?> results = relation.getResults();
@@ -204,14 +212,10 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
                         relation
                 );
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                logger.error("getRelations", e);
             }
         }
         return relations;
-    }
-
-    public String getQualifiedKeyName() {
-        return this.getPrimaryKey();
     }
 
     public ColumnValue<?> getColumnValue(String column) {
@@ -232,6 +236,11 @@ public abstract class BaseRecord<T extends BaseRecord<T, S>, S extends IBaseMode
 
     protected <V extends BaseRecord<V, W>, W extends IBaseModel<W>> HasMany<V, W, T> hasMany(V relation, String foreignKey, String localKey) {
         return new HasMany<>(relation, (T) this, foreignKey, localKey);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getState(), this.getDbState());
     }
 
     @Override

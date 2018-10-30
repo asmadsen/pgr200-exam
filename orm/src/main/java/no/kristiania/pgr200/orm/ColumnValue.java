@@ -1,5 +1,7 @@
 package no.kristiania.pgr200.orm;
 
+import java.util.Objects;
+
 public class ColumnValue<T> {
 
     private T value;
@@ -8,12 +10,17 @@ public class ColumnValue<T> {
         this.value = value;
     }
 
-    public Class<?> getType(){
+    public Class<?> getType() {
         return value.getClass();
     }
 
     public T getValue() {
         return value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.value);
     }
 
     @Override

@@ -1,11 +1,9 @@
 package no.kristiania.pgr200.orm;
 
-import no.kristiania.pgr200.orm.Enums.JoinType;
-import no.kristiania.pgr200.orm.Enums.OrderDirection;
-import no.kristiania.pgr200.orm.Enums.SqlOperator;
-import no.kristiania.pgr200.orm.TestData.RoleModel;
-import no.kristiania.pgr200.orm.TestData.User;
-import no.kristiania.pgr200.orm.TestData.UserModel;
+import no.kristiania.pgr200.orm.enums.OrderDirection;
+import no.kristiania.pgr200.orm.enums.SqlOperator;
+import no.kristiania.pgr200.orm.test_data.User;
+import no.kristiania.pgr200.orm.test_data.UserModel;
 import org.junit.Test;
 
 import java.sql.PreparedStatement;
@@ -51,7 +49,8 @@ public class SelectQueryTest {
                 .orderBy("age")
                 .orderBy("name", OrderDirection.ASC);
 
-        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `age` FROM `users` ORDER BY `age` DESC, `name` ASC");
+        assertThat(query.getSqlStatement()).isEqualTo(
+                "SELECT `id`, `name`, `age` FROM `users` ORDER BY `age` DESC, `name` ASC");
     }
 
     @Test
@@ -62,7 +61,7 @@ public class SelectQueryTest {
         assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, COUNT(`id`) FROM `users`");
 
         query = new SelectQuery<>(new UserModel(), "id")
-            .average("id");
+                .average("id");
 
         assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, AVG(`id`) FROM `users`");
 
@@ -80,33 +79,6 @@ public class SelectQueryTest {
                 .min("fortune");
 
         assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, MIN(`fortune`) FROM `users`");
-    }
-
-    @Test
-    public void shouldComposeJoinQuery() {
-        SelectQuery query = new SelectQuery<>(new RoleModel(), "id", "name")
-                .join(new UserModel(), "id", "user_id")
-                .select("users.id", "users.name");
-
-        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `users`.`id`, `users`.`name` FROM `roles` LEFT JOIN `users` ON `users`.`id` = `roles`.`user_id`");
-
-        query = new SelectQuery<>(new RoleModel(), "id", "name")
-                .join(new UserModel(), "id", "user_id", JoinType.InnerJoin)
-                .select("users.id", "users.name");
-
-        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `users`.`id`, `users`.`name` FROM `roles` INNER JOIN `users` ON `users`.`id` = `roles`.`user_id`");
-
-        query = new SelectQuery<>(new RoleModel(), "id", "name")
-                .join(new SelectQuery<>(new UserModel(), "id", "name").where("id", SqlOperator.Equals, 1), "users", "id", "user_id")
-                .select("users.id", "users.name");
-
-        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `users`.`id`, `users`.`name` FROM `roles` LEFT JOIN (SELECT `id`, `name` FROM `users` WHERE `id` = ?) ON `users`.`id` = `roles`.`user_id`");
-
-        query = new SelectQuery<>(new RoleModel(), "id", "name")
-                .join(new SelectQuery<>(new UserModel(), "id", "name").where("id", SqlOperator.Equals, 1), "users", "id", "user_id", JoinType.FullOuterJoin)
-                .select("users.id", "users.name");
-
-        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `users`.`id`, `users`.`name` FROM `roles` FULL OUTER JOIN (SELECT `id`, `name` FROM `users` WHERE `id` = ?) ON `users`.`id` = `roles`.`user_id`");
     }
 
     @Test
@@ -138,13 +110,15 @@ public class SelectQueryTest {
                 .where("name", SqlOperator.Equals, "John Doe")
                 .where("age", SqlOperator.GreaterThan, 18);
 
-        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `age` FROM `users` WHERE `name` = ? AND `age` > ?");
+        assertThat(query.getSqlStatement()).isEqualTo(
+                "SELECT `id`, `name`, `age` FROM `users` WHERE `name` = ? AND `age` > ?");
 
         query = new SelectQuery<>(new UserModel(), "id", "name", "age")
                 .where("name", SqlOperator.Equals, "John Doe")
                 .where("name", SqlOperator.Equals, "Jane Doe", false);
 
-        assertThat(query.getSqlStatement()).isEqualTo("SELECT `id`, `name`, `age` FROM `users` WHERE `name` = ? OR `name` = ?");
+        assertThat(query.getSqlStatement()).isEqualTo(
+                "SELECT `id`, `name`, `age` FROM `users` WHERE `name` = ? OR `name` = ?");
     }
 
     @Test
@@ -169,7 +143,7 @@ public class SelectQueryTest {
     }
 
     @Test
-    public void shouldTrowInvalidArgumentWhenNegativeLimit(){
+    public void shouldTrowInvalidArgumentWhenNegativeLimit() {
         assertThatThrownBy(() -> {
             new SelectQuery<>(new UserModel(), "id", "name", "age").limit(-1);
         }).isInstanceOf(IllegalArgumentException.class);

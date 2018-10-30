@@ -1,10 +1,10 @@
 package no.kristiania.pgr200.orm;
 
-import no.kristiania.pgr200.orm.Enums.SqlOperator;
-import no.kristiania.pgr200.orm.Enums.Statement;
+import no.kristiania.pgr200.orm.enums.SqlOperator;
+import no.kristiania.pgr200.orm.enums.Statement;
 
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.StringJoiner;
 
 public class ConditionalStatement<T> {
@@ -38,17 +38,19 @@ public class ConditionalStatement<T> {
 
     public String getSqlStatement() {
         if (this.key.contains(".") && !this.key.matches(".*" + Orm.quote + "[.]" + Orm.quote + ".*"))
-            this.key = String.format("%s" + Orm.quote + "." + Orm.quote + "%s", this.key.split("[.]")[0], this.key.split("[.]")[1]);
-        if(!operator.hasValue()) return String.format(Orm.quote + "%s" + Orm.quote + " %s", this.key, operator.getOperator());
-        return String.format(Orm.quote + "%s" + Orm.quote + " %s %s", this.key, operator.getOperator(), this.getValuePlaceholder());
+            this.key = String.format("%s%s.%s%s",
+                                     this.key.split("[.]")[0],
+                                     Orm.quote,
+                                     Orm.quote,
+                                     this.key.split("[.]")[1]);
+        if (!operator.hasValue()) return String.format("%s %s", Orm.QuoteString(this.key), operator.getOperator());
+        return String.format("%s %s %s", Orm.QuoteString(this.key), operator.getOperator(), this.getValuePlaceholder());
     }
 
     private String getValuePlaceholder() {
         if (this.operator.equals(SqlOperator.In) && this.getListValue() != null) {
             StringJoiner sj = new StringJoiner(", ");
-            for (T t : this.getListValue()) {
-                sj.add("?");
-            }
+            for (int i = 0; i < this.getListValue().size(); i++) sj.add("?");
             return "(" + sj.toString() + ")";
         }
         return "?";
@@ -57,11 +59,11 @@ public class ConditionalStatement<T> {
     public String getSqlStatement(String sqlStatement) {
         String andOr = useAnd ? SqlOperator.And.getOperator() : SqlOperator.Or.getOperator();
         StringJoiner statement = new StringJoiner(" ");
-        if(sqlStatement != null) statement.add(sqlStatement).add(andOr);
+        if (sqlStatement != null) statement.add(sqlStatement).add(andOr);
         return statement.add(getSqlStatement()).toString();
     }
 
-    public static String buildStatements(LinkedList<ConditionalStatement> list) {
+    public static String buildStatements(List<ConditionalStatement> list) {
         String statement = null;
         for (ConditionalStatement statementPart : list) {
             statement = statementPart.getSqlStatement(statement);
