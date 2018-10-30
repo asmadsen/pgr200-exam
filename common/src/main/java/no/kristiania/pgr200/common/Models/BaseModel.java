@@ -39,6 +39,11 @@ public abstract class BaseModel<T> implements IBaseModel<T> {
         }
     }
 
+    public T withAttributes(Map<String, ColumnValue> attributes){
+        this.populateAttributes(attributes);
+        return (T) this;
+    }
+
     @Override
     public Map<String, ColumnValue> getAttributes() {
         Map<String, ColumnValue> attributes = new HashMap<>();

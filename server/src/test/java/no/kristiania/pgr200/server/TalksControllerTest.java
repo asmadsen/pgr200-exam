@@ -112,7 +112,7 @@ public class TalksControllerTest {
         HttpResponse response = controller.destroy();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK);
         response = controller.show();
-        assertThat(response.getJson().toString()).isEqualTo("{}");
+        assertThat(response.getJson().toString()).isEqualTo("{\"value\":{\"data\":\"No results\"}}");
     }
 
     @Test

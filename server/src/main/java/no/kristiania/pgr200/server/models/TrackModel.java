@@ -6,7 +6,7 @@ import no.kristiania.pgr200.orm.BaseRecord;
 
 import java.util.UUID;
 
-public class TrackModel extends BaseRecord<Track> {
+public class TrackModel extends BaseRecord<TrackModel, Track> {
 
     public TrackModel() {
         super(new Track());

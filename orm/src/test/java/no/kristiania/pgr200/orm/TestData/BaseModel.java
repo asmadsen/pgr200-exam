@@ -54,6 +54,10 @@ public abstract class BaseModel<T> implements IBaseModel<T> {
         }
     }
 
+    public T withAttributes(Map<String, ColumnValue> attributes){
+        this.populateAttributes(attributes);
+        return (T) this;
+    }
 
     @SuppressWarnings("Duplicates")
     @Override

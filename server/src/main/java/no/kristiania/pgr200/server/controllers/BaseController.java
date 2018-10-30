@@ -13,6 +13,7 @@ import no.kristiania.pgr200.server.annotations.ApiRequest;
 
 import javax.validation.ConstraintViolation;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class BaseController<T extends BaseRecord> {
 
@@ -44,7 +45,9 @@ public abstract class BaseController<T extends BaseRecord> {
     public abstract HttpResponse index();
 
     HttpResponse index(T model) {
-        getResponsebody().add("values", new JsonParser().parse(getGsonBuilder().toJson(model.all())));
+        List<T> list = model.all();
+        getResponsebody().add("values", new JsonParser().parse(getGsonBuilder().toJson(
+                list.stream().map(BaseRecord::getState).collect(Collectors.toList()))));
         httpResponse.setHeaders(getHeaders());
         httpResponse.setBody(getGsonBuilder().toJson(getResponsebody()));
         httpResponse.setStatus(HttpStatus.OK);
@@ -62,12 +65,18 @@ public abstract class BaseController<T extends BaseRecord> {
                     getErrorMessage("Could not find element with id: " + getHttpRequest().getUri().split("/")[2]));
             httpResponse.setBody(getResponsebody().toString());
         } else {
-            getResponsebody().add("value", new JsonParser().parse(getGsonBuilder().toJson(
-                    model.findById(getUuidFromUri()))));
-            httpResponse.setBody(getGsonBuilder().toJson(getResponsebody()));
+            T result = (T) model.findById(getUuidFromUri());
             httpResponse.setStatus(HttpStatus.OK);
+            if(result != null) {
+                addPropertyToBody("value",
+                        new JsonParser().parse(getGsonBuilder().toJson(result.getState())).getAsJsonObject());
+            } else {
+                JsonObject object = new JsonObject();
+                object.addProperty("data", "No results");
+                addPropertyToBody("value", object);
+            }
+            httpResponse.setBody(getGsonBuilder().toJson(getResponsebody()));
         }
-
         return httpResponse;
     }
 
@@ -160,8 +169,8 @@ public abstract class BaseController<T extends BaseRecord> {
         return errorObject;
     }
 
-    void addPropertyToBody(String property, JsonObject message) {
-        getResponsebody().add(property, message);
+    void addPropertyToBody(String property, JsonObject value) {
+        getResponsebody().add(property, value);
     }
 
     private void addViolations(Set<ConstraintViolation> violations) {

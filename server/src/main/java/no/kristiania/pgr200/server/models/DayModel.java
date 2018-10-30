@@ -8,7 +8,7 @@ import java.text.ParseException;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
-public class DayModel extends BaseRecord<Day> {
+public class DayModel extends BaseRecord<DayModel, Day> {
 
     public DayModel() {
         super(new Day());

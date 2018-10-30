@@ -6,7 +6,7 @@ import no.kristiania.pgr200.orm.BaseRecord;
 
 import java.util.UUID;
 
-public class ConferenceModel extends BaseRecord<Conference> {
+public class ConferenceModel extends BaseRecord<ConferenceModel, Conference> {
 
     public ConferenceModel(UUID uuid) {
         super(new Conference(uuid));

@@ -20,9 +20,7 @@ public class InsertQueryTest {
 
     @Test
     public void shouldComposeInsertStatement() throws SQLException {
-        Orm.connection = DriverManager.getConnection(
-                "jdbc:h2:mem:conference_server;DB_CLOSE_DELAY=-1", "sa", "sa");
-        UserModel model = new UserModel(UUID.randomUUID(), "John Doe", "john@example.com");
+        UserModel model = new UserModel("John Doe", "john@example.com");
         InsertQuery query = new InsertQuery("users").insert(model);
 
         assertThat(query.getSqlStatement()).isEqualTo("INSERT INTO `users` (`name`, `id`, `email`) VALUES (?, ?, ?)");
@@ -30,9 +28,8 @@ public class InsertQueryTest {
 
     @Test
     public void shouldPopulateStatement() throws SQLException {
-        Orm.connection = DriverManager.getConnection(
-                "jdbc:h2:mem:conference_server;DB_CLOSE_DELAY=-1", "sa", "sa");
-        UserModel model = new UserModel(UUID.randomUUID(), "John Doe", "john@example.com");
+        UserModel model = new UserModel("John Doe", "john@example.com");
+        model.getState().setId(UUID.randomUUID());
         InsertQuery query = new InsertQuery("users").insert(model);
 
         PreparedStatement statement = mock(PreparedStatement.class);

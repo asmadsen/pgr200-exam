@@ -6,7 +6,7 @@ import no.kristiania.pgr200.orm.BaseRecord;
 
 import java.util.UUID;
 
-public class TimeslotModel extends BaseRecord<Timeslot> {
+public class TimeslotModel extends BaseRecord<TimeslotModel, Timeslot> {
     public TimeslotModel() {
         super(new Timeslot());
     }
