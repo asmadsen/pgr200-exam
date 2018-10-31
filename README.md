@@ -1,3 +1,7 @@
+# Gruppe: 
+* Kjell-Olaf Slagnes: slakje17
+* Andreas Storesund Madsen: madand17
+
 ## Hvordan teste løsningen
 ```
 Naviger til target mappen:
@@ -18,24 +22,24 @@ ConferenceServer.postman_collection.json
 ## Sjekkliste for innleveringen
 
 - [ ] Kodekvalitet
-    - [ ] Produserer `mvn package` en executable jar? (tips: Bruk `maven-shade-plugin`)
-    - [ ] Bruker koden Java 8 og UTF-8
-    - [ ] Bygger prosjektet på https://travis-ci.com?
-    - [ ] Har du god test-dekning? (tips: Sett opp jacoco-maven-plugin til å kreve at minst 65% av linjene har testdekning)
-    - [ ] Kobler main-klassen seg opp mot PostgreSQL ved hjelp av en properties-fil?
+    - [x] Produserer `mvn package` en executable jar? (tips: Bruk `maven-shade-plugin`)
+    - [x] Bruker koden Java 8 og UTF-8
+    - [x] Bygger prosjektet på https://travis-ci.com?
+    - [x] Har du god test-dekning? (tips: Sett opp jacoco-maven-plugin til å kreve at minst 65% av linjene har testdekning)
+    - [x] Kobler main-klassen seg opp mot PostgreSQL ved hjelp av en properties-fil?
     - [ ] Kan main-klassen resette databasen? (tips: Bruk Flyway#clear)
 - [ ] Funksjonalitet
-    - [ ] Kan man legge inn et nytt foredrag?
-    - [ ] Kan man liste foredrag i databasen?
-    - [ ] Valgfritt: Oppretter main-klassen et konferanseprogram med flere dager og tracks?
-    - [ ] Valgfritt: Kan main-klassen vise konferanseprogrammet?
+    - [x] Kan man legge inn et nytt foredrag?
+    - [x] Kan man liste foredrag i databasen?
+    - [x] Valgfritt: Oppretter main-klassen et konferanseprogram med flere dager og tracks?
+    - [x] Valgfritt: Kan main-klassen vise konferanseprogrammet?
 - [ ] Dokumentasjon i form av README.md
-    - [ ] Navn og Feide-ID på dere de som var på teamet
-    - [ ] Inkluderer dokumentasjonen hvordan man tester ut funksjonaliteten programmet manuelt? (Inkludert eventuell ekstra funksjonalitet dere har tatt med)
+    - [x] Navn og Feide-ID på dere de som var på teamet
+    - [x] Inkluderer dokumentasjonen hvordan man tester ut funksjonaliteten programmet manuelt? (Inkludert eventuell ekstra funksjonalitet dere har tatt med)
     - [ ] Inkluderer dokumentasjonen en evaluering av hvordan man jobbet sammen?
-    - [ ] Inkluderer dokumentasjonen en screencast av en parprogrammeringsesjon?
-    - [ ] Inkluderer dokumentasjonen en evaluering _fra_ en annen gruppe og en evaluering _til_ en annen gruppe?
-    - [ ] Inkluderer dokumentasjonen et databasediagram
+    - [x] Inkluderer dokumentasjonen en screencast av en parprogrammeringsesjon?
+    - [x] Inkluderer dokumentasjonen en evaluering _fra_ en annen gruppe og en evaluering _til_ en annen gruppe?
+    - [x] Inkluderer dokumentasjonen et databasediagram
     - [ ] Inkluderer dokumentasjonen en link til screencast av programmeringsesjon?
 
 # Architecture overview [![Build Status](https://travis-ci.com/Westerdals/command-line-parser-exercise-asmadsen.svg?token=CtziNfWQqQxtrfWutyqx&branch=master)](https://travis-ci.com/Westerdals/command-line-parser-exercise-asmadsen)
