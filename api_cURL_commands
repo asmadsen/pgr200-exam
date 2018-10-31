@@ -1,0 +1,64 @@
+#!/bin/bash
+
+echo Oppretter en topic:
+curl -X POST \
+  http://localhost:8080/api/topics \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '{
+	"topic": "Java Generics"
+}'
+
+topic_id=$(curl -s -X GET \
+  http://localhost:8080/api/topics \
+  -H 'cache-control: no-cache' | \
+     python3 -c "import sys, json; print(json.load(sys.stdin)['values'][0]['id'])")
+
+echo
+echo Henter alle topics:
+curl -X GET \
+  http://localhost:8080/api/topics \
+  -H 'cache-control: no-cache'
+
+echo
+echo Oppretter en talk:
+curl -X POST \
+  http://localhost:8080/api/talks \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '{
+	"title": "Generics For dummies",
+	"description": "A walkthrough on how to use java generics",
+	"topic_id": '$topic_id'
+}'
+
+talk_id=$(curl -s -X GET \
+  http://localhost:8080/api/talks \
+  -H 'Postman-Token: a2280273-7aea-40f3-9b11-ea1671857382' \
+  -H 'cache-control: no-cache' | \
+     python3 -c "import sys, json; print(json.load(sys.stdin)['values'][0]['id'])")
+
+echo
+echo Henter alle talks:
+curl -X GET \
+  http://localhost:8080/api/talks \
+  -H 'cache-control: no-cache'
+
+echo
+echo Oppdaterer en talk med id: "$talk_id"
+curl -X PUT \
+  http://localhost:8080/api/talks/$talk_id \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '{
+	"title": "Advanced Generics",
+	"description": "A in depth course about Java generics"
+}'
+
+echo
+echo Henter alle talks: "(Nå er en talk oppdatert med nye data)"
+curl -X GET \
+  http://localhost:8080/api/talks \
+  -H 'cache-control: no-cache'
+
+

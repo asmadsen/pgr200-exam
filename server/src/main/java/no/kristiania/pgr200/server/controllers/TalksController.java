@@ -43,6 +43,7 @@ public class TalksController extends BaseController<TalkModel> {
     @Override
     @ApiRequest(action = HttpMethod.PUT, route = "/talks" + uuidPath)
     public HttpResponse update(){
+        httpResponse.setHeaders(getHeaders());
         if(!validateUUID(getHttpRequest().getUri().split("/")[2])) {
             JsonObject error = new JsonObject();
             error.addProperty("error", "Not an UUID: " + getHttpRequest().getUri().split("/")[2]);

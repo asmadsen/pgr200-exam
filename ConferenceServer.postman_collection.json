@@ -1,0 +1,861 @@
+{
+	"info": {
+		"_postman_id": "0aa3c1ae-f8bc-4cfe-ad17-4172cf61fb4b",
+		"name": "ConferenceServer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Conferences",
+			"item": [
+				{
+					"name": "GET Conferences",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/conferences",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"conferences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Conference",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/conferences/aedd7463-fd45-4e8c-bfe4-ab2b30cfd2f1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"conferences",
+								"aedd7463-fd45-4e8c-bfe4-ab2b30cfd2f1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Conference",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"DefCon\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/conferences",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"conferences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Conference",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"DefCon\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/conferences/aedd7463-fd45-4e8c-bfe4-ab2b30cfd2f1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"conferences",
+								"aedd7463-fd45-4e8c-bfe4-ab2b30cfd2f1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Conference",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/conferences/aedd7463-fd45-4e8c-bfe4-ab2b30cfd2f1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"conferences",
+								"aedd7463-fd45-4e8c-bfe4-ab2b30cfd2f1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Days",
+			"item": [
+				{
+					"name": "GET Days",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/days",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"days"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Day",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/days/64c2a5f2-f3c5-4241-83e6-622179d37747",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"days",
+								"64c2a5f2-f3c5-4241-83e6-622179d37747"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Days",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"date\": \"2018-11-15\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/days",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"days"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Day",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"conference_id\": \"15dd42e8-ce8e-4055-b6f1-05ed28bdbaf9\",\n\t\"date\": \"2012-12-22\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/days/64c2a5f2-f3c5-4241-83e6-622179d37747",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"days",
+								"64c2a5f2-f3c5-4241-83e6-622179d37747"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Day",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8080/api/days/3500ecf5-8588-4493-ab25-611156e65b43",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"days",
+								"3500ecf5-8588-4493-ab25-611156e65b43"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tracks",
+			"item": [
+				{
+					"name": "GET Tracks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tracks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tracks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Track",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tracks/aedd7463-fd45-4e8c-bfe4-ab2b30cfd2f1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tracks",
+								"aedd7463-fd45-4e8c-bfe4-ab2b30cfd2f1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Track",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"day_id\": \"ee9b1ee6-bdc0-4e72-91ab-2085c598ca41\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tracks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tracks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Track",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tracks/aedd7463-fd45-4e8c-bfe4-ab2b30cfd2f1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tracks",
+								"aedd7463-fd45-4e8c-bfe4-ab2b30cfd2f1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Track",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tracks/aedd7463-fd45-4e8c-bfe4-ab2b30cfd2f1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tracks",
+								"aedd7463-fd45-4e8c-bfe4-ab2b30cfd2f1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Timeslots",
+			"item": [
+				{
+					"name": "GET Timeslots",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/timeslots",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"timeslots"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Timeslot",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/timeslots/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"timeslots",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Timeslot",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"talk_id\": \"b80125d2-aa93-4615-9368-c4a2c377b736\",\n\t\"track_id\": \"9efd8f69-659b-461e-8ff0-0b4efba90203\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/timeslots",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"timeslots"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Timeslot",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"talk_id\": \"b80125d2-aa93-4615-9368-c4a2c377b736\",\n\t\"track_id\": \"9efd8f69-659b-461e-8ff0-0b4efba90203\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/timeslots/37d09cab-bd28-475c-afc4-d2ca3b15585c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"timeslots",
+								"37d09cab-bd28-475c-afc4-d2ca3b15585c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Timeslot",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/timeslots/4aafc4e4-244b-4fe3-b6fb-615d105929fc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"timeslots",
+								"4aafc4e4-244b-4fe3-b6fb-615d105929fc"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Talks",
+			"item": [
+				{
+					"name": "GET Talks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/talks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"talks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Talk",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/talks/b80125d2-aa93-4615-9368-c4a2c377b736",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"talks",
+								"b80125d2-aa93-4615-9368-c4a2c377b736"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Talk",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8bc2b066-2b73-4ddd-bb65-14bad25b3157",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"NEw java talk\",\n\t\"description\": \"giaoifn2p1n3p123m\",\n\t\"topic_id\": \"5893dacc-7e28-49c4-a00b-ce8748f03863\"\n}\n"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/talks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"talks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Talk",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"Advanced Generics\",\n\t\"description\": \"A in depth course about Java generics\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/talks/4345d2d9-0349-4134-bd89-4a0f9f925fb3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"talks",
+								"4345d2d9-0349-4134-bd89-4a0f9f925fb3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Talk",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/talks/90827f2a-d7ed-4863-aafd-b186e9c0815e",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"talks",
+								"90827f2a-d7ed-4863-aafd-b186e9c0815e"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Topics",
+			"item": [
+				{
+					"name": "GET Topics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/topics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Topic",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/topics/d791e51c-b017-4554-9544-cfbc5bef3eac",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topics",
+								"d791e51c-b017-4554-9544-cfbc5bef3eac"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Topic",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"topic\": \"C++\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/topics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Topic",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"topic\": \"Ruby\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/topics/d791e51c-b017-4554-9544-cfbc5bef3eac",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topics",
+								"d791e51c-b017-4554-9544-cfbc5bef3eac"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Topic",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/topics/d791e51c-b017-4554-9544-cfbc5bef3eac",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"topics",
+								"d791e51c-b017-4554-9544-cfbc5bef3eac"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
