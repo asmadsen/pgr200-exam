@@ -9,9 +9,9 @@ public class DatabaseHandling {
 
     public Connection createConnection() throws SQLException {
         return DriverManager.getConnection(
-                ConferenceServer.DATASOURCE,
-                ConferenceServer.USER,
-                ConferenceServer.PASSWORD);
+                ConferenceServer.properties.getProperty("dataSource.url"),
+                ConferenceServer.properties.getProperty("dataSource.username"),
+                ConferenceServer.properties.getProperty("dataSource.password"));
     }
 
     public static Connection getConnection() throws SQLException {

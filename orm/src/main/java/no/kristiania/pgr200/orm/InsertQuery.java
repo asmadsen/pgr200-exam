@@ -1,6 +1,8 @@
 package no.kristiania.pgr200.orm;
 
 import no.kristiania.pgr200.orm.enums.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -12,6 +14,7 @@ public class InsertQuery<T extends IBaseModel<T>> {
     private final String table;
     private T model;
     private Map<String, ColumnValue> attributes;
+    private static Logger logger = LoggerFactory.getLogger(InsertQuery.class);
 
     public InsertQuery(String table) {
         this.table = table;
@@ -54,6 +57,7 @@ public class InsertQuery<T extends IBaseModel<T>> {
     public int get() throws SQLException {
         PreparedStatement statement = Orm.connection.prepareStatement(getSqlStatement());
         populateStatement(statement);
+        logger.info(statement.toString());
         return statement.executeUpdate();
     }
 }

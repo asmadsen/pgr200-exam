@@ -23,7 +23,9 @@ public class TimeslotController extends BaseController<TimeslotModel> {
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/timeslots" + uuidPath)
     public HttpResponse show() {
-        return show(new TimeslotModel());
+        TimeslotModel model = new TimeslotModel();
+        return show(model.newQuery()
+                .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("track").with("talk").first());
     }
 
     @Override

@@ -63,20 +63,16 @@ public abstract class BaseRecord<
 
     public boolean save() {
         if (isDirty()) {
-            try {
-                if (exists()) {
-                    if (!update()) return false;
-                } else {
-                    if (!create()) return false;
-                }
-            } catch (SQLException e) {
-                logger.error("save", e);
+            if (exists()) {
+                if (!update()) return false;
+            } else {
+                if (!create()) return false;
             }
         }
         return true;
     }
 
-    public boolean update() throws SQLException {
+    public boolean update() {
         if (isDirty()) {
             UpdateQuery<T> updateQuery = new UpdateQuery<>((T) this).whereEquals(getPrimaryKey(),
                                                                                  state.getAttribute(getPrimaryKey())
@@ -84,11 +80,15 @@ public abstract class BaseRecord<
             state.getAttributes().forEach((k, v) -> {
                 if(v != null) updateQuery.set(k, v.getValue());
             });
-            if (updateQuery.get() > 0) {
-                setDbState(newStateInstance().withAttributes(state.getAttributes()));
-                return true;
-            } else {
-                return false;
+            try {
+                if (updateQuery.get() > 0) {
+                    setDbState(newStateInstance().withAttributes(state.getAttributes()));
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return true;
