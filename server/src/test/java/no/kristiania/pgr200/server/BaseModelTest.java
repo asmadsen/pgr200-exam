@@ -4,7 +4,10 @@ import com.github.javafaker.Faker;
 import no.kristiania.pgr200.server.models.TalkModel;
 import org.junit.*;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
@@ -19,9 +22,12 @@ public class BaseModelTest {
 
     @Before
     public void init(){
-        ConferenceServer.DATASOURCE = "jdbc:h2:mem:conference_server;DB_CLOSE_DELAY=-1";
-        ConferenceServer.USER = "sa";
-        ConferenceServer.PASSWORD = "sa";
+        ConferenceServer.properties = new Properties();
+        try {
+            ConferenceServer.properties.load(new FileInputStream("dataSourceH2.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         SetupDatabaseTest.initSchema();
     }
 

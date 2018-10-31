@@ -4,6 +4,8 @@ import no.kristiania.pgr200.orm.enums.OrderDirection;
 import no.kristiania.pgr200.orm.enums.SqlOperator;
 import no.kristiania.pgr200.orm.overload_helpers.WhereOverloads;
 import no.kristiania.pgr200.orm.relations.AbstractRelation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,6 +28,7 @@ public class SelectQuery<
     private LinkedHashSet<String> groupBy;
     private LinkedHashMap<String, OrderDirection> orderBy;
     private int limit;
+    private static Logger LOGGER = LoggerFactory.getLogger(SelectQuery.class);
 
     public SelectQuery(T model, String... columns) {
         this(model);
@@ -168,6 +171,7 @@ public class SelectQuery<
         try {
             PreparedStatement statement = Orm.connection.prepareStatement(getSqlStatement());
             populateStatement(statement);
+            LOGGER.info(statement.toString());
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Map<String, ColumnValue> attributes = new HashMap<>();
@@ -183,8 +187,8 @@ public class SelectQuery<
                 results.add(entry);
             }
             results = this.eagerLoadRelations(results);
-        } catch (SQLException ignored) {
-            System.out.println(ignored);
+        } catch (SQLException e) {
+            LOGGER.error("newStateInstance", e);
         }
         return results;
     }

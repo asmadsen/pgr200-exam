@@ -1,8 +1,13 @@
 package no.kristiania.pgr200.server.models;
 
 import com.google.gson.JsonObject;
+import no.kristiania.pgr200.common.models.Timeslot;
+import no.kristiania.pgr200.common.models.Topic;
 import no.kristiania.pgr200.common.models.Track;
 import no.kristiania.pgr200.orm.BaseRecord;
+import no.kristiania.pgr200.orm.annotations.Relation;
+import no.kristiania.pgr200.orm.relations.BelongsTo;
+import no.kristiania.pgr200.orm.relations.HasMany;
 
 import java.util.UUID;
 
@@ -27,5 +32,10 @@ public class TrackModel extends BaseRecord<TrackModel, Track> {
     @Override
     public String getTable() {
         return "tracks";
+    }
+
+    @Relation
+    public HasMany<TimeslotModel, Timeslot, TrackModel> timeslots() {
+        return this.hasMany(new TimeslotModel(), "track_id", "id");
     }
 }

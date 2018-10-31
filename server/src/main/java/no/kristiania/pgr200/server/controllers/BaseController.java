@@ -86,7 +86,7 @@ public abstract class BaseController<T extends BaseRecord> {
         }
         Set<ConstraintViolation> violations = model.getState().validate();
         httpResponse.setHeaders(getHeaders());
-        if (violations.isEmpty() && model.save()) {
+        if (violations.isEmpty() && model.update()) {
             getResponsebody().add("value", new JsonParser().parse(getGsonBuilder().toJson(model.getState())));
             httpResponse.setStatus(HttpStatus.OK);
             httpResponse.setBody(getResponsebody().toString());
@@ -130,15 +130,15 @@ public abstract class BaseController<T extends BaseRecord> {
     HttpResponse destroy(T model) {
         httpResponse.setHeaders(getHeaders());
         if (!validateUUID(getHttpRequest().getUri().split("/")[2])) {
-            getResponsebody().add("error",
-                    getErrorMessage("Could not find element with id: " + getHttpRequest().getUri().split("/")[2]));
-            httpResponse.setStatus(HttpStatus.BadRequest);
-            httpResponse.setBody(getResponsebody().toString());
+            return getElementNotFoundResponse();
         }
         if (model.destroy()) {
             httpResponse.setStatus(HttpStatus.OK);
         } else {
             httpResponse.setStatus(HttpStatus.BadRequest);
+            JsonObject object = new JsonObject();
+            object.add("error", getErrorMessage("Could not delete element with id: " + getUuidFromUri()));
+            httpResponse.setBody(object.toString());
         }
         return httpResponse;
     }
@@ -179,5 +179,13 @@ public abstract class BaseController<T extends BaseRecord> {
             errors.addProperty(violation.getPropertyPath().toString(), violation.getMessage());
         }
         getResponsebody().add("errors", errors);
+    }
+
+    HttpResponse getElementNotFoundResponse() {
+        getResponsebody().add("error",
+                getErrorMessage("Could not find element with id: " + getHttpRequest().getUri().split("/")[2]));
+        httpResponse.setStatus(HttpStatus.BadRequest);
+        httpResponse.setBody(getResponsebody().toString());
+        return httpResponse;
     }
 }

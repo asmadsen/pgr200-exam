@@ -5,7 +5,6 @@ import no.kristiania.pgr200.common.http.HttpRequest;
 import no.kristiania.pgr200.common.http.HttpResponse;
 import no.kristiania.pgr200.server.annotations.ApiController;
 import no.kristiania.pgr200.server.annotations.ApiRequest;
-import no.kristiania.pgr200.server.models.TopicModel;
 import no.kristiania.pgr200.server.models.TrackModel;
 
 @ApiController("/tracks")
@@ -24,7 +23,9 @@ public class TracksController extends BaseController<TrackModel> {
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/tracks" + uuidPath)
     public HttpResponse show() {
-        return show(new TrackModel(getUuidFromUri()));
+        TrackModel model = new TrackModel();
+        return show(model.newQuery()
+                .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("timeslots").first());
     }
 
     @Override

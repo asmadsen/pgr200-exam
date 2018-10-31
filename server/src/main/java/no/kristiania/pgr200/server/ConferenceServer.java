@@ -12,13 +12,12 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class ConferenceServer implements Runnable {
     private Socket connection;
     private static final int PORT = 8080;
-    public static String DATASOURCE = "jdbc:postgresql://localhost/postgres";
-    public static String USER = "postgres";
-    public static String PASSWORD = "postgres";
+    public static Properties properties;
 
     public ConferenceServer(Socket socket) {
         this.connection = socket;
@@ -33,7 +32,15 @@ public class ConferenceServer implements Runnable {
 
     public static void main(String[] args) {
         Flyway flyway = new Flyway();
-        flyway.setDataSource("jdbc:postgresql://localhost/postgres", "postgres", "postgres");
+        properties = new Properties();
+        try {
+            properties.load(new FileInputStream("innlevering.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        flyway.setDataSource(properties.getProperty("dataSource.url"),
+                properties.getProperty("dataSource.username"),
+                properties.getProperty("dataSource.password"));
         flyway.setSchemas("conference_server");
         flyway.setLocations("filesystem:server/src/main/resources/db/migration");
 //        flyway.clean();

@@ -6,8 +6,8 @@ import java.util.UUID;
 public class Timeslot extends BaseModel<Timeslot> {
 
     protected UUID id;
-    private UUID talk_id;
-    private UUID track_id;
+    public UUID talk_id;
+    public UUID track_id;
 
     public Timeslot() {
 

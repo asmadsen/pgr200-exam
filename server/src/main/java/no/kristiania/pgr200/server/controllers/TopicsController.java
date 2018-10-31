@@ -3,9 +3,9 @@ package no.kristiania.pgr200.server.controllers;
 import no.kristiania.pgr200.common.http.HttpMethod;
 import no.kristiania.pgr200.common.http.HttpRequest;
 import no.kristiania.pgr200.common.http.HttpResponse;
+import no.kristiania.pgr200.common.http.HttpStatus;
 import no.kristiania.pgr200.server.annotations.ApiController;
 import no.kristiania.pgr200.server.annotations.ApiRequest;
-import no.kristiania.pgr200.server.models.TalkModel;
 import no.kristiania.pgr200.server.models.TopicModel;
 
 @ApiController("/topics")
@@ -24,7 +24,13 @@ public class TopicsController extends BaseController<TopicModel>{
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/topics" + uuidPath)
     public HttpResponse show() {
-        return show(new TopicModel().newQuery().first());
+        httpResponse.setHeaders(getHeaders());
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) {
+            return getElementNotFoundResponse();
+        }
+        TopicModel model = new TopicModel();
+        return show(model.newQuery()
+                .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("talks").first());
     }
 
     @Override

@@ -24,7 +24,9 @@ public class ConferenceController extends BaseController<ConferenceModel> {
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/conferences" + uuidPath)
     public HttpResponse show() {
-        return show(new ConferenceModel());
+        ConferenceModel model = new ConferenceModel();
+        return show(model.newQuery()
+                .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("days").first());
     }
 
     @Override
