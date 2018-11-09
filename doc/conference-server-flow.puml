@@ -13,7 +13,7 @@ Server <-- Database --
 Client <-- Server --: Location: http://.../api/id
 User <-- Client --: Id is <id>
 == Listing all talks ==
-User -> Client ++: list
+User -> Client ++: listPrompt
 Client -> Server ++: GET http://.../api/talks
 Server -> Database ++: SELECT * FROM talks 
 Server <-- Database --: talk rows

@@ -16,7 +16,6 @@ public class ConditionalPromptTest {
 
         ConditionalPrompt prompt = new ConditionalPrompt(command1 -> true, childPrompt);
 
-
         prompt.prompt(command);
 
         verify(childPrompt).prompt(eq(command));

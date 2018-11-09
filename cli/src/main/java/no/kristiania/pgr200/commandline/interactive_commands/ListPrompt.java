@@ -1,5 +1,6 @@
 package no.kristiania.pgr200.commandline.interactive_commands;
 
+import org.fusesource.jansi.Ansi;
 import org.jline.keymap.KeyMap;
 import org.jline.reader.Binding;
 import org.jline.reader.LineReader;
@@ -8,6 +9,9 @@ import org.jline.terminal.Terminal;
 import org.jline.utils.InfoCmp;
 
 import java.io.PrintWriter;
+
+import static org.fusesource.jansi.Ansi.ansi;
+import static org.jline.reader.LineReader.MAIN;
 
 public class ListPrompt extends AbstractPrompt {
     private final String question;
@@ -35,6 +39,8 @@ public class ListPrompt extends AbstractPrompt {
 
         this.unRegisterKeyBindings(lineReader);
 
+        terminal.writer().print(ansi().cursorDown(this.options.length - this.selectedIndex + 1).a(""));
+
         command.setValue(this.identifier, this.options[selectedIndex]);
     }
 
@@ -46,7 +52,7 @@ public class ListPrompt extends AbstractPrompt {
     }
 
     private void registerKeyBindings(LineReader lineReader) {
-        KeyMap<Binding> keys = lineReader.getKeys();
+        KeyMap<Binding> keys = lineReader.getKeyMaps().get(MAIN);
         Terminal terminal = lineReader.getTerminal();
         keys.bind((Widget) () -> {
             int previousIndex = this.selectedIndex;
@@ -73,7 +79,7 @@ public class ListPrompt extends AbstractPrompt {
             if(from < to) {
                 terminal.puts(InfoCmp.Capability.cursor_down);
                 from++;
-            } else if (from > to) {
+            } else {
                 terminal.puts(InfoCmp.Capability.cursor_up);
                 from--;
             }
@@ -84,7 +90,8 @@ public class ListPrompt extends AbstractPrompt {
         for (String entry : list) {
             terminal.writer().println(String.format("  %s", entry));
         }
-        int index = list.length;
+        int index = list.length + 1;
+        terminal.writer().println(ansi().fgBrightBlack().a("(use arrow keys)").reset());
         this.goToLine(terminal, index, 0);
         index = 0;
         this.replaceLine(terminal, list[index], true);
@@ -95,6 +102,6 @@ public class ListPrompt extends AbstractPrompt {
         terminal.puts(InfoCmp.Capability.carriage_return);
         terminal.puts(InfoCmp.Capability.clr_eol);
         String prefix = selected ? "> " : "  ";
-        terminal.writer().print(String.format("%s%s", prefix, line));
+        terminal.writer().print(ansi().fgBright(selected ? Ansi.Color.CYAN : Ansi.Color.DEFAULT).a(String.format("%s%s", prefix, line)).reset());
     }
 }

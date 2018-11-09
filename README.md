@@ -122,27 +122,14 @@ I tilbakemeldingen er det lurt å stille spørsmålene: 1. Hva lærte jeg av den
 
 ## Retningslinjer for vurdering
 
-### Minimum krav for bestått
-
-- Kompilerende kode som er sjekket inn i GitHub
-- Tester som gjør noe ikke totalt ufornuftig (eksempel på ufornuftlig `assertTrue(true)` eller `assertEquals(4, 2+2)`)
-- Kjørbart program som legger inn data i databasen
-
-### Minimum krav for C
-
-- Skriv og les programmet fra databasen i Java i henhold til deres egen dokumentasjon
-- Les og skriv data over socket
-- Kode lagret på GitHub, kompilerer og utfører en oppgave uten å krasje
 
 ### Minimum krav for B
 
 De fleste av følgende må være oppfyllt:
 
-- Et rimelig nivå med enhetstester som kjører på Travis CI
-- Kode uten større skrivefeil, feil innrykk, slukte exceptions eller advarsler fra Eclipse
+- Kode uten slukte exceptions eller advarsler fra Eclipse((hehe))
 - Readme som beskriver 4-10 steg for å demonstrere programmet
-- God kode: Enkel, konsis, uttrykksfull, velformattert kode uten vestlige feil eller mangler
-- Ingen alvorlige feil, SQL injection hull, krasj ved uventet input
+- Ingen alvorlige feil, krasj ved uventet input
 
 ### Krav for A
 
@@ -150,13 +137,12 @@ Løsningen må oppfylle alle krav til B og ha 2-3 områder som hever den ytterli
 
 - Velskrevet (men ikke nødvendigvis omfattende) dokumentasjon
 - At videoen får fram kvalitetene i designet
-- Uttrykksfulle enhetstester som er effektive på å fange feil og som kjører på Travis CI
-- En velbegrunnet datamodell med 4-8 klasser
+- Uttrykksfulle enhetstester som er effektive på å fange feil
+- En velbegrunnet datamodell
 - En lettfattelig og utvidbar http-server
 - Spennende generisk kode som egentlig er unødvendig kompleks for å løse problemet
 - Enkel kode som løser problemet presist og konsist (i konflikt med forrige)
 
-Grupper på 3 må ha flere av disse enn grupper på 2 for å få en A.
 
 ## Hvordan teste løsningen
 ```

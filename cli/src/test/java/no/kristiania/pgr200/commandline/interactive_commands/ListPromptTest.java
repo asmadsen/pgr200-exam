@@ -1,58 +1,57 @@
 package no.kristiania.pgr200.commandline.interactive_commands;
 
-import com.github.javafaker.Faker;
 import org.jline.keymap.KeyMap;
 import org.jline.reader.Binding;
 import org.jline.reader.LineReader;
-import org.jline.reader.impl.LineReaderImpl;
+import org.jline.reader.Widget;
 import org.jline.terminal.Terminal;
 import org.jline.utils.InfoCmp;
 import org.junit.Test;
 import org.mockito.InOrder;
+import org.mockito.stubbing.Answer;
 
-import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class ListPromptTest {
-    Faker faker = new Faker();
     @Test
     public void shouldListOptions() {
-        Terminal stream = mock(Terminal.class);
-        PrintWriter writer = mock(PrintWriter.class);
-        LineReader lineReader = mock(LineReaderImpl.class);
-        KeyMap<Binding> keys = spy(new KeyMap<>());
-        when(lineReader.getTerminal()).thenReturn(stream);
-        when(lineReader.getKeys()).thenReturn(keys);
-        when(stream.writer()).thenReturn(writer);
-        when(stream.getStringCapability(any())).thenReturn("up");
+        InteractiveCommand command = Mocks.getInteractiveCommand();
 
-        InteractiveCommand command = spy(new InteractiveCommand(stream, lineReader));
-        Set<String> characters = generateCharacters();
-        String[] array = characters.toArray(new String[]{});
-        ListPrompt listPrompt = new ListPrompt("name", "Who are you?", array);
+        Terminal terminal = command.getTerminal();
+        PrintWriter writer = command.getOutput();
+
+        when(terminal.getStringCapability(any()))
+                .thenReturn("up")
+                .thenReturn("down")
+                .thenReturn("up")
+                .thenReturn("down");
+
+        LineReader lineReader = command.getLineReader();
+
+        when(lineReader.readLine()).then((Answer<String>) (invocation) -> {
+            KeyMap<Binding> keys = lineReader.getKeys();
+            ((Widget) keys.getBound("down")).apply();
+            ((Widget) keys.getBound("up")).apply();
+            ((Widget) keys.getBound("down")).apply();
+            return "";
+        });
+
+        String[] characters = Mocks.generateCharacters();
+        ListPrompt listPrompt = new ListPrompt("name", "Who are you?", characters);
 
         listPrompt.prompt(command);
 
         InOrder order = inOrder(writer);
 
         order.verify(writer).println(eq("Who are you?"));
-        for (int i = 0; i < array.length; i++) {
-            order.verify(writer).println(eq(String.format("  %s", array[i])));
+        for (String anArray : characters) {
+            order.verify(writer).println(eq(String.format("  %s", anArray)));
         }
 
-        verify(command).setValue("name", array[0]);
+        verify(command).setValue("name", characters[1]);
     }
 
-    private Set<String> generateCharacters() {
-        Set<String> characters = new HashSet<>();
-        for (int i = 0; i < 10; i++) {
-            characters.add(faker.rickAndMorty().character());
-        }
-        return characters;
-    }
 }
