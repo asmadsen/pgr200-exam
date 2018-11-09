@@ -1,6 +1,6 @@
 # Gruppe: 
 * Kjell-Olaf Slagnes: slakje17
-* Andreas Storesund Madsen: madand17
+* Andreas Storesund Madsen: madand18
 
 # PGR200 Hovedinnlevering
 
@@ -87,15 +87,15 @@ I tilbakemeldingen er det lurt å stille spørsmålene: 1. Hva lærte jeg av den
 
 ## Sjekkliste for innleveringen
 
-- [ ] Kodekvalitet
+- [x] Kodekvalitet
   - [x] Koden er klonet fra GitHub classrom
-  - [ ] Produserer `mvn package` en executable jar? (tips: Bruk `maven-shade-plugin`)
-  - [ ] Bruker koden Java 8 og UTF-8
-  - [ ] Bygger prosjektet på [https://travis-ci.com](https://travis-ci.com)?
-  - [ ] Har du god test-dekning? (tips: Sett opp jacoco-maven-plugin til å kreve at minst 65% av linjene har testdekning)
-  - [ ] Er koden delt inn i flere Maven `<modules>`?
-  - [ ] Bruker kommunikasjon mellom klient og server HTTP korrekt?
-  - [ ] Kobler serveren seg opp mot PostgreSQL ved hjelp av konfigurasjon i fila `innlevering.properties` i *current working directory* med `dataSource.url`, `dataSource.username`, `dataSource.password`?
+  - [x] Produserer `mvn package` en executable jar? (tips: Bruk `maven-shade-plugin`)
+  - [x] Bruker koden Java 8 og UTF-8
+  - [x] Bygger prosjektet på [https://travis-ci.com](https://travis-ci.com)?
+  - [x] Har du god test-dekning? (tips: Sett opp jacoco-maven-plugin til å kreve at minst 65% av linjene har testdekning)
+  - [x] Er koden delt inn i flere Maven `<modules>`?
+  - [x] Bruker kommunikasjon mellom klient og server HTTP korrekt?
+  - [x] Kobler serveren seg opp mot PostgreSQL ved hjelp av konfigurasjon i fila `innlevering.properties` i *current working directory* med `dataSource.url`, `dataSource.username`, `dataSource.password`?
 - [ ] Funksjonalitet
   - [ ] add: Legg til et foredrag i databasen med title, description og topic (valgfritt)
   - [ ] list: List opp alle foredrag i basen med et valgfritt topic
@@ -103,19 +103,14 @@ I tilbakemeldingen er det lurt å stille spørsmålene: 1. Hva lærte jeg av den
   - [ ] update: Endre title, description eller topic for et foredrag
   - [ ] Valgfri tillegg: Kommandoer for å sette opp hvor mange dager og timer konferansen skal vare og hvor mange parallelle spor den skal inneholde.
 - [ ] Dokumentasjon i form av README.md
-  - [ ] Navn og Feide-ID på dere de som var på teamet
+  - [x] Navn og Feide-ID på dere de som var på teamet
   - [ ] Inkluderer dokumentasjonen hvordan man tester ut funksjonaliteten programmet manuelt? (Inkludert eventuell ekstra funksjonalitet dere har tatt med)
   - [ ] Inkluderer dokumentasjonen en evaluering av hvordan man jobbet sammen?
   - [ ] Inkluderer dokumentasjonen en screencast av en parprogrammeringsesjon?
   - [ ] Inkluderer dokumentasjonen en evaluering *fra* en annen gruppe og en evaluering *til* en annen gruppe?
-  - [ ] Inkluderer dokumentasjonen en UML diagram med datamodellen?
-  - [ ] Inkluderer dokumentasjonen en link til screencast av programmeringsesjon?
+  - [x] Inkluderer dokumentasjonen en UML diagram med datamodellen?
   - [ ] Inkluderer dokumentasjonen en egenevaluering med hvilken karakter gruppen mener de fortjener?
 
-### Forberedelse
-
-- [ ] Finn endelig grupperpartner innen 1. november
-- [ ] Finn en gruppe for gjensidig evaluering innen 1. november
 
 ### Innlevering
 
@@ -179,29 +174,6 @@ Start dette bin/bash skriptet som tester noen få endepunkter på vårt API:
 eller importer alle endpunkter til postman og naviger manuelt der:
 ConferenceServer.postman_collection.json
 ```
-
-## Sjekkliste for innleveringen
-
-- [ ] Kodekvalitet
-    - [x] Produserer `mvn package` en executable jar? (tips: Bruk `maven-shade-plugin`)
-    - [x] Bruker koden Java 8 og UTF-8
-    - [x] Bygger prosjektet på https://travis-ci.com?
-    - [x] Har du god test-dekning? (tips: Sett opp jacoco-maven-plugin til å kreve at minst 65% av linjene har testdekning)
-    - [x] Kobler main-klassen seg opp mot PostgreSQL ved hjelp av en properties-fil?
-    - [ ] Kan main-klassen resette databasen? (tips: Bruk Flyway#clear)
-- [ ] Funksjonalitet
-    - [x] Kan man legge inn et nytt foredrag?
-    - [x] Kan man liste foredrag i databasen?
-    - [x] Valgfritt: Oppretter main-klassen et konferanseprogram med flere dager og tracks?
-    - [x] Valgfritt: Kan main-klassen vise konferanseprogrammet?
-- [ ] Dokumentasjon i form av README.md
-    - [x] Navn og Feide-ID på dere de som var på teamet
-    - [x] Inkluderer dokumentasjonen hvordan man tester ut funksjonaliteten programmet manuelt? (Inkludert eventuell ekstra funksjonalitet dere har tatt med)
-    - [ ] Inkluderer dokumentasjonen en evaluering av hvordan man jobbet sammen?
-    - [x] Inkluderer dokumentasjonen en screencast av en parprogrammeringsesjon?
-    - [x] Inkluderer dokumentasjonen en evaluering _fra_ en annen gruppe og en evaluering _til_ en annen gruppe?
-    - [x] Inkluderer dokumentasjonen et databasediagram
-    - [ ] Inkluderer dokumentasjonen en link til screencast av programmeringsesjon?
 
 # Architecture overview [![Build Status](https://travis-ci.com/Westerdals/command-line-parser-exercise-asmadsen.svg?token=CtziNfWQqQxtrfWutyqx&branch=master)](https://travis-ci.com/Westerdals/command-line-parser-exercise-asmadsen)
 
