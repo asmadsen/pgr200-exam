@@ -12,9 +12,9 @@ public class Timeslot extends BaseModel<Timeslot> {
 
     @no.kristiania.pgr200.common.annotations.UUID
     protected UUID id;
-    @no.kristiania.pgr200.common.annotations.UUID
+    @no.kristiania.pgr200.common.annotations.UUID(allowNull = false)
     public UUID talk_id;
-    @no.kristiania.pgr200.common.annotations.UUID
+    @no.kristiania.pgr200.common.annotations.UUID(allowNull = false)
     public UUID track_id;
     @NotNull
     @Min(0)

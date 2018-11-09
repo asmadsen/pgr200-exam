@@ -11,6 +11,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-to-slf4j:2.11.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.11.1" level="project" />
+    <orderEntry type="library" name="Maven: org.logevents:logevents:0.1.7" level="project" />
     <orderEntry type="library" name="Maven: com.hypertino:inflector_2.10:1.0.10" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.10.6" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate.validator:hibernate-validator:6.0.13.Final" level="project" />

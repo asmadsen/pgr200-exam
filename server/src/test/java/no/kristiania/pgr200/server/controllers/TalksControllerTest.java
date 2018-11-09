@@ -167,7 +167,6 @@ public class TalksControllerTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(errorResponse.get("errors").toString().contains("\"title\":\"must not be blank\""));
         assertTrue(errorResponse.get("errors").toString().contains("\"description\":\"must not be blank\""));
-        assertTrue(errorResponse.get("errors").toString().contains("\"topic_id\":\"must be a valid UUID\""));
     }
 
     @Test

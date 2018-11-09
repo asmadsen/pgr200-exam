@@ -13,7 +13,7 @@ public class Day extends BaseModel<Day> {
     protected UUID id;
     @DateFormat
     public String date;
-    @no.kristiania.pgr200.common.annotations.UUID
+    @no.kristiania.pgr200.common.annotations.UUID(allowNull = false)
     public UUID conference_id;
 
     public Day() {

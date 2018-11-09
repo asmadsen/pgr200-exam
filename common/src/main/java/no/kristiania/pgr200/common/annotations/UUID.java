@@ -16,4 +16,6 @@ public @interface UUID {
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
+    boolean allowNull() default true;
 }
