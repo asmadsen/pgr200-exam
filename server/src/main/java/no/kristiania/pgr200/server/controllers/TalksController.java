@@ -1,10 +1,8 @@
 package no.kristiania.pgr200.server.controllers;
 
-import com.google.gson.JsonObject;
 import no.kristiania.pgr200.common.http.HttpMethod;
 import no.kristiania.pgr200.common.http.HttpRequest;
 import no.kristiania.pgr200.common.http.HttpResponse;
-import no.kristiania.pgr200.common.http.HttpStatus;
 import no.kristiania.pgr200.server.annotations.ApiController;
 import no.kristiania.pgr200.server.annotations.ApiRequest;
 import no.kristiania.pgr200.server.models.TalkModel;
@@ -25,10 +23,7 @@ public class TalksController extends BaseController<TalkModel> {
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/talks" + uuidPath)
     public HttpResponse show() {
-        httpResponse.setHeaders(getHeaders());
-        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) {
-            return getElementNotFoundResponse();
-        }
+        if(!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         TalkModel model = new TalkModel();
         return show(model.newQuery()
                 .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("topic").first());
@@ -43,15 +38,7 @@ public class TalksController extends BaseController<TalkModel> {
     @Override
     @ApiRequest(action = HttpMethod.PUT, route = "/talks" + uuidPath)
     public HttpResponse update(){
-        httpResponse.setHeaders(getHeaders());
-        if(!validateUUID(getHttpRequest().getUri().split("/")[2])) {
-            JsonObject error = new JsonObject();
-            error.addProperty("error", "Not an UUID: " + getHttpRequest().getUri().split("/")[2]);
-            addPropertyToBody("error", error);
-            httpResponse.setStatus(HttpStatus.BadRequest);
-            httpResponse.setBody(getResponsebody().toString());
-            return httpResponse;
-        }
+        if(!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         return update(new TalkModel(getUuidFromUri(),
                 getHttpRequest().getJson().getAsJsonObject()));
     }
@@ -59,6 +46,7 @@ public class TalksController extends BaseController<TalkModel> {
     @Override
     @ApiRequest(action = HttpMethod.DELETE, route = "/talks" + uuidPath)
     public HttpResponse destroy() {
+        if(!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         return destroy(new TalkModel(getUuidFromUri()));
     }
 }

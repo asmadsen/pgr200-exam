@@ -2,17 +2,20 @@ package no.kristiania.pgr200.common.models;
 
 import com.google.gson.JsonObject;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Talk extends BaseModel<Talk> {
 
+    @no.kristiania.pgr200.common.annotations.UUID
     protected UUID id;
-    @NotNull
+    @NotBlank
     public String title;
-    @NotNull
+    @NotBlank
     public String description;
+    @no.kristiania.pgr200.common.annotations.UUID
     public UUID topic_id;
 
     public Talk() {
@@ -28,15 +31,25 @@ public class Talk extends BaseModel<Talk> {
     }
 
     public Talk(JsonObject talk) {
-        if(talk.get("id") != null) setId(UUID.fromString(talk.get("id").getAsString()));
-        if(talk.get("title") != null) setTitle(talk.get("title").getAsString());
-        if(talk.get("description") != null) setDescription(talk.get("description").getAsString());
-        if(talk.get("topic_id") != null) setTopic_id(UUID.fromString(talk.get("topic_id").getAsString()));
+        if(talk.get("id") != null && !talk.get("id").isJsonNull())
+            setId(UUID.fromString(talk.get("id").getAsString()));
+        if(talk.get("title") != null && !talk.get("title").isJsonNull())
+            setTitle(talk.get("title").getAsString());
+        if(talk.get("description") != null && !talk.get("description").isJsonNull())
+            setDescription(talk.get("description").getAsString());
+        if(talk.get("topic_id") != null && !talk.get("topic_id").isJsonNull())
+            setTopic_id(UUID.fromString(talk.get("topic_id").getAsString()));
     }
 
     public Talk(UUID uuid, JsonObject talk) {
         this(talk);
         setId(uuid);
+    }
+
+    public Talk(String title, String description, UUID topic_id) {
+        setTitle(title);
+        setDescription(description);
+        setTopic_id(topic_id);
     }
 
     public UUID getId() {

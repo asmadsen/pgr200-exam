@@ -10,6 +10,7 @@ import no.kristiania.pgr200.server.annotations.ApiRequest;
 
 import javax.validation.ConstraintViolation;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class BaseController<T extends BaseRecord> {
 
@@ -91,13 +92,7 @@ public abstract class BaseController<T extends BaseRecord> {
             httpResponse.setStatus(HttpStatus.OK);
             httpResponse.setBody(getResponsebody().toString());
         } else {
-            httpResponse.setStatus(HttpStatus.UnprocessableEntity);
-            if (getHttpRequest().getJson().getAsJsonObject().get("error") != null) {
-                httpResponse.setBody(getGsonBuilder().toJson(httpRequest.getJson()));
-            } else {
-                addViolations(violations);
-                httpResponse.setBody(getGsonBuilder().toJson(getResponsebody()));
-            }
+            setUnprocessableResponse(violations);
         }
         return httpResponse;
     }
@@ -107,21 +102,27 @@ public abstract class BaseController<T extends BaseRecord> {
 
     HttpResponse create(T model) {
         Set<ConstraintViolation> violations = model.getState().validate();
+        violations = violations.stream()
+                .filter(e -> !e.getPropertyPath().toString().equals("id")).collect(Collectors.toSet());
         httpResponse.setHeaders(getHeaders());
         if (violations.isEmpty() && model.create()) {
             getResponsebody().add("value", new JsonParser().parse(getGsonBuilder().toJson(model.getState())));
             httpResponse.setStatus(HttpStatus.Created);
             httpResponse.setBody(getGsonBuilder().toJson(getResponsebody()));
         } else {
-            httpResponse.setStatus(HttpStatus.UnprocessableEntity);
-            if (getHttpRequest().getJson().getAsJsonObject().get("error") != null) {
-                httpResponse.setBody(getGsonBuilder().toJson(httpRequest.getJson()));
-            } else {
-                addViolations(violations);
-                httpResponse.setBody(getGsonBuilder().toJson(getResponsebody()));
-            }
+            setUnprocessableResponse(violations);
         }
         return httpResponse;
+    }
+
+    private void setUnprocessableResponse(Set<ConstraintViolation> violations) {
+        httpResponse.setStatus(HttpStatus.UnprocessableEntity);
+        if (getHttpRequest().getJson().getAsJsonObject().get("error") != null) {
+            httpResponse.setBody(getGsonBuilder().toJson(httpRequest.getJson()));
+        } else {
+            addViolations(violations);
+            httpResponse.setBody(getGsonBuilder().toJson(getResponsebody()));
+        }
     }
 
     @ApiRequest(action = HttpMethod.DELETE, route = uuidPath)
@@ -130,7 +131,7 @@ public abstract class BaseController<T extends BaseRecord> {
     HttpResponse destroy(T model) {
         httpResponse.setHeaders(getHeaders());
         if (!validateUUID(getHttpRequest().getUri().split("/")[2])) {
-            return getElementNotFoundResponse();
+            return getNotValidUuidResponse();
         }
         if (model.destroy()) {
             httpResponse.setStatus(HttpStatus.OK);
@@ -181,9 +182,10 @@ public abstract class BaseController<T extends BaseRecord> {
         getResponsebody().add("errors", errors);
     }
 
-    HttpResponse getElementNotFoundResponse() {
+    HttpResponse getNotValidUuidResponse() {
+        httpResponse.setHeaders(getHeaders());
         getResponsebody().add("error",
-                getErrorMessage("Could not find element with id: " + getHttpRequest().getUri().split("/")[2]));
+                getErrorMessage("Not a valid UUID: " + getHttpRequest().getUri().split("/")[2]));
         httpResponse.setStatus(HttpStatus.BadRequest);
         httpResponse.setBody(getResponsebody().toString());
         return httpResponse;

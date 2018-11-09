@@ -8,7 +8,6 @@ import no.kristiania.pgr200.common.http.HttpStatus;
 import no.kristiania.pgr200.server.annotations.ApiController;
 import no.kristiania.pgr200.server.annotations.ApiRequest;
 import no.kristiania.pgr200.server.models.DayModel;
-import no.kristiania.pgr200.server.models.TimeslotModel;
 
 import java.time.format.DateTimeParseException;
 
@@ -28,6 +27,7 @@ public class DaysController extends BaseController<DayModel> {
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/days" + uuidPath)
     public HttpResponse show() {
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         DayModel model = new DayModel();
         return show(model.newQuery()
                 .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("conference").first());
@@ -36,6 +36,7 @@ public class DaysController extends BaseController<DayModel> {
     @Override
     @ApiRequest(action = HttpMethod.PUT, route = "/days" + uuidPath)
     public HttpResponse update() {
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         try {
             return update(new DayModel(getUuidFromUri(), getHttpRequest().getJson().getAsJsonObject()));
         } catch (DateTimeParseException e) {
@@ -66,6 +67,7 @@ public class DaysController extends BaseController<DayModel> {
     @Override
     @ApiRequest(action = HttpMethod.DELETE, route = "/days" + uuidPath)
     public HttpResponse destroy() {
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         return destroy(new DayModel(getUuidFromUri()));
     }
 }

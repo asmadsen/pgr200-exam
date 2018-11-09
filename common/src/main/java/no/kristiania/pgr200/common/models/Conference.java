@@ -1,11 +1,16 @@
 package no.kristiania.pgr200.common.models;
 
+import com.google.gson.JsonObject;
+
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Conference extends BaseModel<Conference> {
 
+    @no.kristiania.pgr200.common.annotations.UUID
     protected UUID id;
+    @NotBlank
     private String name;
 
     public Conference() {
@@ -23,6 +28,16 @@ public class Conference extends BaseModel<Conference> {
 
     public Conference(UUID uuid) {
         setId(uuid);
+    }
+
+    public Conference(UUID uuid, JsonObject conference) {
+        this(conference);
+        setId(uuid);
+    }
+
+    public Conference(JsonObject conference) {
+        if(conference.get("name") != null && !conference.get("name").isJsonNull())
+            setName(conference.get("name").getAsString());
     }
 
     public UUID getId() {

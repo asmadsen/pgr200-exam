@@ -31,6 +31,10 @@ public class TalkModel extends BaseRecord<TalkModel, Talk> {
         super(new Talk(uuid));
     }
 
+    public TalkModel(String title, String description, UUID topic_id) {
+        super(new Talk(title, description, topic_id));
+    }
+
     @Override
     public String getTable() {
         return "talks";

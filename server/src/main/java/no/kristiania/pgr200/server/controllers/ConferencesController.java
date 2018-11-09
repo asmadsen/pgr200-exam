@@ -8,10 +8,10 @@ import no.kristiania.pgr200.server.annotations.ApiRequest;
 import no.kristiania.pgr200.server.models.ConferenceModel;
 
 @ApiController("/conferences")
-public class ConferenceController extends BaseController<ConferenceModel> {
+public class ConferencesController extends BaseController<ConferenceModel> {
 
 
-    public ConferenceController(HttpRequest httpRequest) {
+    public ConferencesController(HttpRequest httpRequest) {
         super(httpRequest);
     }
 
@@ -24,6 +24,7 @@ public class ConferenceController extends BaseController<ConferenceModel> {
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/conferences" + uuidPath)
     public HttpResponse show() {
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         ConferenceModel model = new ConferenceModel();
         return show(model.newQuery()
                 .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("days").first());
@@ -32,6 +33,7 @@ public class ConferenceController extends BaseController<ConferenceModel> {
     @Override
     @ApiRequest(action = HttpMethod.PUT, route = "/conferences" + uuidPath)
     public HttpResponse update() {
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         return update(new ConferenceModel(getUuidFromUri(), getHttpRequest().getJson().getAsJsonObject()));
     }
 
@@ -44,6 +46,7 @@ public class ConferenceController extends BaseController<ConferenceModel> {
     @Override
     @ApiRequest(action = HttpMethod.DELETE, route = "/conferences" + uuidPath)
     public HttpResponse destroy() {
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         return destroy(new ConferenceModel(getUuidFromUri()));
     }
 }

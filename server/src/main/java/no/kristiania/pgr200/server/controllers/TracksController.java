@@ -23,6 +23,9 @@ public class TracksController extends BaseController<TrackModel> {
     @Override
     @ApiRequest(action = HttpMethod.GET, route = "/tracks" + uuidPath)
     public HttpResponse show() {
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) {
+            return getNotValidUuidResponse();
+        }
         TrackModel model = new TrackModel();
         return show(model.newQuery()
                 .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("timeslots").first());
@@ -31,6 +34,9 @@ public class TracksController extends BaseController<TrackModel> {
     @Override
     @ApiRequest(action = HttpMethod.PUT, route = "/tracks" + uuidPath)
     public HttpResponse update() {
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) {
+            return getNotValidUuidResponse();
+        }
         return update(new TrackModel(getUuidFromUri(), getHttpRequest().getJson().getAsJsonObject()));
     }
 
@@ -43,6 +49,9 @@ public class TracksController extends BaseController<TrackModel> {
     @Override
     @ApiRequest(action = HttpMethod.DELETE, route = "/tracks" + uuidPath)
     public HttpResponse destroy() {
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) {
+            return getNotValidUuidResponse();
+        }
         return destroy(new TrackModel(getUuidFromUri()));
     }
 }

@@ -63,6 +63,12 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.2</version>
+                <configuration>
+                    <excludes>
+                        <exclude>no/kristiania/pgr200/common/models/*.class</exclude>
+                        <include>no/kristiania/pgr200/common/models/BaseModel.class</include>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>jacoco-initialize</id>

@@ -3,7 +3,6 @@ package no.kristiania.pgr200.server;
 import no.kristiania.pgr200.common.http.HttpMethod;
 import no.kristiania.pgr200.common.http.HttpRequest;
 import no.kristiania.pgr200.server.controllers.BaseController;
-import no.kristiania.pgr200.server.controllers.ScheduleController;
 import no.kristiania.pgr200.server.controllers.TalksController;
 import org.junit.Test;
 
@@ -19,13 +18,6 @@ public class RequestHandlerTest {
         RequestHandler requestHandler = new RequestHandler(new HttpRequest(HttpMethod.GET, "/api/talks", defaultHeaders()));
         BaseController controller = requestHandler.getControllerFromRoute();
         assertThat(controller).isInstanceOf(TalksController.class);
-    }
-
-    @Test
-    public void shouldReturnScheduleController(){
-        RequestHandler requestHandler = new RequestHandler( new HttpRequest(HttpMethod.GET, "/api/schedule", defaultHeaders()));
-        BaseController controller = requestHandler.getControllerFromRoute();
-        assertThat(controller).isInstanceOf(ScheduleController.class);
     }
 
     @Test

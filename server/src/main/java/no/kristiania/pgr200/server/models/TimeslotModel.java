@@ -21,15 +21,16 @@ public class TimeslotModel extends BaseRecord<TimeslotModel, Timeslot> {
         super(new Timeslot(uuid));
     }
 
-    public TimeslotModel(UUID uuid, JsonObject jsonObject) {
-        super(new Timeslot(uuid,
-                UUID.fromString(jsonObject.get("talk_id").getAsString()),
-                UUID.fromString(jsonObject.get("track_id").getAsString())));
+    public TimeslotModel(UUID uuid, JsonObject topic) {
+        super(new Timeslot(uuid, topic));
     }
 
-    public TimeslotModel(JsonObject jsonObject) {
-        super(new Timeslot(UUID.fromString(jsonObject.get("talk_id").getAsString()),
-                UUID.fromString(jsonObject.get("track_id").getAsString())));
+    public TimeslotModel(JsonObject topic) {
+        super(new Timeslot(topic));
+    }
+
+    public TimeslotModel(UUID talk_id, UUID track_id, int slot_index) {
+        super(new Timeslot(talk_id, track_id, slot_index));
     }
 
     @Override

@@ -21,12 +21,16 @@ public class TrackModel extends BaseRecord<TrackModel, Track> {
         super(new Track(uuid));
     }
 
-    public TrackModel(JsonObject jsonObject) {
-        super(new Track(null, UUID.fromString(jsonObject.get("day_id").getAsString())));
+    public TrackModel(JsonObject track) {
+        super(new Track(track));
     }
 
     public TrackModel(UUID uuid, JsonObject jsonObject) {
-        super(new Track(uuid, UUID.fromString(jsonObject.get("day_id").getAsString())));
+        super(new Track(uuid, jsonObject));
+    }
+
+    public TrackModel(UUID id, UUID day_id) {
+        super(new Track(id, day_id));
     }
 
     @Override

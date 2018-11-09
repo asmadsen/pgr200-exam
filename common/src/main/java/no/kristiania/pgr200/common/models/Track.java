@@ -1,11 +1,15 @@
 package no.kristiania.pgr200.common.models;
 
+import com.google.gson.JsonObject;
+
 import java.util.Objects;
 import java.util.UUID;
 
 public class Track extends BaseModel<Track> {
 
+    @no.kristiania.pgr200.common.annotations.UUID
     protected UUID id;
+    @no.kristiania.pgr200.common.annotations.UUID
     private UUID day_id;
 
     public Track() {
@@ -19,6 +23,20 @@ public class Track extends BaseModel<Track> {
     public Track(UUID id, UUID day_id) {
         setId(id);
         setDay_id(day_id);
+    }
+
+    public Track(JsonObject track) {
+        if(track.get("id") != null && !track.get("id").isJsonNull()) {
+            this.id = UUID.fromString(track.get("id").getAsString());
+        }
+        if(track.get("day_id") != null && !track.get("day_id").isJsonNull()) {
+            this.day_id = UUID.fromString(track.get("day_id").getAsString());
+        }
+    }
+
+    public Track(UUID id, JsonObject track) {
+        this(track);
+        setId(id);
     }
 
     public UUID getId() {

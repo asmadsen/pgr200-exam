@@ -1,17 +1,19 @@
 package no.kristiania.pgr200.common.models;
 
 import com.google.gson.JsonObject;
+import no.kristiania.pgr200.common.annotations.DateFormat;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Day extends BaseModel<Day> {
 
+    @no.kristiania.pgr200.common.annotations.UUID
     protected UUID id;
-    public Date date;
+    @DateFormat
+    public String date;
+    @no.kristiania.pgr200.common.annotations.UUID
     public UUID conference_id;
 
     public Day() {
@@ -21,15 +23,23 @@ public class Day extends BaseModel<Day> {
         setId(uuid);
     }
 
-    public Day(String date) {
+    public Day(String date, UUID conference_id) {
         setDate(date);
+        setConference_id(conference_id);
     }
 
-    public Day(UUID uuid, JsonObject jsonObject) {
+    public Day(UUID uuid, JsonObject day) {
+        this(day);
         setId(uuid);
-        if(jsonObject.get("date") != null) setDate(jsonObject.get("date").getAsString());
-        if(jsonObject.get("conference_id") != null)
-            setConference_id(UUID.fromString(jsonObject.get("conference_id").getAsString()));
+    }
+
+    public Day(JsonObject day) {
+        if(day.get("date") != null && !day.get("date").isJsonNull()) {
+            setDate(day.get("date").getAsString());
+        }
+        if(day.get("conference_id") != null && !day.get("conference_id").isJsonNull()) {
+            setConference_id(UUID.fromString(day.get("conference_id").getAsString()));
+        }
     }
 
     public UUID getId() {
@@ -40,12 +50,12 @@ public class Day extends BaseModel<Day> {
         this.id = id;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
     public void setDate(String date) {
-        this.date = Date.valueOf(LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE));
+        this.date = date;
     }
 
     public UUID getConference_id() {

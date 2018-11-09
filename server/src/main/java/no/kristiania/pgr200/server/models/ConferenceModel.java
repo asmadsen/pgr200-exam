@@ -20,11 +20,15 @@ public class ConferenceModel extends BaseRecord<ConferenceModel, Conference> {
     }
 
     public ConferenceModel(UUID uuid, JsonObject jsonObject) {
-        super(new Conference(uuid, jsonObject.get("name").getAsString()));
+        super(new Conference(uuid, jsonObject));
     }
 
     public ConferenceModel(JsonObject jsonObject) {
-        super(new Conference(jsonObject.get("name").getAsString()));
+        super(new Conference(jsonObject));
+    }
+
+    public ConferenceModel(String name) {
+        super(new Conference(name));
     }
 
     @Override

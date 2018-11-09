@@ -37,7 +37,8 @@ public abstract class BaseRecord<
         setState(state);
         if (getState().getAttributes().get(getPrimaryKey()) != null &&
                 getState().getAttributes().get(getPrimaryKey()).getValue() != null) {
-            setDbState(findById((UUID) getState().getAttributes().get(getPrimaryKey()).getValue()).getState());
+            T dbState = findById((UUID) getState().getAttributes().get(getPrimaryKey()).getValue());
+            if(dbState != null) setDbState(dbState.getState());
         }
     }
 
@@ -88,7 +89,8 @@ public abstract class BaseRecord<
                     return false;
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.warn(e.getMessage());
+                return false;
             }
         }
         return true;

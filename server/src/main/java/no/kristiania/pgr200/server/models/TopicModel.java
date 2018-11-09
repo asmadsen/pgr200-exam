@@ -15,12 +15,12 @@ public class TopicModel extends BaseRecord<TopicModel, Topic> {
         super(new Topic());
     }
 
-    public TopicModel(UUID uuid, JsonObject asJsonObject) {
-        super(new Topic(uuid, asJsonObject.get("topic").getAsString()));
+    public TopicModel(UUID uuid, JsonObject topic) {
+        super(new Topic(uuid, topic));
     }
 
     public TopicModel(JsonObject topic) {
-        super(new Topic(topic.get("topic").getAsString()));
+        super(new Topic(topic));
     }
 
     public TopicModel(UUID uuid) {

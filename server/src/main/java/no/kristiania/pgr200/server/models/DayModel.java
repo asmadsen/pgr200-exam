@@ -7,6 +7,7 @@ import no.kristiania.pgr200.orm.BaseRecord;
 import no.kristiania.pgr200.orm.annotations.Relation;
 import no.kristiania.pgr200.orm.relations.BelongsTo;
 
+import java.sql.Date;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
@@ -20,8 +21,12 @@ public class DayModel extends BaseRecord<DayModel, Day> {
         super(new Day(uuid, jsonObject));
     }
 
+    public DayModel(String date, UUID conferenceId){
+        super(new Day(date, conferenceId));
+    }
+
     public DayModel(JsonObject jsonObject) throws DateTimeParseException {
-        super(new Day(jsonObject.get("date").getAsString()));
+        super(new Day(jsonObject));
     }
 
     public DayModel(UUID uuid) {

@@ -45,7 +45,6 @@ public abstract class BaseModel<T> implements IBaseModel<T> {
                 field.setAccessible(true);
                 if(entry.getValue().getValue() == null) continue;
                 if (Utils.primitiveToClassType(field.getType()).equals(entry.getValue().getType())) {
-                    entry.getValue().getValue();
                     field.set(this, entry.getValue().getValue());
                 } else if (entry.getValue().getValue() instanceof Clob) {
                     StringBuilder sb = new StringBuilder();
