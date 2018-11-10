@@ -53,13 +53,6 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                        <configuration>
-                            <tasks>
-                                <echo>Using env.test.properties</echo>
-                                <copy file="../innlevering.properties" tofile="${basedir}/target/innlevering.properties"/>
-                                <copy file="../dataSourceH2.properties" tofile="${basedir}/target/dataSourceH2.properties"/>
-                            </tasks>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -12,8 +12,10 @@ Compile and run tests:
 mvn clean package
 
 Edit innlevering.properties with login and database connection string
-Location: server/target/innlevering.properties
+innlevering.properties
 
+The server needs to be started from the root of the project so the properties file
+can be located and run the nessecary migrations.
 Start the server:
 java -jar server/target/conference-api-server-0.1-SNAPSHOT.jar
 
