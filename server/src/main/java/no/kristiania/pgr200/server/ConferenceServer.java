@@ -33,7 +33,7 @@ public class ConferenceServer implements Runnable {
             Orm.quote = "\"";
             DatabaseHandling.getConnection().setSchema("conference_server");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("ConferenceServer", e);
         }
     }
 
@@ -43,7 +43,7 @@ public class ConferenceServer implements Runnable {
         try {
             properties.load(new FileInputStream("innlevering.properties"));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Read properties file", e);
         }
         flyway.setDataSource(properties.getProperty("dataSource.url"),
                              properties.getProperty("dataSource.username"),
@@ -59,7 +59,7 @@ public class ConferenceServer implements Runnable {
                 thread.start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Main", e);
         }
     }
 
@@ -83,7 +83,7 @@ public class ConferenceServer implements Runnable {
             }
             connection.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("run", e);
         }
     }
 }

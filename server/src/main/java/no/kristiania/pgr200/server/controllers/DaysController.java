@@ -8,11 +8,15 @@ import no.kristiania.pgr200.common.http.HttpStatus;
 import no.kristiania.pgr200.server.annotations.ApiController;
 import no.kristiania.pgr200.server.annotations.ApiRequest;
 import no.kristiania.pgr200.server.models.DayModel;
+import org.slf4j.Logger;
 
 import java.time.format.DateTimeParseException;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 @ApiController("/days")
 public class DaysController extends BaseController<DayModel> {
+    private static Logger logger = getLogger(DaysController.class);
 
     public DaysController(HttpRequest httpRequest) {
         super(httpRequest);
@@ -40,6 +44,7 @@ public class DaysController extends BaseController<DayModel> {
         try {
             return update(new DayModel(getUuidFromUri(), getHttpRequest().getJson().getAsJsonObject()));
         } catch (DateTimeParseException e) {
+            logger.error("update", e);
             return getDateTimeParseResponse(e.getMessage());
         }
     }
@@ -50,6 +55,7 @@ public class DaysController extends BaseController<DayModel> {
         try {
             return create(new DayModel(getHttpRequest().getJson().getAsJsonObject()));
         } catch (DateTimeParseException e) {
+            logger.error("create", e);
             return getDateTimeParseResponse(e.getMessage());
         }
     }

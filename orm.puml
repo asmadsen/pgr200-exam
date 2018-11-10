@@ -32,7 +32,6 @@ namespace Orm {
         -dbState : BaseModel<T>
         -deleteFunctionality : DeleteFunctionality
         ---
-        #Bootstrap() : void
         #getDeleteFunctionality() : DeleteFunctionality
         -isDirty() : boolean
         -exists() : boolean
@@ -87,15 +86,12 @@ namespace Orm {
         -model : T
         -table : String
         -selects : Set<String>
-        -joins : LinkedList<JoinStatement>
         -wheres : LinkedList<ConditionalStatement>
         -groupBy : LinkedHashSet<String>
         -orderBy : LinkedHashSet<String>
         -having : LinkedList<ConditionalStatement>
         ---
         +select(columns : String...)
-        +join(table : Class<? extends BaseRecord>, foreignKey : String, localKey : String, type : JoinType)
-        +join(query : Query, foreignKey : String, localKey : String, type : JoinType)
         +where(key : String, operator : SqlOperator, value : T, useAnd : boolean = true)
         +whereNot(column : String, value : V)
         +whereEquals(column : String, value : V)
@@ -111,7 +107,6 @@ namespace Orm {
     }
 
     SelectQuery "1" o-- "*" ConditionalStatement
-    SelectQuery "1" o-- "*" JoinStatement
 
     class UpdateQuery {
         -table : String
@@ -162,22 +157,6 @@ namespace Orm {
     }
 
     ConditionalStatement "1" o-- "1" SqlOperator
-
-    class JoinStatement {
-        table : Class<BaseRecord>
-        query : SelectQuery
-        foreignKey : String
-        localKey : String
-        type : JoinType
-    }
-
-    enum JoinType {
-        LeftJoin
-        OuterJoin
-    }
-
-    JoinStatement "1" o-- "1" JoinType
-    JoinStatement "1" o-- "0..1" SelectQuery
 
     enum SqlOperator {
 
