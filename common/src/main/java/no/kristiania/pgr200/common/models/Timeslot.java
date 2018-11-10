@@ -3,7 +3,6 @@ package no.kristiania.pgr200.common.models;
 import com.google.gson.JsonObject;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
@@ -34,9 +33,9 @@ public class Timeslot extends BaseModel<Timeslot> {
     }
 
     public Timeslot(JsonObject timeSlot) {
-        if(timeSlot.get("talk_id") != null) this.talk_id = UUID.fromString(timeSlot.get("talk_id").getAsString());
-        if(timeSlot.get("track_id") != null) this.track_id = UUID.fromString(timeSlot.get("track_id").getAsString());
-        if(timeSlot.get("slot_index") != null) this.slot_index = timeSlot.get("slot_index").getAsInt();
+        if (timeSlot.get("talk_id") != null) this.talk_id = UUID.fromString(timeSlot.get("talk_id").getAsString());
+        if (timeSlot.get("track_id") != null) this.track_id = UUID.fromString(timeSlot.get("track_id").getAsString());
+        if (timeSlot.get("slot_index") != null) this.slot_index = timeSlot.get("slot_index").getAsInt();
     }
 
     public Timeslot(UUID talk_id, UUID track_id, int slot_index) {

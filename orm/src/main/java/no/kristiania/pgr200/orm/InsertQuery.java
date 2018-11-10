@@ -28,16 +28,19 @@ public class InsertQuery<T extends IBaseModel<T>> {
         StringBuilder sql = new StringBuilder();
         StringJoiner values = new StringJoiner(", ");
         attributes = model.getAttributes();
-        attributes = attributes.entrySet().stream().filter(e -> e.getValue() != null).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        attributes = attributes.entrySet()
+                               .stream()
+                               .filter(e -> e.getValue() != null)
+                               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         attributes.keySet().forEach(e -> values.add("?"));
         sql.append(String.format("%s %s (%s) %s (%s)",
                                  Statement.INSERT.getStatement(),
                                  Orm.QuoteString(getTable()),
                                  String.join(", ", attributes
-                                                        .keySet()
-                                                        .stream()
-                                                        .map(Orm::QuoteString)
-                                                        .collect(Collectors.toList())),
+                                         .keySet()
+                                         .stream()
+                                         .map(Orm::QuoteString)
+                                         .collect(Collectors.toList())),
                                  Statement.VALUES, values.toString()));
         return sql.toString();
     }

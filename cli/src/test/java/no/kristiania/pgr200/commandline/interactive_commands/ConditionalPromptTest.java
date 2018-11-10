@@ -3,9 +3,7 @@ package no.kristiania.pgr200.commandline.interactive_commands;
 import org.junit.Test;
 
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class ConditionalPromptTest {
     @Test

@@ -13,7 +13,19 @@ public class SampleData {
     }
 
     private static String randomWord() {
-        String[] alternatives = { "hello", "world", "it's", "a", "beautiful", "morning", "and", "I'd", "like", "some", "coffee" };
+        String[] alternatives = {
+                "hello",
+                "world",
+                "it's",
+                "a",
+                "beautiful",
+                "morning",
+                "and",
+                "I'd",
+                "like",
+                "some",
+                "coffee"
+        };
         return pickOne(alternatives);
     }
 
@@ -22,7 +34,7 @@ public class SampleData {
     }
 
     public static String sampleTopic() {
-        return pickOne(new String[] { "testing", "java", "sockets", "jdbc", "database" });
+        return pickOne(new String[]{"testing", "java", "sockets", "jdbc", "database"});
     }
 
 }

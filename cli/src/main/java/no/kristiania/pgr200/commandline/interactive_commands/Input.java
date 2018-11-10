@@ -1,11 +1,8 @@
 package no.kristiania.pgr200.commandline.interactive_commands;
 
 import no.kristiania.pgr200.common.utils.Utils;
-import org.hibernate.validator.internal.constraintvalidators.bv.NotNullValidator;
 
-import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import java.util.Set;
 
 import static org.fusesource.jansi.Ansi.ansi;

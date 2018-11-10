@@ -3,7 +3,6 @@ package no.kristiania.pgr200.common.models;
 import com.google.gson.JsonObject;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -26,8 +25,8 @@ public class Topic extends BaseModel<Topic> {
         this.id = id;
     }
 
-    public Topic(JsonObject topic){
-        if(topic.get("topic") != null && !topic.get("topic").isJsonNull()) {
+    public Topic(JsonObject topic) {
+        if (topic.get("topic") != null && !topic.get("topic").isJsonNull()) {
             this.topic = topic.get("topic").getAsString();
         }
     }

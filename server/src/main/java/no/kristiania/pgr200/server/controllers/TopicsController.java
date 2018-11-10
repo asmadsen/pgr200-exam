@@ -8,9 +8,9 @@ import no.kristiania.pgr200.server.annotations.ApiRequest;
 import no.kristiania.pgr200.server.models.TopicModel;
 
 @ApiController("/topics")
-public class TopicsController extends BaseController<TopicModel>{
+public class TopicsController extends BaseController<TopicModel> {
 
-    public TopicsController(HttpRequest httpRequest){
+    public TopicsController(HttpRequest httpRequest) {
         super(httpRequest);
     }
 
@@ -27,11 +27,11 @@ public class TopicsController extends BaseController<TopicModel>{
         if (!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         TopicModel model = new TopicModel();
         return show(model.newQuery()
-                .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("talks").first());
+                         .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("talks").first());
     }
 
     @Override
-    @ApiRequest(action = HttpMethod.PUT, route = "/topics" +uuidPath)
+    @ApiRequest(action = HttpMethod.PUT, route = "/topics" + uuidPath)
     public HttpResponse update() {
         if (!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         return update(new TopicModel(getUuidFromUri(), getHttpRequest().getJson().getAsJsonObject()));

@@ -1,13 +1,10 @@
 package no.kristiania.pgr200.commandline.interactive_commands;
 
 import org.jline.reader.LineReader;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.InOrder;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class ConfirmTest {

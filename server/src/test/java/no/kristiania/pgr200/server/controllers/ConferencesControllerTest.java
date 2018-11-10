@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class ConferencesControllerTest {
     @Before
@@ -136,12 +136,12 @@ public class ConferencesControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(response.getJson().getAsJsonObject()
-                .get("error").getAsJsonObject().get("message").getAsString()
-                .contains("com.google.gson.stream.MalformedJsonException"));
+                           .get("error").getAsJsonObject().get("message").getAsString()
+                           .contains("com.google.gson.stream.MalformedJsonException"));
     }
 
     @Test
-    public void shouldRespondWithViolationsOnCreate(){
+    public void shouldRespondWithViolationsOnCreate() {
         HttpRequest request = ControllerTestUtils.createHttpRequest(HttpMethod.POST, "/conferences");
         request.getHeaders().put("Content-Type", "application/json");
         request.setBody(ControllerTestUtils.modelToJson(new Conference()));
@@ -166,12 +166,12 @@ public class ConferencesControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(response.getJson().getAsJsonObject()
-                .get("error").getAsJsonObject().get("message").getAsString()
-                .contains("com.google.gson.stream.MalformedJsonException"));
+                           .get("error").getAsJsonObject().get("message").getAsString()
+                           .contains("com.google.gson.stream.MalformedJsonException"));
     }
 
     @Test
-    public void shouldRespondWithViolationsOnUpdate(){
+    public void shouldRespondWithViolationsOnUpdate() {
         ConferenceModel model = ControllerTestUtils.createConferenceModel();
         HttpRequest request = ControllerTestUtils.createHttpRequest(
                 HttpMethod.PUT, "/conferences/" + model.getState().getId());

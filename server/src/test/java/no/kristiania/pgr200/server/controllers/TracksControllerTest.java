@@ -145,12 +145,12 @@ public class TracksControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(response.getJson().getAsJsonObject()
-                .get("error").getAsJsonObject().get("message").getAsString()
-                .contains("com.google.gson.stream.MalformedJsonException"));
+                           .get("error").getAsJsonObject().get("message").getAsString()
+                           .contains("com.google.gson.stream.MalformedJsonException"));
     }
 
     @Test
-    public void shouldRespondWithViolationsOnCreate(){
+    public void shouldRespondWithViolationsOnCreate() {
         HttpRequest request = ControllerTestUtils.createHttpRequest(HttpMethod.POST, "/tracks");
         request.getHeaders().put("Content-Type", "application/json");
         request.setBody(ControllerTestUtils.modelToJson(new Track()));
@@ -175,12 +175,12 @@ public class TracksControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(response.getJson().getAsJsonObject()
-                .get("error").getAsJsonObject().get("message").getAsString()
-                .contains("com.google.gson.stream.MalformedJsonException"));
+                           .get("error").getAsJsonObject().get("message").getAsString()
+                           .contains("com.google.gson.stream.MalformedJsonException"));
     }
 
     @Test
-    public void shouldRespondWithViolationsOnUpdate(){
+    public void shouldRespondWithViolationsOnUpdate() {
         TrackModel model = ControllerTestUtils.createTrackModel(dayModel);
         HttpRequest request = ControllerTestUtils.createHttpRequest(
                 HttpMethod.PUT, "/tracks/" + model.getState().getId());

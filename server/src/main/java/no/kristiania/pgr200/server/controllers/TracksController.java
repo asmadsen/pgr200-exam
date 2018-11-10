@@ -28,7 +28,7 @@ public class TracksController extends BaseController<TrackModel> {
         }
         TrackModel model = new TrackModel();
         return show(model.newQuery()
-                .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("timeslots").first());
+                         .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("timeslots").first());
     }
 
     @Override

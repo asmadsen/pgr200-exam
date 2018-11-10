@@ -9,11 +9,13 @@ import no.kristiania.pgr200.server.db.DatabaseHandling;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.time.Year;
 import java.util.Properties;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -44,8 +46,8 @@ public class ConferenceServer implements Runnable {
             e.printStackTrace();
         }
         flyway.setDataSource(properties.getProperty("dataSource.url"),
-                properties.getProperty("dataSource.username"),
-                properties.getProperty("dataSource.password"));
+                             properties.getProperty("dataSource.username"),
+                             properties.getProperty("dataSource.password"));
         flyway.setSchemas("conference_server");
         flyway.setLocations("filesystem:server/src/main/resources/db/migration");
 //        flyway.clean();
@@ -66,10 +68,13 @@ public class ConferenceServer implements Runnable {
     public void run() {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequest httpRequest = new HttpParser().parseRequest(in);
-            logger.info(String.format("%s %s %s\r\n", httpRequest.getHttpMethod().name(), httpRequest.getUri(), httpRequest.getHttpVersion()));
+            logger.info(String.format("%s %s %s\r\n",
+                                      httpRequest.getHttpMethod().name(),
+                                      httpRequest.getUri(),
+                                      httpRequest.getHttpVersion()));
             RequestHandler requestHandler = new RequestHandler(httpRequest);
-            if(httpRequest.getUri() != null || httpRequest.getHttpMethod() != null) {
-                if(!httpRequest.getUri().startsWith("/api")) {
+            if (httpRequest.getUri() != null || httpRequest.getHttpMethod() != null) {
+                if (!httpRequest.getUri().startsWith("/api")) {
                     new HttpResponse(HttpStatus.NotFound).writeToStream(out);
                 } else {
                     httpRequest.setUri(httpRequest.getUri().replaceFirst("/api", ""));

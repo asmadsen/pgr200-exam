@@ -3,13 +3,10 @@ package no.kristiania.pgr200.commandline.interactive_commands;
 import no.kristiania.pgr200.common.models.Talk;
 import org.junit.Test;
 import org.mockito.InOrder;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.util.LinkedList;
 
 import static no.kristiania.pgr200.commandline.interactive_commands.Prompt.confirm;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +29,7 @@ public class PromptCreationTest {
 
         verify(creation, times(2)).addPrompt(isA(Input.class));
     }
-    
+
     @Test
     public void shouldBeAbleToCreateListInput() {
         PromptCreation creation = getSpy();

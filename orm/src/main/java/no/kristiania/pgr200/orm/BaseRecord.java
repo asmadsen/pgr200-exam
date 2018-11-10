@@ -1,6 +1,9 @@
 package no.kristiania.pgr200.orm;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import no.kristiania.pgr200.orm.annotations.Relation;
 import no.kristiania.pgr200.orm.generics.Listable;
 import no.kristiania.pgr200.orm.relations.AbstractRelation;
@@ -38,7 +41,7 @@ public abstract class BaseRecord<
         if (getState().getAttributes().get(getPrimaryKey()) != null &&
                 getState().getAttributes().get(getPrimaryKey()).getValue() != null) {
             T dbState = findById((UUID) getState().getAttributes().get(getPrimaryKey()).getValue());
-            if(dbState != null) setDbState(dbState.getState());
+            if (dbState != null) setDbState(dbState.getState());
         }
     }
 
@@ -79,7 +82,7 @@ public abstract class BaseRecord<
                                                                                  state.getAttribute(getPrimaryKey())
                                                                                       .getValue());
             state.getAttributes().forEach((k, v) -> {
-                if(v != null) updateQuery.set(k, v.getValue());
+                if (v != null) updateQuery.set(k, v.getValue());
             });
             try {
                 if (updateQuery.get() > 0) {
@@ -195,14 +198,14 @@ public abstract class BaseRecord<
         return new Listable<>((V) null);
     }
 
-    private <N extends IBaseModel<N>, M extends BaseRecord<M,N>> void loadRelation(String relationName) {
+    private <N extends IBaseModel<N>, M extends BaseRecord<M, N>> void loadRelation(String relationName) {
         AbstractRelation<M, N, T> relation = (AbstractRelation<M, N, T>) this.getRelations().get(relationName);
         if (relation == null) {
             throw new IllegalArgumentException("Tried to load undefined relation `" + relationName + "`");
         }
         relation.addConstraints();
         List<T> models = new LinkedList<>();
-        models.add((T)this);
+        models.add((T) this);
         List<T> match = relation.match(models, relation.getEager().getListValue(), relationName);
         this.setRelation(relationName, match.get(0).relations.get(relationName));
     }
@@ -255,7 +258,7 @@ public abstract class BaseRecord<
                 }
                 object.add(entry.getKey(), children);
             } else {
-                if(entry.getValue() != null) object.add(entry.getKey(), ((BaseRecord) entry.getValue()).toJson());
+                if (entry.getValue() != null) object.add(entry.getKey(), ((BaseRecord) entry.getValue()).toJson());
                 else object.add(entry.getKey(), null);
             }
         }

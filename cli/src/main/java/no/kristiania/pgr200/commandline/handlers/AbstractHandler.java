@@ -33,8 +33,10 @@ public abstract class AbstractHandler {
     protected HttpResponse update(String baseUrl, JsonElement element) {
         HttpClient httpClient = getHttpClient();
         HttpRequest httpRequest = new HttpRequest(PUT,
-                                         String.format("%s/%s", baseUrl, element.getAsJsonObject().get("id").getAsString()),
-                                         element);
+                                                  String.format("%s/%s",
+                                                                baseUrl,
+                                                                element.getAsJsonObject().get("id").getAsString()),
+                                                  element);
         try {
             return httpClient.execute("localhost:8080", httpRequest);
         } catch (IOException e) {

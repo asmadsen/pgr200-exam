@@ -3,7 +3,6 @@ package no.kristiania.pgr200.common.models;
 import com.google.gson.JsonObject;
 import no.kristiania.pgr200.common.annotations.DateFormat;
 
-import java.sql.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -34,10 +33,10 @@ public class Day extends BaseModel<Day> {
     }
 
     public Day(JsonObject day) {
-        if(day.get("date") != null && !day.get("date").isJsonNull()) {
+        if (day.get("date") != null && !day.get("date").isJsonNull()) {
             setDate(day.get("date").getAsString());
         }
-        if(day.get("conference_id") != null && !day.get("conference_id").isJsonNull()) {
+        if (day.get("conference_id") != null && !day.get("conference_id").isJsonNull()) {
             setConference_id(UUID.fromString(day.get("conference_id").getAsString()));
         }
     }

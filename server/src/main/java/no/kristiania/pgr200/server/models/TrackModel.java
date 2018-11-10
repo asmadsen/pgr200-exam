@@ -2,11 +2,9 @@ package no.kristiania.pgr200.server.models;
 
 import com.google.gson.JsonObject;
 import no.kristiania.pgr200.common.models.Timeslot;
-import no.kristiania.pgr200.common.models.Topic;
 import no.kristiania.pgr200.common.models.Track;
 import no.kristiania.pgr200.orm.BaseRecord;
 import no.kristiania.pgr200.orm.annotations.Relation;
-import no.kristiania.pgr200.orm.relations.BelongsTo;
 import no.kristiania.pgr200.orm.relations.HasMany;
 
 import java.util.UUID;

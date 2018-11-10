@@ -19,7 +19,8 @@ public class Confirm extends AbstractPrompt {
                 this.question,
                 ansi().fgBrightBlack().a("(" + (this.defaultValue ? "Y/n" : "y/N") + ")").reset()));
 
-        boolean value = this.defaultValue;;
+        boolean value = this.defaultValue;
+        ;
         String input = command.getLineReader().readLine("> ");
 
         if (input.matches("(?i)y(es)?")) {

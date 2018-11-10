@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
-@Constraint(validatedBy={ UUIDValidator.class })
+@Constraint(validatedBy = {UUIDValidator.class})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UUID {
     String message() default "must be a valid UUID";

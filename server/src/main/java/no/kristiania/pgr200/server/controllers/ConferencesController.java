@@ -27,7 +27,7 @@ public class ConferencesController extends BaseController<ConferenceModel> {
         if (!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         ConferenceModel model = new ConferenceModel();
         return show(model.newQuery()
-                .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("days").first());
+                         .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("days").first());
     }
 
     @Override

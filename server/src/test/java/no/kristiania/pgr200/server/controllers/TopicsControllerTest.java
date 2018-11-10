@@ -136,12 +136,12 @@ public class TopicsControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(response.getJson().getAsJsonObject()
-                .get("error").getAsJsonObject().get("message").getAsString()
-                .contains("com.google.gson.stream.MalformedJsonException"));
+                           .get("error").getAsJsonObject().get("message").getAsString()
+                           .contains("com.google.gson.stream.MalformedJsonException"));
     }
 
     @Test
-    public void shouldRespondWithViolationsOnCreate(){
+    public void shouldRespondWithViolationsOnCreate() {
         HttpRequest request = ControllerTestUtils.createHttpRequest(HttpMethod.POST, "/topics");
         request.getHeaders().put("Content-Type", "application/json");
         request.setBody("{}");
@@ -165,12 +165,12 @@ public class TopicsControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(response.getJson().getAsJsonObject()
-                .get("error").getAsJsonObject().get("message").getAsString()
-                .contains("com.google.gson.stream.MalformedJsonException"));
+                           .get("error").getAsJsonObject().get("message").getAsString()
+                           .contains("com.google.gson.stream.MalformedJsonException"));
     }
 
     @Test
-    public void shouldRespondWithViolationsOnUpdate(){
+    public void shouldRespondWithViolationsOnUpdate() {
         TopicModel model = ControllerTestUtils.createTopicModel();
         HttpRequest request = ControllerTestUtils.createHttpRequest(
                 HttpMethod.PUT, "/topics/" + model.getState().getId());
@@ -187,7 +187,7 @@ public class TopicsControllerTest {
     }
 
     @Test
-    public void shouldReturnNoResultsWithIncorrectUuid(){
+    public void shouldReturnNoResultsWithIncorrectUuid() {
         TopicsController controller = new TopicsController(
                 ControllerTestUtils.createHttpRequest(HttpMethod.GET, "/topics/" + UUID.randomUUID()));
         HttpResponse response = controller.show();

@@ -6,11 +6,9 @@ import org.jline.reader.Binding;
 import org.jline.reader.LineReader;
 import org.jline.reader.Widget;
 import org.jline.terminal.Terminal;
-import org.jline.utils.InfoCmp;
 import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.stubbing.Answer;
-import org.mockito.verification.VerificationMode;
 
 import java.io.PrintWriter;
 

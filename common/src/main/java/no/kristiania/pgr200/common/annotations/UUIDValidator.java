@@ -17,7 +17,7 @@ public class UUIDValidator implements ConstraintValidator<no.kristiania.pgr200.c
     @Override
     public boolean isValid(UUID uuid, ConstraintValidatorContext uuidContext) {
         if (!allowNull) {
-            if(uuid == null) return false;
+            if (uuid == null) return false;
         } else {
             return true;
         }

@@ -36,7 +36,7 @@ public class Conference extends BaseModel<Conference> {
     }
 
     public Conference(JsonObject conference) {
-        if(conference.get("name") != null && !conference.get("name").isJsonNull())
+        if (conference.get("name") != null && !conference.get("name").isJsonNull())
             setName(conference.get("name").getAsString());
     }
 

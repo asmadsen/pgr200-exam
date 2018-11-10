@@ -30,7 +30,7 @@ public class DaysController extends BaseController<DayModel> {
         if (!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         DayModel model = new DayModel();
         return show(model.newQuery()
-                .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("conference").first());
+                         .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("conference").first());
     }
 
     @Override

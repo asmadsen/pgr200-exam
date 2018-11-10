@@ -1,6 +1,5 @@
 package no.kristiania.pgr200.server.controllers;
 
-import com.github.javafaker.Faker;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import no.kristiania.pgr200.common.http.HttpMethod;
@@ -9,19 +8,14 @@ import no.kristiania.pgr200.common.http.HttpResponse;
 import no.kristiania.pgr200.common.http.HttpStatus;
 import no.kristiania.pgr200.common.models.Talk;
 import no.kristiania.pgr200.orm.Orm;
-import no.kristiania.pgr200.server.controllers.TalksController;
-import no.kristiania.pgr200.server.models.ConferenceModel;
-import no.kristiania.pgr200.server.models.TalkModel;
 import no.kristiania.pgr200.server.models.TalkModel;
 import no.kristiania.pgr200.server.models.TopicModel;
 import org.flywaydb.core.Flyway;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -151,8 +145,8 @@ public class TalksControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(response.getJson().getAsJsonObject()
-                .get("error").getAsJsonObject().get("message").getAsString()
-                .contains("com.google.gson.stream.MalformedJsonException"));
+                           .get("error").getAsJsonObject().get("message").getAsString()
+                           .contains("com.google.gson.stream.MalformedJsonException"));
     }
 
     @Test
@@ -180,8 +174,8 @@ public class TalksControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(response.getJson().getAsJsonObject()
-                .get("error").getAsJsonObject().get("message").getAsString()
-                .contains("com.google.gson.stream.MalformedJsonException"));
+                           .get("error").getAsJsonObject().get("message").getAsString()
+                           .contains("com.google.gson.stream.MalformedJsonException"));
     }
 
     @Test

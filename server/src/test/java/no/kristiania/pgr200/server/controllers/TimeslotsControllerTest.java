@@ -150,12 +150,12 @@ public class TimeslotsControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(response.getJson().getAsJsonObject()
-                .get("error").getAsJsonObject().get("message").getAsString()
-                .contains("com.google.gson.stream.MalformedJsonException"));
+                           .get("error").getAsJsonObject().get("message").getAsString()
+                           .contains("com.google.gson.stream.MalformedJsonException"));
     }
 
     @Test
-    public void shouldRespondWithViolationsOnCreate(){
+    public void shouldRespondWithViolationsOnCreate() {
         HttpRequest request = ControllerTestUtils.createHttpRequest(HttpMethod.POST, "/timeslots");
         request.getHeaders().put("Content-Type", "application/json");
         request.setBody("{}");
@@ -179,12 +179,12 @@ public class TimeslotsControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(response.getJson().getAsJsonObject()
-                .get("error").getAsJsonObject().get("message").getAsString()
-                .contains("com.google.gson.stream.MalformedJsonException"));
+                           .get("error").getAsJsonObject().get("message").getAsString()
+                           .contains("com.google.gson.stream.MalformedJsonException"));
     }
 
     @Test
-    public void shouldRespondWithViolationsOnUpdate(){
+    public void shouldRespondWithViolationsOnUpdate() {
         TimeslotModel model = ControllerTestUtils.createTimeslotModel(talkModel, trackModel);
         HttpRequest request = ControllerTestUtils.createHttpRequest(
                 HttpMethod.PUT, "/timeslots/" + model.getState().getId());
@@ -197,11 +197,12 @@ public class TimeslotsControllerTest {
         JsonObject errorResponse = ControllerTestUtils.stringToJsonObject(response.getBody());
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
-        assertThat(errorResponse.get("errors").toString()).isEqualTo("{\"slot_index\":\"must be greater than or equal to 0\"}");
+        assertThat(errorResponse.get("errors").toString()).isEqualTo(
+                "{\"slot_index\":\"must be greater than or equal to 0\"}");
     }
 
     @Test
-    public void shouldReturnNoResultsWithIncorrectUuid(){
+    public void shouldReturnNoResultsWithIncorrectUuid() {
         TimeslotsController controller = new TimeslotsController(
                 ControllerTestUtils.createHttpRequest(HttpMethod.GET, "/timeslots/" + UUID.randomUUID()));
         HttpResponse response = controller.show();

@@ -18,7 +18,6 @@ import java.util.UUID;
 
 import static no.kristiania.pgr200.commandline.interactive_commands.Prompt.confirm;
 import static no.kristiania.pgr200.commandline.interactive_commands.Prompt.input;
-import static no.kristiania.pgr200.commandline.interactive_commands.Prompt.list;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class TalksHandler extends AbstractHandler {
@@ -38,7 +37,7 @@ public class TalksHandler extends AbstractHandler {
 
         command.pushPrompt(
                 Prompt.list("action", "What action do you want to take?", actions)
-                        .getPromptsAsPrompt()
+                      .getPromptsAsPrompt()
         );
 
         command.prompt();
@@ -88,10 +87,10 @@ public class TalksHandler extends AbstractHandler {
                                          }
                                          topics = _topics.toArray(new Topic[]{});
                                          return true;
-                        }, Prompt.list("topic", "Select a topic", () -> topics, Topic::getTopic)
-                                     .conditional(command1 -> {
-                                         return ((Topic) command1.getValues().get("topic")).equals(this.topic);
-                                     }, input("topic", "Topic name", Topic.class))
+                                     }, Prompt.list("topic", "Select a topic", () -> topics, Topic::getTopic)
+                                              .conditional(command1 -> {
+                                                  return ((Topic) command1.getValues().get("topic")).equals(this.topic);
+                                              }, input("topic", "Topic name", Topic.class))
                         )
                         .getPromptsAsPrompt()
         );
@@ -167,7 +166,7 @@ public class TalksHandler extends AbstractHandler {
     private void update() {
         Talk talk = this.selectEntryPrompt("Which talk do you want to update?", false);
 
-        if (talk == null)  return;
+        if (talk == null) return;
 
         talk = this.promptTalk(talk);
 
@@ -175,10 +174,9 @@ public class TalksHandler extends AbstractHandler {
     }
 
 
-
     private void delete() {
         Talk talk = this.selectEntryPrompt("Which talk do you want to delete?", true);
-        if (talk == null)  return;
+        if (talk == null) return;
 
         this.delete(this.baseUrl(), talk.getId().toString());
     }

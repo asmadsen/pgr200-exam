@@ -26,10 +26,10 @@ public class Track extends BaseModel<Track> {
     }
 
     public Track(JsonObject track) {
-        if(track.get("id") != null && !track.get("id").isJsonNull()) {
+        if (track.get("id") != null && !track.get("id").isJsonNull()) {
             this.id = UUID.fromString(track.get("id").getAsString());
         }
-        if(track.get("day_id") != null && !track.get("day_id").isJsonNull()) {
+        if (track.get("day_id") != null && !track.get("day_id").isJsonNull()) {
             this.day_id = UUID.fromString(track.get("day_id").getAsString());
         }
     }

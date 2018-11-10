@@ -56,14 +56,15 @@ public abstract class BaseController<T extends BaseRecord> {
 
     HttpResponse show(T model) {
         httpResponse.setHeaders(getHeaders());
-        if (!validateUUID(getHttpRequest().getUri().split("/")[2])){
+        if (!validateUUID(getHttpRequest().getUri().split("/")[2])) {
             httpResponse.setStatus(HttpStatus.BadRequest);
             addPropertyToBody("error",
-                    getErrorMessage("Could not find element with id: " + getHttpRequest().getUri().split("/")[2]));
+                              getErrorMessage("Could not find element with id: " + getHttpRequest().getUri()
+                                                                                                   .split("/")[2]));
             httpResponse.setBody(getResponsebody().toString());
         } else {
             httpResponse.setStatus(HttpStatus.OK);
-            if(model != null) {
+            if (model != null) {
                 addPropertyToBody("value", model.toJson());
             } else {
                 JsonObject object = new JsonObject();
@@ -81,7 +82,8 @@ public abstract class BaseController<T extends BaseRecord> {
     HttpResponse update(T model) {
         if (!validateUUID(getHttpRequest().getUri().split("/")[2])) {
             getResponsebody().add("error",
-                    getErrorMessage("Could not find element with id: " + getHttpRequest().getUri().split("/")[2]));
+                                  getErrorMessage("Could not find element with id: " + getHttpRequest().getUri()
+                                                                                                       .split("/")[2]));
             httpResponse.setStatus(HttpStatus.BadRequest);
             httpResponse.setBody(getResponsebody().toString());
         }
@@ -103,7 +105,7 @@ public abstract class BaseController<T extends BaseRecord> {
     HttpResponse create(T model) {
         Set<ConstraintViolation> violations = model.getState().validate();
         violations = violations.stream()
-                .filter(e -> !e.getPropertyPath().toString().equals("id")).collect(Collectors.toSet());
+                               .filter(e -> !e.getPropertyPath().toString().equals("id")).collect(Collectors.toSet());
         httpResponse.setHeaders(getHeaders());
         if (violations.isEmpty() && model.create()) {
             getResponsebody().add("value", new JsonParser().parse(getGsonBuilder().toJson(model.getState())));
@@ -185,7 +187,7 @@ public abstract class BaseController<T extends BaseRecord> {
     HttpResponse getNotValidUuidResponse() {
         httpResponse.setHeaders(getHeaders());
         getResponsebody().add("error",
-                getErrorMessage("Not a valid UUID: " + getHttpRequest().getUri().split("/")[2]));
+                              getErrorMessage("Not a valid UUID: " + getHttpRequest().getUri().split("/")[2]));
         httpResponse.setStatus(HttpStatus.BadRequest);
         httpResponse.setBody(getResponsebody().toString());
         return httpResponse;

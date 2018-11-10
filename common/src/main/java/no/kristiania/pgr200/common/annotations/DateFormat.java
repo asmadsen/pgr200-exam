@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
-@Constraint(validatedBy={ DateFormatValidator.class })
+@Constraint(validatedBy = {DateFormatValidator.class})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DateFormat {
     String message() default "date format must be YYYY-MM-DD";

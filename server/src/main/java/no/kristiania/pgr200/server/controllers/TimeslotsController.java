@@ -26,7 +26,7 @@ public class TimeslotsController extends BaseController<TimeslotModel> {
         if (!validateUUID(getHttpRequest().getUri().split("/")[2])) return getNotValidUuidResponse();
         TimeslotModel model = new TimeslotModel();
         return show(model.newQuery()
-                .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("track").with("talk").first());
+                         .whereEquals(model.getPrimaryKey(), getUuidFromUri()).with("track").with("talk").first());
     }
 
     @Override

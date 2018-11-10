@@ -3,7 +3,6 @@ package no.kristiania.pgr200.common.models;
 import com.google.gson.JsonObject;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -31,13 +30,13 @@ public class Talk extends BaseModel<Talk> {
     }
 
     public Talk(JsonObject talk) {
-        if(talk.get("id") != null && !talk.get("id").isJsonNull())
+        if (talk.get("id") != null && !talk.get("id").isJsonNull())
             setId(UUID.fromString(talk.get("id").getAsString()));
-        if(talk.get("title") != null && !talk.get("title").isJsonNull())
+        if (talk.get("title") != null && !talk.get("title").isJsonNull())
             setTitle(talk.get("title").getAsString());
-        if(talk.get("description") != null && !talk.get("description").isJsonNull())
+        if (talk.get("description") != null && !talk.get("description").isJsonNull())
             setDescription(talk.get("description").getAsString());
-        if(talk.get("topic_id") != null && !talk.get("topic_id").isJsonNull())
+        if (talk.get("topic_id") != null && !talk.get("topic_id").isJsonNull())
             setTopic_id(UUID.fromString(talk.get("topic_id").getAsString()));
     }
 

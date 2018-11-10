@@ -8,7 +8,7 @@ import no.kristiania.pgr200.common.http.HttpResponse;
 import no.kristiania.pgr200.common.http.HttpStatus;
 import no.kristiania.pgr200.common.models.Day;
 import no.kristiania.pgr200.orm.Orm;
-import no.kristiania.pgr200.server.models.*;
+import no.kristiania.pgr200.server.models.ConferenceModel;
 import no.kristiania.pgr200.server.models.DayModel;
 import org.flywaydb.core.Flyway;
 import org.junit.Before;
@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class DaysControllerTest {
 
@@ -145,8 +145,8 @@ public class DaysControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(response.getJson().getAsJsonObject()
-                .get("error").getAsJsonObject().get("message").getAsString()
-                .contains("com.google.gson.stream.MalformedJsonException"));
+                           .get("error").getAsJsonObject().get("message").getAsString()
+                           .contains("com.google.gson.stream.MalformedJsonException"));
     }
 
     @Test
@@ -173,8 +173,8 @@ public class DaysControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UnprocessableEntity);
         assertTrue(response.getJson().getAsJsonObject()
-                .get("error").getAsJsonObject().get("message").getAsString()
-                .contains("com.google.gson.stream.MalformedJsonException"));
+                           .get("error").getAsJsonObject().get("message").getAsString()
+                           .contains("com.google.gson.stream.MalformedJsonException"));
     }
 
     @Test

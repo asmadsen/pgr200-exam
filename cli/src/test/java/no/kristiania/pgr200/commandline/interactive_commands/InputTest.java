@@ -2,7 +2,6 @@ package no.kristiania.pgr200.commandline.interactive_commands;
 
 import com.github.javafaker.Faker;
 import no.kristiania.pgr200.common.models.Talk;
-import org.hibernate.validator.internal.constraintvalidators.bv.notempty.NotEmptyValidatorForCharSequence;
 import org.junit.Test;
 
 import static org.fusesource.jansi.Ansi.ansi;
@@ -55,7 +54,9 @@ public class InputTest {
 
         prompt.prompt(command);
 
-        verify(command.getOutput(), times(1)).println(eq("What is your name? " + ansi().fgBrightBlack().a("John Doe").reset()));
+        verify(command.getOutput(), times(1)).println(eq("What is your name? " + ansi().fgBrightBlack()
+                                                                                       .a("John Doe")
+                                                                                       .reset()));
         verify(command).setValue(eq("title"), eq("John Doe"));
     }
 }
