@@ -12,6 +12,7 @@ public class BelongsTo<V extends BaseRecord<V, W>, W extends IBaseModel<W>, T ex
         extends AbstractRelation<V, W, T> {
     private final String foreignKey;
     private final String ownerKey;
+    private boolean isEmpty = false;
 
     public BelongsTo(V relation, T parent, String foreignKey, String ownerKey) {
         super(relation.newQuery(), parent);
@@ -27,6 +28,7 @@ public class BelongsTo<V extends BaseRecord<V, W>, W extends IBaseModel<W>, T ex
 
     @Override
     public void addEagerConstraints(Collection<T> models) {
+        if (models.stream().noneMatch(m -> m.getState().getAttribute(this.foreignKey).getValue() != null)) this.isEmpty = true;
         this.query.where(this.ownerKey,
                          SqlOperator.In,
                          models.stream()
@@ -60,6 +62,7 @@ public class BelongsTo<V extends BaseRecord<V, W>, W extends IBaseModel<W>, T ex
 
     @Override
     public Listable<V> getResults() {
+        if (this.isEmpty) return new Listable<>(null);
         return new Listable<>(this.query.get());
     }
 }
