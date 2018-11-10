@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,7 +92,7 @@ public abstract class HttpCommon {
 
     public void writeToStream(OutputStream stream) throws IOException {
         stream.write(this.getFirstLine());
-        byte[] body = this.body.getBytes();
+        byte[] body = this.body.getBytes(StandardCharsets.UTF_8);
         if (body.length > 0) {
             this.headers.put("Content-Length", String.valueOf(body.length));
         }

@@ -55,7 +55,8 @@ public class Topic extends BaseModel<Topic> {
     @Override
     public boolean equals(Object other) {
         if (other instanceof Topic) {
-            return this.getId().equals(((Topic) other).getId()) && this.getTopic().equals(((Topic) other).getTopic());
+            return Objects.equals(this.getId(), ((Topic) other).getId()) &&
+                    Objects.equals(this.getTopic(), ((Topic) other).topic);
         }
         return false;
     }

@@ -60,7 +60,8 @@ public class HttpParser {
         int read = 0;
         while ((c = reader.read()) != -1) {
             builder.append((char) c);
-            if (++read >= length) {
+            read = read + String.valueOf((char) c).getBytes(UTF_8).length;
+            if (read >= length) {
                 break;
             }
         }

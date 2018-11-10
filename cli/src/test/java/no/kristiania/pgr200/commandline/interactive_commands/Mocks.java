@@ -1,6 +1,7 @@
 package no.kristiania.pgr200.commandline.interactive_commands;
 
 import com.github.javafaker.Faker;
+import no.kristiania.pgr200.common.models.Talk;
 import org.jline.keymap.KeyMap;
 import org.jline.reader.Binding;
 import org.jline.reader.LineReader;
@@ -52,5 +53,16 @@ public class Mocks {
             characters.add(Mocks.faker.rickAndMorty().character());
         }
         return characters.toArray(new String[]{});
+    }
+
+    public static Talk[] generateTalks() {
+        Set<Talk> characters = new HashSet<>();
+        for (int i = 0; i < 10; i++) {
+            Talk talk = new Talk();
+            talk.title = faker.book().title() + " - " + i;
+            talk.description = faker.harryPotter().quote();
+            characters.add(talk);
+        }
+        return characters.toArray(new Talk[]{});
     }
 }

@@ -1,5 +1,6 @@
 package no.kristiania.pgr200.commandline;
 
+import no.kristiania.pgr200.commandline.handlers.TalksHandler;
 import no.kristiania.pgr200.commandline.interactive_commands.InteractiveCommand;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -13,11 +14,14 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 import java.io.IOException;
+import java.util.Map;
 
+import static no.kristiania.pgr200.commandline.interactive_commands.Prompt.confirm;
 import static no.kristiania.pgr200.commandline.interactive_commands.Prompt.list;
 
 public class ConferenceCliClient {
     private static Logger logger = LoggerFactory.getLogger(ConferenceCliClient.class);
+    private static boolean restart = true;
 
     public ConferenceCliClient() {
     }
@@ -41,18 +45,34 @@ public class ConferenceCliClient {
                                                      .build();
             lineReader.variable("disable-history", true);
 
-            InteractiveCommand command = new InteractiveCommand(lineReader);
+            while (restart) {
+                InteractiveCommand command = new InteractiveCommand(lineReader);
 
-            String[] models = {"Talks", "Tracks"};
-            String[] actions = {"List", "Add", "Delete"};
+                String[] models = {"Talks"};
 
-            command.pushPrompt(
-                    list("model", "Choose startingpoint", models)
-                            .list("action", "What action do you want to take?", actions)
-                            .getPromptsAsPrompt()
-            );
+                command.pushPrompt(
+                        list("model", "Choose startingpoint", models)
+                                .getPromptsAsPrompt()
+                );
 
-            command.prompt();
+                command.prompt();
+
+                Map<String, Object> values = command.getValues();
+
+                switch (((String) values.get("model")).toLowerCase()) {
+                    case "talks":
+                        new TalksHandler(lineReader).execute();
+                        break;
+                }
+
+                command = new InteractiveCommand(lineReader);
+                command.pushPrompt(confirm("restart", "Do you want to do another action", false).getPromptsAsPrompt());
+                command.prompt();
+                if (!(Boolean) command.getValues().get("restart")) {
+                    restart = false;
+                }
+            }
+
 
         } catch (Exception e) {
             logger.error("Main", e);

@@ -7,14 +7,19 @@ import no.kristiania.pgr200.common.http.HttpStatus;
 import no.kristiania.pgr200.orm.Orm;
 import no.kristiania.pgr200.server.db.DatabaseHandling;
 import org.flywaydb.core.Flyway;
+import org.slf4j.Logger;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.time.Year;
 import java.util.Properties;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class ConferenceServer implements Runnable {
+    private static Logger logger = getLogger(ConferenceServer.class);
     private Socket connection;
     private static final int PORT = 8080;
     public static Properties properties;
@@ -61,6 +66,7 @@ public class ConferenceServer implements Runnable {
     public void run() {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequest httpRequest = new HttpParser().parseRequest(in);
+            logger.info(String.format("%s %s %s\r\n", httpRequest.getHttpMethod().name(), httpRequest.getUri(), httpRequest.getHttpVersion()));
             RequestHandler requestHandler = new RequestHandler(httpRequest);
             if(httpRequest.getUri() != null || httpRequest.getHttpMethod() != null) {
                 if(!httpRequest.getUri().startsWith("/api")) {

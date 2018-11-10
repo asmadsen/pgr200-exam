@@ -87,9 +87,10 @@ public class Talk extends BaseModel<Talk> {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Talk) {
-            return this.getId().equals(((Talk) obj).getId()) &&
-                    this.getTitle().equals(((Talk) obj).getTitle()) &&
-                    this.getDescription().equals(((Talk) obj).getDescription());
+            return Objects.equals(this.getId(), ((Talk) obj).getId()) &&
+                    Objects.equals(this.getTitle(), ((Talk) obj).getTitle()) &&
+                    Objects.equals(this.getDescription(), ((Talk) obj).getDescription()) &&
+                    Objects.equals(this.getTopic_id(), ((Talk) obj).getTopic_id());
         }
         return false;
     }

@@ -195,15 +195,16 @@ public abstract class BaseRecord<
         return new Listable<>((V) null);
     }
 
-    private void loadRelation(String relationName) {
-        AbstractRelation<?, ?, T> relation = this.getRelations().get(relationName);
+    private <N extends IBaseModel<N>, M extends BaseRecord<M,N>> void loadRelation(String relationName) {
+        AbstractRelation<M, N, T> relation = (AbstractRelation<M, N, T>) this.getRelations().get(relationName);
         if (relation == null) {
             throw new IllegalArgumentException("Tried to load undefined relation `" + relationName + "`");
         }
         relation.addConstraints();
-        Listable<?> results = relation.getResults();
-        if (results.isList()) this.setRelation(relationName, results.getListValue());
-        else this.setRelation(relationName, results.getValue());
+        List<T> models = new LinkedList<>();
+        models.add((T)this);
+        List<T> match = relation.match(models, relation.getEager().getListValue(), relationName);
+        this.setRelation(relationName, match.get(0).relations.get(relationName));
     }
 
     public Map<String, AbstractRelation<?, ?, T>> getRelations() {

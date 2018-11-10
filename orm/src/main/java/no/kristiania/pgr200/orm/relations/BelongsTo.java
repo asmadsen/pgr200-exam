@@ -60,6 +60,6 @@ public class BelongsTo<V extends BaseRecord<V, W>, W extends IBaseModel<W>, T ex
 
     @Override
     public Listable<V> getResults() {
-        return new Listable<>(this.query.first());
+        return new Listable<>(this.query.get());
     }
 }
