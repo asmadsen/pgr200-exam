@@ -89,7 +89,6 @@ public class TracksControllerTest {
         request.setBody(ControllerTestUtils.modelToJson(trackModel.getState()));
         TracksController controller = new TracksController(request);
         HttpResponse response = controller.update();
-        System.out.println(response.getBody());
         Track track = ControllerTestUtils.jsonToModel(response, Track.class);
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK);
