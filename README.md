@@ -172,7 +172,7 @@ I tilbakemeldingen er det lurt å stille spørsmålene: 1. Hva lærte jeg av den
 
 ### Forslag til datamodell
 
-![Datamodell](doc/conference-data-model.png)
+![Datamodell](doc/database.png)
 
 ## Sjekkliste for innleveringen
 
