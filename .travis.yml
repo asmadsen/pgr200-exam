@@ -6,6 +6,7 @@
 # Specify we are working with a Java project.
 # Travis can be used also for many other languages.
 language: java
+dist: trusty
 
 # The JDK we need for compiling
 jdk:
