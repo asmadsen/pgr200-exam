@@ -84,7 +84,7 @@ public class HttpClientTest {
         JsonObject expect = new JsonObject();
         expect.add("args", new JsonObject());
         expect.add("headers", gson.toJsonTree(headers));
-        expect.addProperty("url", "http://httpbin.org/get");
+        expect.addProperty("url", "https://httpbin.org/get");
         JsonObject object = response.getJson().getAsJsonObject();
         object.remove("origin");
         assertThat(object.entrySet())
